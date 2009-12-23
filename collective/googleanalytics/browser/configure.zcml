@@ -1,0 +1,31 @@
+<configure 
+    xmlns="http://namespaces.zope.org/zope"
+    xmlns:browser="http://namespaces.zope.org/browser"
+    i18n_domain="analytics">
+        
+    <browser:page
+        for="collective.googleanalytics.interfaces.utility.IAnalytics"
+        name="analytics-controlpanel"
+        class=".controlpanel.AnalyticsControlPanelForm"
+        permission="cmf.ManagePortal"
+        />
+
+	<browser:resourceDirectory
+		name="analytics_images"
+		directory="images"
+		/>
+		
+	<configure package="Products.GenericSetup.browser">
+	
+		<browser:page
+		    for="zope.app.container.interfaces.IAdding"
+		    name="add_analytics_report"
+		    template="addWithPresettings.pt"
+		    class="collective.googleanalytics.browser.report.AnalyticsReportAddView"
+		    permission="collective.googleanalytics.ManageAnalyticsReports"
+		    />
+		
+	</configure>
+
+</configure>
+

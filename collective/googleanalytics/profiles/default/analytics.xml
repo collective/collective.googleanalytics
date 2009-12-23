@@ -1,0 +1,155 @@
+<?xml version="1.0"?>
+<object name="portal_analytics" meta_type="Google Analytics Tool"
+   xmlns:i18n="http://xml.zope.org/namespaces/i18n">
+ <object name="site-visits-month-line" meta_type="Google Analytics Report"
+    i18n:domain="analytics">
+  <property name="title"
+     i18n:translate="">Site Visits This Month: Line Chart</property>
+  <property name="description"
+     i18n:translate="">Displays the number of site visits for the last 30 days as a line graph.</property>
+  <property name="metrics">
+   <element value="ga:visits"/>
+  </property>
+  <property name="dimensions">
+   <element value="ga:day"/>
+   <element value="ga:month"/>
+  </property>
+  <property name="filters"/>
+  <property name="sort">
+   <element value="ga:month"/>
+  </property>
+  <property name="start_date">python:today - timedelta(days=30)</property>
+  <property name="end_date">today</property>
+  <property name="max_results">1000</property>
+  <property name="is_page_specific">False</property>
+  <property name="column_labels">
+   <element value="string:Day"/>
+   <element value="string:Visits"/>
+  </property>
+  <property name="column_exps">
+   <element value="python:str(ga_day)"/>
+   <element value="python:int(ga_visits)"/>
+  </property>
+  <property name="viz_type">LineChart</property>
+  <property name="viz_options">
+   <element value="title string:Site Visits this Month"/>
+   <element value="height python:250"/>
+   <element value="legend string:none"/>
+   <element value="titleX string:Day"/>
+   <element value="titleY string:Visits"/>
+   <element value="axisFontSize python:10"/>
+  </property>
+  <property name="introduction"></property>
+  <property
+     name="conclusion">&lt;p&gt;&lt;strong tal:content="python:sum(data_columns[1])"&gt;1000&lt;/strong&gt; visits this month&lt;/p&gt;
+   &lt;p&gt;&lt;strong tal:content="python:int(sum(data_columns[1])/len(data_columns[1]))"&gt;1000&lt;/strong&gt; 
+   average visits per day&lt;/p&gt;</property>
+ </object>
+ <object name="site-visits-month-sparkline"
+    meta_type="Google Analytics Report" i18n:domain="analytics">
+  <property name="title"
+     i18n:translate="">Site Visits This Month: Sparkline</property>
+  <property name="description"
+     i18n:translate="">Displays the number of site visits for the last 30 days as sparkline.</property>
+  <property name="metrics">
+   <element value="ga:visits"/>
+  </property>
+  <property name="dimensions">
+   <element value="ga:day"/>
+   <element value="ga:month"/>
+  </property>
+  <property name="filters"/>
+  <property name="sort">
+   <element value="ga:month"/>
+  </property>
+  <property name="start_date">python:today - timedelta(days=30)</property>
+  <property name="end_date">today</property>
+  <property name="max_results">1000</property>
+  <property name="is_page_specific">False</property>
+  <property name="column_labels">
+   <element value="string:Visits"/>
+  </property>
+  <property name="column_exps">
+   <element value="python:int(ga_visits)"/>
+  </property>
+  <property name="viz_type">ImageSparkLine</property>
+  <property name="viz_options">
+   <element value="height python:40"/>
+   <element value="width python:150"/>
+   <element value="showAxisLines python:False"/>
+   <element value="showValueLabels python:False"/>
+  </property>
+  <property name="introduction">&lt;h3&gt;Site Visits&lt;/h3&gt;
+   &lt;h4&gt;Last 30 Days&lt;/h4&gt;</property>
+  <property
+     name="conclusion">&lt;p&gt;&lt;strong tal:content="python:sum(data_columns[0])"&gt;1000&lt;/strong&gt; visits this month&lt;/p&gt;</property>
+ </object>
+ <object name="top-5-pageviews-month-table"
+    meta_type="Google Analytics Report" i18n:domain="analytics">
+  <property name="title"
+     i18n:translate="">Top 5 Pages This Month: Table</property>
+  <property name="description"
+     i18n:translate="">Displays a table of the top pages by number of page views for this month.</property>
+  <property name="metrics">
+   <element value="ga:pageviews"/>
+  </property>
+  <property name="dimensions">
+   <element value="ga:pagePath"/>
+  </property>
+  <property name="filters"/>
+  <property name="sort">
+   <element value="-ga:pageviews"/>
+  </property>
+  <property name="start_date">python:today - timedelta(days=30)</property>
+  <property name="end_date">today</property>
+  <property name="max_results">5</property>
+  <property name="is_page_specific">False</property>
+  <property name="column_labels">
+   <element value="string:URL"/>
+   <element value="string:Views"/>
+  </property>
+  <property name="column_exps">
+   <element value="ga_pagePath"/>
+   <element value="ga_pageviews"/>
+  </property>
+  <property name="viz_type">Table</property>
+  <property name="viz_options"/>
+  <property name="introduction">&lt;h3&gt;Top 5 Pages&lt;/h3&gt;
+   &lt;h4&gt;Last 30 Days&lt;/h4&gt;</property>
+  <property name="conclusion"></property>
+ </object>
+ <object name="top-5-sources-month-table" meta_type="Google Analytics Report"
+    i18n:domain="analytics">
+  <property name="title"
+     i18n:translate="">Top 5 Sources This Month: Table</property>
+  <property name="description"
+     i18n:translate="">Displays a table of the top source domains by number of visits for this month.</property>
+  <property name="metrics">
+   <element value="ga:visits"/>
+  </property>
+  <property name="dimensions">
+   <element value="ga:source"/>
+  </property>
+  <property name="filters"/>
+  <property name="sort">
+   <element value="-ga:visits"/>
+  </property>
+  <property name="start_date">python:today - timedelta(days=30)</property>
+  <property name="end_date">today</property>
+  <property name="max_results">5</property>
+  <property name="is_page_specific">False</property>
+  <property name="column_labels">
+   <element value="string:Domain"/>
+   <element value="string:Visits"/>
+  </property>
+  <property name="column_exps">
+   <element value="ga_source"/>
+   <element value="ga_visits"/>
+  </property>
+  <property name="viz_type">Table</property>
+  <property name="viz_options"/>
+  <property name="introduction">&lt;h3&gt;Top 5 Sources&lt;/h3&gt;
+   &lt;h4&gt;Last 30 Days&lt;/h4&gt;</property>
+  <property name="conclusion"></property>
+ </object>
+</object>

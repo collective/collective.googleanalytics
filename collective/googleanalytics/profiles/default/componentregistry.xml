@@ -1,0 +1,9 @@
+<?xml version="1.0"?>
+<componentregistry>
+ <adapters/>
+ <utilities>
+  <utility
+     interface="collective.googleanalytics.interfaces.utility.IAnalytics"
+     object="portal_analytics"/>
+ </utilities>
+</componentregistry>

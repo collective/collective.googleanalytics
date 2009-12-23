@@ -1,0 +1,6 @@
+<?xml version="1.0"?>
+<tool-setup>
+  <required tool_id="portal_analytics"
+            class="collective.googleanalytics.utility.Analytics"/>
+</tool-setup>
+

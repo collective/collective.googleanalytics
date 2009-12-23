@@ -1,0 +1,4 @@
+<?xml version="1.0"?>
+<action-icons>
+ <action-icon category="controlpanel" action_id="Analytics" title="Google Analytics" priority="0" icon_expr="++resource++analytics_images/chart_curve.gif"/>
+</action-icons>

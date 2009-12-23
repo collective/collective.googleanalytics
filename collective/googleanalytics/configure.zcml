@@ -1,0 +1,75 @@
+<configure
+    xmlns="http://namespaces.zope.org/zope"
+    xmlns:five="http://namespaces.zope.org/five"
+    xmlns:genericsetup="http://namespaces.zope.org/genericsetup"
+    i18n_domain="collective.googleanalytics">
+
+  <five:registerPackage package="." initialize=".initialize" />
+  
+  <permission
+	   id="collective.googleanalytics.ViewAnalyticsResults"
+      title="Google Analytics: View Analytics Results"
+	   />
+	
+  <permission
+	   id="collective.googleanalytics.ManageAnalyticsReports"
+      title="Google Analytics: Manage Analytics Reports"
+	   />
+
+  <include package=".browser" />
+  <include package=".portlets" />
+  <include package=".viewlets" />
+
+  <five:registerClass
+      class=".report.AnalyticsReport"
+      meta_type="Google Analytics Report"
+	  addview="add_analytics_report"
+      permission="collective.googleanalytics.ManageAnalyticsReports"
+      global="False"
+      />
+
+  <adapter factory=".exportimport.AnalyticsReportNodeAdapter"/>
+  <adapter factory=".exportimport.AnalyticsToolXMLAdapter"/>
+
+  <utility
+    component=".vocabularies.getProfiles"
+    name="collective.googleanalytics.Profiles"
+    provides="zope.schema.interfaces.IVocabularyFactory"
+    />
+
+  <utility
+    component=".vocabularies.getReports"
+    name="collective.googleanalytics.Reports"
+    provides="zope.schema.interfaces.IVocabularyFactory"
+    />
+    
+  <utility
+    component=".vocabularies.getRoles"
+    name="collective.googleanalytics.Roles"
+    provides="zope.schema.interfaces.IVocabularyFactory"
+    />
+
+  <genericsetup:registerProfile
+       name="default"
+       title="Google Analytics"
+       directory="profiles/default"
+       description="Tools to pull statistics from Google Analytics."
+       provides="Products.GenericSetup.interfaces.EXTENSION"
+       />
+
+    <genericsetup:importStep
+        name="analytics"
+        title="Google Analytics"
+        description="Import Google Analytics Reports"
+        handler="collective.googleanalytics.exportimport.importAnalyticsReports">
+        <depends name="componentregistry"/>
+    </genericsetup:importStep>
+
+    <genericsetup:exportStep
+        name="analytics"
+        title="Google Analytics"
+        description="Export Google Analytics Reports"
+        handler="collective.googleanalytics.exportimport.exportAnalyticsReports">
+    </genericsetup:exportStep>
+
+</configure>

@@ -1,0 +1,11 @@
+<?xml version="1.0"?>
+<rolemap>
+  <permissions>
+    <permission name="Google Analytics: View Analytics Results" acquire="True">
+      <role name="Manager"/>
+    </permission>
+    <permission name="Google Analytics: Manage Analytics Reports" acquire="True">
+      <role name="Manager"/>
+    </permission>
+  </permissions>
+</rolemap>

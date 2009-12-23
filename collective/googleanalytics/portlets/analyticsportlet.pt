@@ -1,0 +1,38 @@
+<dl class="portlet portletGoogleAnalytics"
+    i18n:domain="collective.googleanalytics">
+
+    <dt class="portletHeader">
+        <span class="portletTopLeft"></span>
+        <span tal:replace="view/getTitle">Google Analytics</span>
+        <span class="portletTopRight"></span>
+    </dt>
+
+    <dd tal:define="results view/getResults;
+			error python:results=='BadAuthenticationError' or results=='MissingCredentialsError';"
+		class="portletItem odd">
+				
+		<p class="error" tal:condition="error">
+			An error occurred while retrieving the results of the report.  
+			Please verify that you have entered the correct e-mail address and password in the 
+			<a tal:attributes="href string:${context/portal_url}/portal_analytics/@@analytics-controlpanel" 
+				href="">Google Analytics control panel</a>.
+		</p>
+		
+		<tal:block condition="not:error">			
+			<tal:results repeat="result results">
+				<div tal:content="structure result/getVizIntroduction"></div>
+				<div tal:attributes="id result/getVizID;"></div>
+			    <script type="text/javascript" tal:content="result/getVizJS"></script>
+				<div tal:content="structure result/getVizConclusion"></div>
+			</tal:results>
+		</tal:block>
+
+    </dd>
+
+    <dd class="portletFooter">
+        <span class="portletBottomLeft"></span>
+        <a href="http://www.google.com/analytics/" target="_blank">More analytics</a>
+        <span class="portletBottomRight"></span>
+    </dd>
+
+</dl>

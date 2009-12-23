@@ -1,0 +1,30 @@
+<configure 
+    xmlns="http://namespaces.zope.org/zope"
+    xmlns:browser="http://namespaces.zope.org/browser"
+    i18n_domain="analytics">
+    
+    <browser:viewletManager
+        name="collective.googleanalytics.controlpanel"
+        provides="..interfaces.viewlets.IAnalyticsControlPanelViewletManager"
+        permission="cmf.ManagePortal"
+        class="plone.app.viewletmanager.manager.OrderedViewletManager"
+        />
+		
+    <browser:viewlet
+        name="collective.googleanalytics.analyticsviewlet"
+        manager="collective.googleanalytics.interfaces.viewlets.IAnalyticsControlPanelViewletManager"
+        class=".analyticsviewlet.AnalyticsViewlet"
+        layer="..interfaces.browserlayer.IAnalyticsLayer"
+        permission="collective.googleanalytics.ViewAnalyticsResults"
+        />
+        
+    <browser:viewlet  
+        name="plone.analytics"
+        manager="plone.app.layout.viewlets.interfaces.IPortalFooter"
+        class=".tracking.AnalyticsTrackingViewlet"
+        layer="..interfaces.browserlayer.IAnalyticsLayer"
+        permission="zope2.View" 
+        />
+
+</configure>
+

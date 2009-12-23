@@ -1,0 +1,7 @@
+<?xml version="1.0"?>
+<object name="portal_javascripts">
+ <javascript cacheable="False" compression="none" conditionalcomment=""
+    cookable="False" enabled="True"
+    expression="python:portal['portal_membership'].checkPermission('Google Analytics: View Analytics Results', context)"
+    id="http://www.google.com/jsapi" inline="False"/>
+</object>

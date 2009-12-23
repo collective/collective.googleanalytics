@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+<portlets>
+
+ <!-- Portlet type registrations -->
+
+ <portlet
+   addview="collective.googleanalytics.AnalyticsPortlet"
+   title="Google  Analytics"
+   description="A portlet that pulls information from Google Analytics."
+   />
+
+</portlets>
