@@ -1,13 +1,12 @@
 from setuptools import setup, find_packages
-import os
 
-version = '0.1'
+version = '1.0a1'
 
 setup(name='collective.googleanalytics',
       version=version,
       description="Tools for pulling statistics from Google Analytics.",
       long_description=open("README.txt").read() + "\n" +
-                       open(os.path.join("docs", "HISTORY.txt")).read(),
+                       open("CHANGES.txt").read(),
       # Get more strings from http://www.python.org/pypi?%3Aaction=list_classifiers
       classifiers=[
         "Framework :: Plone",
@@ -20,7 +19,7 @@ setup(name='collective.googleanalytics',
       keywords='Google Analytics Plone statistics portlet integration',
       author='Matt Yoder',
       author_email='mattyoder@onenw.org',
-      url='https://groundwire.devguard.com/svn/public/collective.googleanalytics/',
+      url='http://svn.plone.org/svn/collective/collective.googleanalytics/trunk',
       license='GPL',
       packages=find_packages(exclude=['ez_setup']),
       namespace_packages=['collective'],
