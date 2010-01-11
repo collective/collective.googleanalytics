@@ -1,4 +1,7 @@
-from App.class_init import InitializeClass
+try:
+    from App.class_init import InitializeClass
+except ImportError:
+    from Globals import InitializeClass
 from AccessControl import ClassSecurityInfo
 
 from zope.interface import implements

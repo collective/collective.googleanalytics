@@ -1,6 +1,9 @@
 Changelog
 =========
 
+* Add fallback for importing InitializeClass in Zopes prior to 2.12.
+  [2010-01-05 - yomatters]
+
 1.0a1 - 2009-12-23
 ------------------
 
