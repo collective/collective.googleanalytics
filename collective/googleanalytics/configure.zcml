@@ -38,6 +38,12 @@
     />
 
   <utility
+    component=".vocabularies.getWebProperties"
+    name="collective.googleanalytics.WebProperties"
+    provides="zope.schema.interfaces.IVocabularyFactory"
+    />
+
+  <utility
     component=".vocabularies.getReports"
     name="collective.googleanalytics.Reports"
     provides="zope.schema.interfaces.IVocabularyFactory"
@@ -46,6 +52,12 @@
   <utility
     component=".vocabularies.getRoles"
     name="collective.googleanalytics.Roles"
+    provides="zope.schema.interfaces.IVocabularyFactory"
+    />
+    
+  <utility
+    component=".vocabularies.getFileExtensions"
+    name="collective.googleanalytics.FileExtensions"
     provides="zope.schema.interfaces.IVocabularyFactory"
     />
 

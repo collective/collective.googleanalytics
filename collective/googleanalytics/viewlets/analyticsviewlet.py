@@ -24,7 +24,7 @@ class AnalyticsViewlet(ViewletBase):
         """
         Returns a list of AnalyticsReportResults objects for the selected reports.
         """
-        profile = getattr(self.analytics_tool, 'profile', None)
+        profile = getattr(self.analytics_tool, 'reports_profile', None)
         reports = getattr(self.analytics_tool, 'reports', None)
         if not profile or not reports:
             return []

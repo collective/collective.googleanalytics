@@ -1,8 +1,10 @@
 Introduction
 ============
-collective.googleanalytics is a Plone product used to pull statistics from Google 
-Analytics and display them in a Plone site. It defines Analytics reports
-that are used to query Google and display the results using Google
+collective.googleanalytics is a product that integrates Plone with Google
+Analytics. It includes both tracking and reporting functionality. The product
+enables easy tracking of the standard Google statistics as well as external
+links, e-mail address clicks and file downloads. It also defines Analytics
+reports that are used to query Google and display the results using Google
 Visualizations. Reports are Zope objects that can be imported and exported
 using GenericSetup XML and modified on a site-by-site basis. The product 
 currently provides a portlet that can display results of reports as well
@@ -19,9 +21,33 @@ Configuration
 When you install the product from the Plone Add-ons control panel, a new
 control panel called Google Analytics will be added to your Plone site.
 In this control panel, you can set the e-mail address and password that
-Plone will use to access Google Analytics. You can also configure the
-amount of time, in minutes, that report results will be cached, reducing
-the need to query Google. Sixty minutes is the default caching interval.
+Plone will use to access Google Analytics.
+
+After setting your credentials, you can select the profile where you want to
+track analytics for this site. Choose a profile from the dropdown menu. If you
+do not see any profiles listed, make sure that your e-mail address and password
+are entered correctly and that your Google Analytics account has access to at
+least one web property. Once you have selected a profile for tracking, you can
+choose the prefixes where Analytics will record information about clicks on
+external links, e-mail addresses and file downloads. If you leave any of these
+prefixes blank, links of that type will not be tracked.
+
+For file downloads, you can further refine the statistics you collect by
+checking or unchecking file types in the Download File Types field. Note
+that, for Google Analytics to track these files, the URL used to access
+the file must end in the given extension. In Plone, that means that the
+short name of the File or Image object must end with a period followed
+by the file extension.
+
+Finally, you can choose roles to exclude from tracking. Page visits, 
+external links, file downloads and e-mail address clicks from users with the
+selected roles will not be recorded in Google Analytics. Note that this
+setting does not affect the inclusion of scripts specified in the Site
+control panel.
+
+On the settings tab, you can also configure the amount of time, in minutes, 
+that report results will be cached, reducing the need to query Google. Sixty 
+minutes is the default caching interval.
 
 Basic Use
 =========

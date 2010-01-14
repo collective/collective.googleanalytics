@@ -39,17 +39,29 @@ class Analytics(PloneBaseTool, IFAwareObjectManager, OrderedFolder):
     security.declarePrivate('password')
     password = FieldProperty(IAnalytics['password'])
     
-    security.declarePrivate('profile')
-    profile = FieldProperty(IAnalytics['profile'])
+    security.declarePrivate('tracking_web_property')
+    tracking_web_property = FieldProperty(IAnalytics['tracking_web_property'])
+    
+    security.declarePrivate('tracking_external_prefix')
+    tracking_external_prefix = FieldProperty(IAnalytics['tracking_external_prefix'])
+    
+    security.declarePrivate('tracking_mailto_prefix')
+    tracking_mailto_prefix = FieldProperty(IAnalytics['tracking_mailto_prefix'])
+    
+    security.declarePrivate('tracking_file_prefix')
+    tracking_file_prefix = FieldProperty(IAnalytics['tracking_file_prefix'])
+    
+    security.declarePrivate('tracking_file_extensions')
+    tracking_file_extensions = FieldProperty(IAnalytics['tracking_file_extensions'])
+    
+    security.declarePrivate('reports_profile')
+    reports_profile = FieldProperty(IAnalytics['reports_profile'])
     
     security.declarePrivate('reports')
     reports = FieldProperty(IAnalytics['reports'])
     
     security.declarePrivate('cache_interval')
     cache_interval = FieldProperty(IAnalytics['cache_interval'])
-    
-    security.declarePrivate('tracking_excluded_roles')
-    tracking_excluded_roles = FieldProperty(IAnalytics['tracking_excluded_roles'])
     
     security.declarePrivate('data_client')
     data_client = gdata.analytics.service.AnalyticsDataService()

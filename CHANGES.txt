@@ -1,6 +1,10 @@
 Changelog
 =========
 
+* Add tracking functionality, including external links, e-mail addresses,
+  file downloads.
+  [2010-01-13 - yomatters]
+
 * Add fallback for importing InitializeClass in Zopes prior to 2.12.
   [2010-01-05 - yomatters]
 

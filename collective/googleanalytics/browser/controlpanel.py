@@ -35,6 +35,14 @@ class AnalyticsControlPanelForm(ControlPanelForm):
     analytics_credentials.description = _(u'analytics_credentials_description', 
         default=u'Enter the login information that Plone will use to access Google Analytics.')
     
+    analytics_tracking = FormFieldsets(IAnalyticsTracking)
+    analytics_tracking.id = 'analytics_tracking'
+    analytics_tracking.label = _(u'analytics_tracking', default=u'Tracking')
+    analytics_tracking.description = _(u'analytics_tracking_description', 
+        default=u'Configure the way Google Analytics tracks statistics about this site.')
+    analytics_tracking['tracking_file_extensions'].custom_widget = MultiCheckBoxWidget
+    analytics_tracking['tracking_excluded_roles'].custom_widget = MultiCheckBoxWidget
+    
     analytics_assignment = FormFieldsets(IAnalyticsReportsAssignment)
     analytics_assignment.id = 'analytics_assignment'
     analytics_assignment.label = _(u'analytics_assignment', default=u'Reports')
@@ -42,20 +50,13 @@ class AnalyticsControlPanelForm(ControlPanelForm):
         default=u'Configure the reports that are displayed in the Google Analytics control panel.')
     analytics_assignment['reports'].custom_widget = MultiCheckBoxWidget
     
-    analytics_tracking = FormFieldsets(IAnalyticsTracking)
-    analytics_tracking.id = 'analytics_tracking'
-    analytics_tracking.label = _(u'analytics_tracking', default=u'Tracking')
-    analytics_tracking.description = _(u'analytics_tracking_description', 
-        default=u'Configure the way Google Analytics tracks statistics about this site.')
-    analytics_tracking['tracking_excluded_roles'].custom_widget = MultiCheckBoxWidget
-    
     analytics_settings = FormFieldsets(IAnalyticsSettings)
     analytics_settings.id = 'analytics_settings'
     analytics_settings.label = _(u'analytics_settings', default=u'Settings')
     analytics_settings.description = _(u'analytics_settings_description', 
         default=u'Configure the settings of the Google Analytics product.')
     
-    form_fields = FormFieldsets(analytics_credentials, analytics_assignment, analytics_tracking, analytics_settings)
+    form_fields = FormFieldsets(analytics_credentials, analytics_tracking, analytics_assignment, analytics_settings)
     
     label = _(u"Google Analytics")
     description = _(u"Settings for Google Analytics.")
