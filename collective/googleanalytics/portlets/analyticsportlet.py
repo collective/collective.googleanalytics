@@ -4,6 +4,7 @@ from zope.formlib import form
 
 from plone.portlets.interfaces import IPortletDataProvider
 from plone.app.portlets.portlets import base
+from plone.app.controlpanel.widgets import MultiCheckBoxVocabularyWidget
 
 from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
 from Products.CMFCore.utils import getToolByName
@@ -11,7 +12,6 @@ from Products.CMFCore.utils import getToolByName
 from zope.i18nmessageid import MessageFactory
 _ = MessageFactory('analytics')
 
-from collective.googleanalytics.browser.controlpanel import MultiCheckBoxWidget
 from collective.googleanalytics import error
 
 class IAnalyticsPortlet(IPortletDataProvider):
@@ -115,7 +115,7 @@ class AddForm(base.AddForm):
     constructs the assignment that is being added.
     """
     form_fields = form.Fields(IAnalyticsPortlet)
-    form_fields['reports'].custom_widget = MultiCheckBoxWidget
+    form_fields['reports'].custom_widget = MultiCheckBoxVocabularyWidget
 
     def create(self, data):
         return Assignment(**data)
@@ -127,4 +127,4 @@ class EditForm(base.EditForm):
     zope.formlib which fields to display.
     """
     form_fields = form.Fields(IAnalyticsPortlet)
-    form_fields['reports'].custom_widget = MultiCheckBoxWidget
+    form_fields['reports'].custom_widget = MultiCheckBoxVocabularyWidget
