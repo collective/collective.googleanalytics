@@ -1,6 +1,7 @@
 import unittest
 import datetime
 import os
+from string import Template
 from Products.CMFCore.utils import getToolByName
 from collective.googleanalytics.tests.base import FunctionalTestCase
 from collective.googleanalytics.report import AnalyticsReport
@@ -82,8 +83,12 @@ class TestReports(FunctionalTestCase):
         results = report.getResults(self.portal, profile=12345, data_feed=feed)
         
         # Load the expected results.
-        results_js_file = os.path.join(os.path.dirname(__file__), 'report_results.js')
-        results_js = open(results_js_file).read()
+        results_js_file = os.path.join(os.path.dirname(__file__), 'report_results.js.tpl')
+        template = Template(open(results_js_file).read())
+        template_vars = {
+            'id': results.getVizID(),
+        }
+        results_js = template.substitute(template_vars)
         
         # Test that the results match what we expect.
         self.assertEqual(results.getVizJS(), results_js)

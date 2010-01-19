@@ -50,6 +50,6 @@ data.addColumn("number", "Visits");
 
 
   // Instantiate and draw our chart, passing in some options.
-  var chart = new google.visualization.LineChart(document.getElementById('analytics-2ce74bef312c8a86dd14cf8f2ed8c349'));
+  var chart = new google.visualization.LineChart(document.getElementById('${id}'));
   chart.draw(data, {title: "Site Visits this Month", titleX: "Day", titleY: "Visits", axisFontSize: 10, legend: "none", height: 250});
 }

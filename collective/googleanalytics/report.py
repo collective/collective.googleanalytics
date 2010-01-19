@@ -363,6 +363,7 @@ class AnalyticsReportResults(object):
         self.definition = definition
         self.data = data
         self.id = report_id
+        self.time_stamp = str(time.time())
         
     def getJSValue(self, value):
         """
@@ -399,18 +400,20 @@ class AnalyticsReportResults(object):
         """
         column_labels = self.definition['column_exps']
         column_types = []
-        for value in self.data[0]:
-            if isinstance(value, datetime.date):
-                col_type = 'date'
-            elif isinstance(value, str):
-                col_type = 'string'
-            else:
-                col_type = 'number'
-            column_types.append(col_type)
-        js = []
-        for col_type, label in zip(column_types, column_labels):
-            js.append('data.addColumn("%s", "%s");' % (col_type, label))
-        return '\n'.join(js)
+        if self.data:
+            for value in self.data[0]:
+                if isinstance(value, datetime.date):
+                    col_type = 'date'
+                elif isinstance(value, str):
+                    col_type = 'string'
+                else:
+                    col_type = 'number'
+                column_types.append(col_type)
+            js = []
+            for col_type, label in zip(column_types, column_labels):
+                js.append('data.addColumn("%s", "%s");' % (col_type, label))
+            return '\n'.join(js)
+        return ''
 
     def getVizPackage(self):
         """
@@ -430,10 +433,10 @@ class AnalyticsReportResults(object):
         """
         try:
             import hashlib
-            viz_id = hashlib.md5(self.id).hexdigest()
+            viz_id = hashlib.md5(self.id + self.time_stamp).hexdigest()
         except ImportError:
             import md5
-            viz_id = md5.new(self.id).hexdigest()
+            viz_id = md5.new(self.id + self.time_stamp).hexdigest()
         
         return 'analytics-' + viz_id
 

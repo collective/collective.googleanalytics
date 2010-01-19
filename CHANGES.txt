@@ -1,6 +1,17 @@
 Changelog
 =========
 
+* Make report IDs unique so that the same page can contain multiple copies
+  of the same report.
+  [2010-01-19 - yomatters]
+
+* Fix a bug that caused an error if the query returned no results.
+  [2010-01-19 - yomatters]
+
+* Fix bug in older Zopes that required the user to reenter the password every
+  time the configlet form was saved.
+  [2010-01-14 - yomatters]
+
 * Add fallback for importing InitializeClass in Zopes prior to 2.12.
   [2010-01-05 - yomatters]
 
