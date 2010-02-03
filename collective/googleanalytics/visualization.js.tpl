@@ -10,13 +10,16 @@ google.setOnLoadCallback(drawChart);
 function drawChart() {
 
 // Create our data table.
+  jq(function () {
+      var data = new google.visualization.DataTable();
+      ${columns}
+      data.addRows(${data});
+      
+      var container_width = getAnalyticsContainerWidth(jq('#${id}'));
+      
+      // Instantiate and draw our chart, passing in some options.
+      var chart = new google.visualization.${chart_type}(document.getElementById('${id}'));
+      chart.draw(data, ${options});
+  });
 
-  var data = new google.visualization.DataTable();
-  ${columns}
-  data.addRows(${data});
-
-
-  // Instantiate and draw our chart, passing in some options.
-  var chart = new google.visualization.${chart_type}(document.getElementById('${id}'));
-  chart.draw(data, ${options});
 }

@@ -4,4 +4,6 @@
     cookable="False" enabled="True"
     expression="python:portal['portal_membership'].checkPermission('Google Analytics: View Analytics Results', context)"
     id="http://www.google.com/jsapi" inline="False"/>
+    <javascript cacheable="True" compression="safe" cookable="True" enabled="on"
+       expression="python:portal['portal_membership'].checkPermission('Google Analytics: View Analytics Results', context)" id="++resource++analytics_config.js" inline="False"/>
 </object>

@@ -11,9 +11,9 @@
         />
 		
     <browser:viewlet
-        name="collective.googleanalytics.analyticsviewlet"
+        name="collective.googleanalytics.sitewide"
         manager="collective.googleanalytics.interfaces.viewlets.IAnalyticsControlPanelViewletManager"
-        class=".analyticsviewlet.AnalyticsViewlet"
+        class=".sitewide.SiteWideAnalyticsViewlet"
         layer="..interfaces.browserlayer.IAnalyticsLayer"
         permission="collective.googleanalytics.ViewAnalyticsResults"
         />

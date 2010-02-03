@@ -1,0 +1,2 @@
+<h2 tal:content="view/getDateRangeLabel">Last 30 Days</h2>
+<div metal:use-macro="context/analytics_macros/macros/reports_results"></div>

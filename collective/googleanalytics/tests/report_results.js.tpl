@@ -10,11 +10,11 @@ google.setOnLoadCallback(drawChart);
 function drawChart() {
 
 // Create our data table.
-
-  var data = new google.visualization.DataTable();
-  data.addColumn("string", "Day");
+  jq(function () {
+      var data = new google.visualization.DataTable();
+      data.addColumn("string", "Day");
 data.addColumn("number", "Visits");
-  data.addRows([
+      data.addRows([
 ["18", 648],
 ["19", 449],
 ["20", 385],
@@ -47,9 +47,12 @@ data.addColumn("number", "Visits");
 ["17", 412],
 ["18", 228]
 ]);
+      
+      var container_width = getAnalyticsContainerWidth(jq('#${id}'));
+      
+      // Instantiate and draw our chart, passing in some options.
+      var chart = new google.visualization.LineChart(document.getElementById('${id}'));
+      chart.draw(data, {title: "Site Visits", titleX: "Day", titleY: "Visits", axisFontSize: 10, legend: "none", height: 250, width: container_width});
+  });
 
-
-  // Instantiate and draw our chart, passing in some options.
-  var chart = new google.visualization.LineChart(document.getElementById('${id}'));
-  chart.draw(data, {title: "Site Visits this Month", titleX: "Day", titleY: "Visits", axisFontSize: 10, legend: "none", height: 250});
 }

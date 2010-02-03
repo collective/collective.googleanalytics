@@ -1,6 +1,13 @@
 Changelog
 =========
 
+* Make date range independent of report and update tests and default reports 
+  to reflect the new reality; add javascript to set the width of the 
+  visualization based on the width of the container; add categories to reports
+  and adjust vocabularies to be category-specific; handle auth token expiration
+  error.
+  [2010-02-03 - yomatters]
+
 * Make report IDs unique so that the same page can contain multiple copies
   of the same report.
   [2010-01-19 - yomatters]

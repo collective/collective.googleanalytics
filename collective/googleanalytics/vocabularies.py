@@ -10,14 +10,13 @@ def getProfiles(context):
     analytics_tool = getToolByName(getSite(), 'portal_analytics')
     
     try:
-        client = analytics_tool.getAuthenticatedClient(service='accounts')
+        accounts = analytics_tool.makeClientRequest('accounts', 'GetAccountList')
     except error.MissingCredentialsError:
         choices = [('Set Google Analytics e-mail and password in the control panel', None)]
         return SimpleVocabulary.fromItems(choices)
     except error.BadAuthenticationError:
         choices = [('Incorrect Google Analytics e-mail or password', None)]
         return SimpleVocabulary.fromItems(choices)
-    accounts = client.GetAccountList()
     if accounts:
         unique_choices = {}
         for entry in accounts.entry:
@@ -27,18 +26,32 @@ def getProfiles(context):
         choices = [('No profiles available', None)]
     return SimpleVocabulary.fromItems(choices)
     
-def getReports(context):
+def getReports(context, category=None):
     """
     Return list of Google Analytics reports.
     """
 
     analytics_tool = getToolByName(getSite(), 'portal_analytics')
-    reports = analytics_tool.getReports()
+    reports = analytics_tool.getReports(category=category)
     choices = []
     if reports:
         choices = [(report.title, report.id,) for report in reports]
     return SimpleVocabulary.fromItems(choices)
     
+def getSiteWideReports(context):
+    """
+    Return list of site wide Google Analytics reports.
+    """
+
+    return getReports(context, category="Site Wide")
+    
+def getPortletReports(context):
+    """
+    Return list of portlet Google Analytics reports.
+    """
+
+    return getReports(context, category="Portlet")
+
 def getRoles(context):
     """
     Return a list of user roles.

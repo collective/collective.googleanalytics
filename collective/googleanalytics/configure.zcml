@@ -36,10 +36,16 @@
     name="collective.googleanalytics.Profiles"
     provides="zope.schema.interfaces.IVocabularyFactory"
     />
-
+    
   <utility
-    component=".vocabularies.getReports"
-    name="collective.googleanalytics.Reports"
+    component=".vocabularies.getSiteWideReports"
+    name="collective.googleanalytics.SiteWideReports"
+    provides="zope.schema.interfaces.IVocabularyFactory"
+    />
+    
+  <utility
+    component=".vocabularies.getPortletReports"
+    name="collective.googleanalytics.PortletReports"
     provides="zope.schema.interfaces.IVocabularyFactory"
     />
     

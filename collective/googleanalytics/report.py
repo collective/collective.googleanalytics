@@ -20,6 +20,7 @@ from collective.googleanalytics.config import METRICS_CHOICES, DIMENSIONS_CHOICE
 
 from string import Template
 
+from DateTime import DateTime
 import datetime
 import time
 import os
@@ -27,16 +28,45 @@ import os
 import logging
 logger = logging.getLogger("analytics")
 
-def report_results_cache_key(method, instance, context, profile, data_feed=None):
+def report_results_cache_key(method, instance, context, profile, start_date, end_date, data_feed=None):
     analytics_tool = instance.aq_parent
     cache_interval = analytics_tool.cache_interval
     cache_interval = (cache_interval > 0 and cache_interval * 60) or 1
     time_key = time.time() // cache_interval
     modification_time = str(instance.bobobase_modification_time())
-    cache_vars = [profile, time_key, modification_time]
+    cache_vars = [time_key, modification_time, profile, start_date, end_date]
     if instance.is_page_specific:
         cache_vars.append(context.request.ACTUAL_URL)
     return hash(tuple(cache_vars))
+
+def getDateRangeChoices(context):
+    """
+    Return a list of possible date ranges for this content.
+    """
+
+    today = datetime.date.today()
+    timedelta = datetime.timedelta
+
+    mtd_days = today.day - 1
+    ytd_days = today.replace(year=1).toordinal() - 1
+
+    date_ranges = {
+        'week': [today - timedelta(days=6), today],
+        'month': [today - timedelta(days=29), today],
+        'quarter': [today - timedelta(days=89), today],
+        'year': [today - timedelta(days=364), today],
+        'mdt': [today - timedelta(days=mtd_days), today],
+        'ytd': [today - timedelta(days=ytd_days), today],
+    }
+
+    if hasattr(context, 'Date') and context.Date() is not 'None':
+        pub_dt = DateTime(context.Date())
+        published_date = datetime.date(pub_dt.year(), pub_dt.month(), pub_dt.day())
+        date_ranges.update({
+            'published': [published_date, today],
+        })
+
+    return date_ranges
 
 class AnalyticsReport(PropertyManager, SimpleItem):
     """
@@ -57,8 +87,6 @@ class AnalyticsReport(PropertyManager, SimpleItem):
     security.declarePrivate('dimensions')
     security.declarePrivate('filters')
     security.declarePrivate('sort')
-    security.declarePrivate('start_date')
-    security.declarePrivate('end_date')
     security.declarePrivate('max_results')
     security.declarePrivate('is_page_specific')
     security.declarePrivate('column_labels')
@@ -77,6 +105,8 @@ class AnalyticsReport(PropertyManager, SimpleItem):
          'label':'I18n Domain'},
         {'id':'is_page_specific', 'type': 'boolean', 'mode':'w',
          'label':'Page Specific'},
+        {'id':'categories', 'type': 'multiple selection', 'mode':'w',
+         'label':'Categories', 'select_variable': 'getCategoriesChoices'},
         {'id':'metrics', 'type': 'multiple selection', 'mode':'w',
         'label':'Query Metrics', 'select_variable': 'getMetricsChoices'},
         {'id':'dimensions', 'type': 'multiple selection', 'mode':'w',
@@ -85,10 +115,6 @@ class AnalyticsReport(PropertyManager, SimpleItem):
         'label':'Query Filters'},
         {'id':'sort', 'type': 'lines', 'mode':'w',
         'label':'Query Sort'},
-        {'id':'start_date', 'type': 'string', 'mode':'w',
-        'label':'Query Start Date'},
-        {'id':'end_date', 'type': 'string', 'mode':'w',
-        'label':'Query End Date'},
         {'id':'max_results', 'type': 'int', 'mode':'w',
         'label':'Query Maximum Results'},
         {'id':'column_labels', 'type': 'lines', 'mode':'w',
@@ -119,8 +145,6 @@ class AnalyticsReport(PropertyManager, SimpleItem):
         self.viz_options = kwargs.get('viz_options', [])
         self.column_labels = kwargs.get('column_labels', [])
         self.column_exps = kwargs.get('column_exps', [])
-        self.start_date = kwargs.get('start_date', 'today')
-        self.end_date = kwargs.get('end_date', 'today')
         self.metrics = kwargs.get('metrics', [])
         self.dimensions = kwargs.get('dimensions', [])
         self.filters = kwargs.get('filters', [])
@@ -129,6 +153,7 @@ class AnalyticsReport(PropertyManager, SimpleItem):
         self.conclusion = kwargs.get('conclusion', '')
         self.max_results = kwargs.get('max_results', 1000)
         self.is_page_specific = kwargs.get('is_page_specific', False)
+        self.categories = kwargs.get('categories', [])
         
     security.declarePrivate('getMetricsChoices')
     def getMetricsChoices(self):
@@ -222,22 +247,79 @@ class AnalyticsReport(PropertyManager, SimpleItem):
         pt = ZopePageTemplate(id='__collective_googleanalytics__')
         pt.pt_edit(tal, 'text/html')
         return pt.__of__(context).pt_render(extra_context=extra)
+        
+    security.declarePrivate('_getDateRange')
+    def _getDateRange(self, context, date_range='month'):
+        """
+        Given a number of days or a date range keyword, get the 
+        appropriate start and end dates.
+        """
+        today = datetime.date.today()
+        if type(date_range) == int and date_range > 0:
+            return [today - datetime.timedelta(days=date_range), today]
+        
+        choices = getDateRangeChoices(context)
+        if date_range in choices.keys():
+            return choices[date_range]
+        else:
+            return [today - datetime.timedelta(days=29), today]
+        
+    security.declarePrivate('_getDateContext')
+    def _getDateContext(self, start_date, end_date):
+        """
+        Given date range arguments, return a dictionary containing the
+        relevant expression context variables.
+        """
+
+        delta = end_date - start_date
+        days = delta.days
+        
+        # Set the dimensions and sort based on the number of days.
+        # We assume that the first dimension in the list is the date
+        # range dimension that the report will use.
+        date_range_choices = [
+            (30, 'ga:day', 'ga:date', 'Day'),
+            (210, 'ga:week', 'ga:year', 'Week'),
+            (1160, 'ga:month', 'ga:year', 'Month'),
+        ]
+        
+        date_range_max = ('ga:year', 'ga:year', 'Year'),
+        
+        date_range = None
+        for choice in date_range_choices:
+            if days <= choice[0]:
+                date_range = choice[1:]
+                break
+                
+        if not date_range:
+            date_range = date_range_max
+        
+        dimension, sort_dimension, unit = date_range
+
+        return {
+            'date_range_unit': unit,
+            'date_range_unit_plural': unit + 's',
+            'date_range_dimension': dimension,
+            'date_range_sort_dimension': sort_dimension,
+        }
 
     security.declarePrivate('_getQueryCriteria')
-    def _getQueryCriteria(self, context, profiles):
+    def _getQueryCriteria(self, context, profiles, start_date, end_date):
         """
         Get the criteria for the query (i.e. resolve the variables that need to be
         evaluted before the query can be performed).
         """
-        exp_context = self._getExpressionContext(context)
+        
+        date_context = self._getDateContext(start_date, end_date)
+        exp_context = self._getExpressionContext(context, date_context)
         criteria = {
             'ids': profiles,
             'dimensions': self._evaluateList(self.dimensions, exp_context),
             'metrics': self._evaluateList(self.metrics, exp_context),
             'filters': self._evaluateList(self.filters, exp_context),
             'sort': self._evaluateList(self.sort, exp_context),
-            'start_date': self._evaluateExpression(self.start_date, exp_context),
-            'end_date': self._evaluateExpression(self.end_date, exp_context),
+            'start_date': start_date,
+            'end_date': end_date,
             'max_results': self.max_results,
         }
         return criteria
@@ -275,25 +357,31 @@ class AnalyticsReport(PropertyManager, SimpleItem):
         column_vars = criteria['dimensions'] + criteria['metrics']
         column_exps = self.column_exps
         rows = []
+        date_context = self._getDateContext(criteria['start_date'], criteria['end_date'])
         for entry in data.entry:
-            extra_context = {}
+            extra_context = date_context.copy()
             for column in entry.dimension + entry.metric:
                 if column.name in column_vars:
                     value = column.value
                     if column.name == 'ga:date':
                         value = self._makeDate(column)
                     extra_context.update({self._makeGoogleVarName(column.name): value})
+                    for date_var in date_context.keys():
+                        if column.name == date_context[date_var]:
+                            extra_context.update({date_var: value})
             exp_context = self._getExpressionContext(context, extra_context)
             row = self._evaluateList(column_exps, exp_context)
             rows.append(row)
         return rows
-        
+    
     security.declarePrivate('_getReportDefinition')
-    def _getReportDefinition(self, context, data):
+    def _getReportDefinition(self, context, criteria, data):
         """
         Returns the definition for the report.
         """
-        exp_context = self._getExpressionContext(context)
+        
+        date_context = self._getDateContext(criteria['start_date'], criteria['end_date'])
+        exp_context = self._getExpressionContext(context, date_context)
         viz_options = {}
         for option in self.viz_options:
             try:
@@ -302,33 +390,55 @@ class AnalyticsReport(PropertyManager, SimpleItem):
                 continue
             viz_options.update({option_key: self._evaluateExpression(option_value, exp_context)})
         tal_dict = self._getExpressionContextDict(context)
-        tal_dict.update({'data_rows': data, 'data_columns': zip(*data)})
+        tal_dict.update({
+            'data_length': len(data),
+            'data_rows': data, 
+            'data_columns': zip(*data),
+        })
+        tal_dict.update(date_context)
         definition = {
             'introduction': self._evaluateTAL(self.introduction, context, tal_dict),
             'conclusion': self._evaluateTAL(self.conclusion, context, tal_dict),
             'viz_type': self.viz_type,
             'viz_options': viz_options,
-            'column_exps': self._evaluateList(self.column_labels, exp_context),
+            'column_labels': self._evaluateList(self.column_labels, exp_context),
         }
         return definition
         
     security.declarePrivate('getResults')
+    def getResults(self, context, profile, **kwargs):
+        """
+        Return a results object that encapsulates the results of the query.
+        This function is a wrapper for _getResultsForDates because the
+        cache decorator can't accept keyword arguments.
+        """
+        
+        start_date = kwargs.get('start_date', None)
+        end_date = kwargs.get('end_date', None)
+        date_range = kwargs.get('date_range', 'month')
+        data_feed = kwargs.get('data_feed', None)
+        
+        if not start_date and not end_date:
+            start_date, end_date = self._getDateRange(context, date_range)
+            
+        return self._getResultsForDates(context, profile, start_date, end_date, data_feed)
+        
+    security.declarePrivate('_getResultsForDates')
     @cache(report_results_cache_key)
-    def getResults(self, context, profile, data_feed=None):
+    def _getResultsForDates(self, context, profile, start_date, end_date, data_feed=None):
         """
         Return a results object that encapsulates the results of the query.
         """
         
-        criteria = self._getQueryCriteria(context, [profile])
+        criteria = self._getQueryCriteria(context, [profile], start_date, end_date)
 
         if not data_feed:
             analytics_tool = self.aq_parent
-            client = analytics_tool.getAuthenticatedClient()
             query_args = self._getQueryArgs(criteria)
-            data_feed = client.GetData(**query_args)
+            data_feed = analytics_tool.makeClientRequest('data', 'GetData', **query_args)
             
         data = self._evaluateData(context, criteria, data_feed)
-        definition = self._getReportDefinition(context, data)
+        definition = self._getReportDefinition(context, criteria, data)
         logger.info("Querying Google for report '%s' on context '%s'." % 
             (self.id, context.id))
         return AnalyticsReportResults(self.id, definition, data)
@@ -398,7 +508,7 @@ class AnalyticsReportResults(object):
         """
         Return javascript that adds the appropriate columns to the DataTable.
         """
-        column_labels = self.definition['column_exps']
+        column_labels = self.definition['column_labels']
         column_types = []
         if self.data:
             for value in self.data[0]:
@@ -447,9 +557,22 @@ class AnalyticsReportResults(object):
         js_options = []
         for option, value in self.definition['viz_options'].items():
             js_options.append('%s: %s' % (option, self.getJSValue(value)))
+        # Set the width of the visualization to the container width if it
+        # if not already set.
+        if not 'width' in self.definition['viz_options'].keys():
+            js_options.append('width: container_width')
         if js_options:
             return '{%s}' % (', '.join(js_options))
         return 'null'
+        
+    def getVizHeight(self):
+        """
+        Return the height of the visualization if it is set, or False if it is not.
+        """
+        
+        if 'height' in self.definition['viz_options'].keys():
+            return int(self.definition['viz_options']['height'])
+        return False
         
     def getVizIntroduction(self):
         """

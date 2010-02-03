@@ -113,8 +113,8 @@ DIMENSIONS_CHOICES = (
     "ga:visitsToTransaction",
     "ga:week",
     "ga:year",
-    "range_dimension",
-    "range_sort_dimension",
+    "date_range_dimension",
+    "date_range_sort_dimension"
 )
 
 VISUALIZATION_CHOICES = (

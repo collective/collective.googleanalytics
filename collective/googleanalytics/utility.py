@@ -17,7 +17,7 @@ from collective.googleanalytics.interfaces.report import IAnalyticsReport
 from collective.googleanalytics import error
 
 import gdata.analytics.service
-from gdata.service import BadAuthentication, CaptchaRequired
+from gdata.service import BadAuthentication, CaptchaRequired, RequestError
 
 class Analytics(PloneBaseTool, IFAwareObjectManager, OrderedFolder):
     """
@@ -51,14 +51,17 @@ class Analytics(PloneBaseTool, IFAwareObjectManager, OrderedFolder):
     security.declarePrivate('tracking_excluded_roles')
     tracking_excluded_roles = FieldProperty(IAnalytics['tracking_excluded_roles'])
     
+    security.declarePrivate('report_categories')
+    report_categories = FieldProperty(IAnalytics['report_categories'])
+    
     security.declarePrivate('data_client')
     data_client = gdata.analytics.service.AnalyticsDataService()
     
     security.declarePrivate('accounts_client')
     accounts_client = gdata.analytics.service.AccountsService()
     
-    security.declarePrivate('getAuthenticatedClient')
-    def getAuthenticatedClient(self, service='data'):
+    security.declarePrivate('_getAuthenticatedClient')
+    def _getAuthenticatedClient(self, service='data', reauthenticate=False):
         """
         Get the client object and authenticate using our stored credentials.
         """
@@ -73,7 +76,8 @@ class Analytics(PloneBaseTool, IFAwareObjectManager, OrderedFolder):
             client = self.data_client
         
         # If we're already authenticated, return the client.
-        if client.email and client.password:
+        if client.email == self.email and client.password == self.password \
+            and not reauthenticate:
             return client
         
         # Otherwise try to do the authentication, and raise an error if it doesn't work.
@@ -85,15 +89,47 @@ class Analytics(PloneBaseTool, IFAwareObjectManager, OrderedFolder):
             client.password = None
             raise error.BadAuthenticationError, 'Incorrect e-mail or password'
         return client
+        
+    security.declarePrivate('makeClientRequest')
+    def makeClientRequest(self, service, method, *args, **kwargs):
+        """
+        Get the authenticated client object and make the specified request.
+        We need this wrapper method so that we can intelligently handle errors.
+        """
+        
+        client = self._getAuthenticatedClient(service)
+        query_method = getattr(client, method, None)
+        if not query_method:
+            raise error.InvalidRequestMethodError, \
+                '%s does not have a method %s' % (client.__class__.__name__, method)
+        try:
+            return query_method(*args, **kwargs)
+        except RequestError, e:
+            if e.reason == 'Token invalid':
+                # The auth token has expired, so the client needs to be reauthenticated.
+                client = getAuthenticatedClient(service, reauthenticate=True)
+                return query_method(*args, **kwargs)
+            else:
+                raise
     
     security.declarePrivate('getReports')
-    def getReports(self):
+    def getReports(self, category=None):
         """
-        List the available Analytics reports.
+        List the available Analytics reports. If a category is specified, only
+        reports of that category are returned. Otherwise, all reports are
+        returned.
         """
                 
         for obj in self.objectValues():
             if IAnalyticsReport.providedBy(obj):
-                yield obj
+                if (category and category in obj.categories) or not category:
+                    yield obj
 
+    def getCategoriesChoices(self):
+        """
+        Return a list of possible report categories.
+        """
+        
+        return self.report_categories
+        
 InitializeClass(Analytics)

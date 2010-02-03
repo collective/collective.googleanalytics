@@ -34,7 +34,7 @@ class IAnalyticsPortlet(IPortletDataProvider):
         required=True)
 
     reports = schema.List(title=_(u"Reports"),
-        value_type=schema.Choice(vocabulary='collective.googleanalytics.Reports'),
+        value_type=schema.Choice(vocabulary='collective.googleanalytics.PortletReports'),
         min_length=1,
         description=_(u"Choose the reports to display."),
         required=True)
@@ -82,7 +82,15 @@ class Renderer(base.Renderer):
         Return the title of the portlet.
         """
         return self.data.portlet_title
-    
+        
+    def getDateRangeLabel(self):
+        """
+        Returns a string the describes the date range that corresponds to
+        the resutls.
+        """
+        
+        return 'Last 30 Days'
+            
     def getResults(self):
         """
         Returns a list of AnalyticsReportResults objects for the selected reports.
@@ -97,7 +105,7 @@ class Renderer(base.Renderer):
                 continue
                 
             try:
-                results.append(report.getResults(self.context, self.data.profile))
+                results.append(report.getResults(self.context, self.data.profile, date_range='month'))
             except error.BadAuthenticationError:
                 return 'BadAuthenticationError'
             except error.MissingCredentialsError:

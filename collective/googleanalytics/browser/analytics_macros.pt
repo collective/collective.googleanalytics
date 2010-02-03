@@ -1,6 +1,7 @@
-<div tal:define="results view/getResults;
+<div metal:define-macro="reports_results" 
+    tal:define="results view/getResults;
 		error python:results=='BadAuthenticationError' or results=='MissingCredentialsError';"
-    class="analytics-reports-viewlet">
+    class="analytics-reports-results">
 				
 	<p class="error" tal:condition="error">
 		An error occurred while retrieving the results of the report.  
@@ -12,10 +13,11 @@
 	<tal:block condition="not:error">			
 		<tal:results repeat="result results">
 			<div tal:content="structure result/getVizIntroduction"></div>
-			<div tal:attributes="id result/getVizID;"></div>
+			<div tal:define="height result/getVizHeight;" 
+			    tal:attributes="id result/getVizID;
+			        style python:(height and 'height:' + str(height) + 'px;;') or ''"></div>
 		    <script type="text/javascript" tal:content="result/getVizJS"></script>
 			<div tal:content="structure result/getVizConclusion"></div>
 		</tal:results>
 	</tal:block>
-
 </div>

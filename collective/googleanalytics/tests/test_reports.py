@@ -1,6 +1,7 @@
 import unittest
 import datetime
 import os
+import re
 from string import Template
 from Products.CMFCore.utils import getToolByName
 from collective.googleanalytics.tests.base import FunctionalTestCase
@@ -48,29 +49,28 @@ class TestReports(FunctionalTestCase):
         
         # Create a report.
         report = AnalyticsReport(id='results-test',
-            title='Site Visits This Month: Line Chart',
-            description='Displays the number of site visits for the last 30 days as a line graph.',
+            title='Site Visits: Line Chart',
+            description='Displays the number of site visits as a line graph.',
             i18n_domain='analytics',
             is_page_specific=False,
+            categories=['Site Wide',],
             metrics=['ga:visits'],
-            dimensions=['ga:day', 'ga:month'],
+            dimensions=['date_range_dimension', 'date_range_sort_dimension'],
             filters=[],
-            sort=['ga:month'],
-            start_date='python:today - timedelta(days=30)',
-            end_date='today',
+            sort=['date_range_sort_dimension', 'date_range_dimension'],
             max_results=1000,
-            column_labels=['string:Day', 'string:Visits'],
-            column_exps=['python:str(ga_day)', 'python:int(ga_visits)'],
+            column_labels=['python:date_range_unit', 'string:Visits'],
+            column_exps=['python:str(date_range_dimension)', 'python:int(ga_visits)'],
             introduction='',
-            conclusion='''<p><strong tal:content="python:sum(data_columns[1])">1000</strong> visits this month</p>
-                <p><strong tal:content="python:int(sum(data_columns[1])/len(data_columns[1]))">1000</strong> 
-                average visits per day</p>''',
+            conclusion='''<p tal:condition="data_length"><strong tal:content="python:sum(data_columns[1])">1000</strong> visits in the last <span tal:replace="string:${data_length} ${date_range_unit_plural/lower}"></span></p>
+            <p tal:condition="data_length"><strong tal:content="python:int(sum(data_columns[1])/len(data_columns[1]))">1000</strong> 
+            average visits per <span tal:replace="string:${date_range_unit/lower}"></span></p>''',
             viz_type='LineChart',
             viz_options=[
-            'title string:Site Visits this Month',
+            'title string:Site Visits',
             'height python:250',
             'legend string:none',
-            'titleX string:Day',
+            'titleX python:date_range_unit',
             'titleY string:Visits',
             'axisFontSize python:10',
             ]
@@ -90,8 +90,15 @@ class TestReports(FunctionalTestCase):
         }
         results_js = template.substitute(template_vars)
         
+        # We normalize all whitespace to spaces to avoid getting false
+        # negatives.
+        whitespace = re.compile(r'\s+')
+        
         # Test that the results match what we expect.
-        self.assertEqual(results.getVizJS(), results_js)
+        self.assertEqual(
+            re.sub(whitespace, ' ', results.getVizJS()),
+            re.sub(whitespace, ' ', results_js)
+        )
         
 
 def test_suite():

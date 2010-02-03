@@ -19,31 +19,26 @@ class TestInstall(FunctionalTestCase):
         """
         analytics_tool = getToolByName(self.portal, 'portal_analytics', None)
         
-        # Test the 'Site Visits This Month: Line Chart' report.
-        report = analytics_tool.get('site-visits-month-line', None)
+        # Test the 'Site Visits: Line Chart' report.
+        report = analytics_tool.get('site-visits-line', None)
         self.assertNotEqual(report, None)
-        self.assertEqual(report.title, 'Site Visits This Month: Line Chart')
+        self.assertEqual(report.title, 'Site Visits: Line Chart')
         self.assertTrue('ga:visits' in report.metrics)
-        self.assertTrue('ga:day' in report.dimensions)
-        self.assertTrue('ga:month' in report.dimensions)
-        self.assertTrue('ga:month' in report.sort)
         
-        # Test the 'Site Visits This Month: Sparkline' report.
-        report = analytics_tool.get('site-visits-month-line', None)
+        # Test the 'Site Visits: Sparkline' report.
+        report = analytics_tool.get('site-visits-sparkline', None)
         self.assertNotEqual(report, None)
-        self.assertEqual(report.start_date, 'python:today - timedelta(days=30)')
-        self.assertEqual(report.end_date, 'today')
         self.assertEqual(report.max_results, 1000)
         self.assertEqual(report.is_page_specific, False)
         
-        # Test the 'Site Visits This Month: Sparkline' report.
-        report = analytics_tool.get('top-5-pageviews-month-table', None)
+        # Test the 'Top 5 Page Views: Table' report.
+        report = analytics_tool.get('top-5-pageviews-table', None)
         self.assertNotEqual(report, None)
         self.assertEqual(report.column_labels, ('string:URL', 'string:Views'))
         self.assertEqual(report.column_exps, ('ga_pagePath', 'ga_pageviews'))
         
-        # Test the 'Top 5 Sources This Month: Table' report.
-        report = analytics_tool.get('top-5-sources-month-table', None)
+        # Test the 'Top 5 Sources: Table' report.
+        report = analytics_tool.get('top-5-sources-table', None)
         self.assertNotEqual(report, None)
         self.assertEqual(report.viz_type, 'Table')
         self.assertNotEqual(report.introduction, '')
