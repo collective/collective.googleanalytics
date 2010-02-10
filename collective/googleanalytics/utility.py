@@ -125,6 +125,7 @@ class Analytics(PloneBaseTool, IFAwareObjectManager, OrderedFolder):
                 if (category and category in obj.categories) or not category:
                     yield obj
 
+    security.declarePrivate('getCategoriesChoices')
     def getCategoriesChoices(self):
         """
         Return a list of possible report categories.

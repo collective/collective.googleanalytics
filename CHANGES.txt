@@ -1,6 +1,9 @@
 Changelog
 =========
 
+* Add security assertions for report categories.
+  [2010-02-10 - yomatters]
+
 * Update documentation to reflect date range changes.
   [2010-02-10 - yomatters]
 

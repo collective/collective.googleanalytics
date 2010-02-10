@@ -89,6 +89,7 @@ class AnalyticsReport(PropertyManager, SimpleItem):
     security.declarePrivate('sort')
     security.declarePrivate('max_results')
     security.declarePrivate('is_page_specific')
+    security.declarePrivate('categories')
     security.declarePrivate('column_labels')
     security.declarePrivate('column_exps')
     security.declarePrivate('viz_type')
