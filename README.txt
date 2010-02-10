@@ -60,10 +60,10 @@ Managing Reports
 ================
 collective.googleanalytics ships with four default reports:
 
-* Site Visits This Month: Line Chart
-* Site Visits This Month: Sparkline
-* Top 5 Pages This Month: Table
-* Top 5 Sources This Month: Table
+* Site Visits: Line Chart
+* Site Visits: Sparkline
+* Top 5 Pages: Table
+* Top 5 Sources: Table
 
 All of these reports are site-wide reports, meaning that they will produce the
 same results regardless of where they are placed on the site. It is possible,
@@ -110,7 +110,10 @@ Query Metrics
 	A list of Google Analytics metrics to use in the query.
 	
 Query Dimensions
-	A list of Google Analytics dimensions to return in the query.
+	A list of Google Analytics dimensions to return in the query. This list can
+	include the special dimension variables date_range_dimension and
+	date_range_sort_dimension. For more information on using these dimension,
+	see the section on `Using TAL and TALES in Reports`_.
 
 Query Filters
 	A list of filters to use in the query. Filters are defined as strings or
@@ -124,15 +127,6 @@ Query Sort
 	strings containing the name of a Google Analytics dimension or metric. In
 	addition, the name of the dimension or metric can be preceded by a minus
 	sign (-) to change the sort order from ascending to descending.
-	
-Query Start Date
-	The date to start querying for Analytics data. Both start and end date
-	are defined using TALES expressions. See the section on `Using TAL and
-	TALES in Reports`_ below for more information.
-	
-Query End Date
-	The end end date for the query to Analytics. It is defined in a TALES
-	expressions.
 	
 Query Maximum Results
 	The maximum number of records that the query should return. It must be
@@ -254,6 +248,69 @@ visualization type and visualization options properties. These properties
 are used to produce javascript that uses the Google Visualizations API
 to render the report data.
 
+Dates and Reports
+=================
+
+Analytics reports do not specify start and end dates for their queries.
+Instead, they accecpt date range arguments when they are evaluated. (This
+dynamic selection of date ranges is not currently exposed in the user
+interface.) These date range arguments are passed to the report's getResults
+method. getResults can accept these date-related keyword arguments:
+
+start_date and end_date
+    Python start and end dates.
+
+date_range
+    An integer specifying the number of days prior to the current date use
+    as the report start date. The end date is assumed to be the current date.
+    The date_range argument can also accept a string keyword that evaluates 
+    to a particular date range depending on the current context. Current 
+    keywords include:
+    
+    week
+        Last seven days.
+        
+    month
+        Last 30 days.
+        
+    quarter
+        Last 90 days.
+        
+    year
+        Last 356 days.
+        
+    mtd
+        Month-to-date.
+        
+    ytd
+        Year-to-date.
+    
+    published
+        Since the item was published.
+        
+Since dates for reports are dynamic, Analytics reports implement two special
+dimensions that are date sensitive. This allows the granularity of the report
+results to be set based on the date range selected. (For example, if you specify
+a date range of a year, you probably don't want to segment your results by day.
+Instead, viewing results by month would be a more appropriate choice.) The two 
+special dimensions are:
+
+date_range_dimension
+    This is the dimension, selected based on the date range, that will be used
+    to segment the results.
+    
+date_range_sort_dimension
+    This is the date-related dimension that is used as a helper to ensure that
+    results segmented by date_range_dimension can be sorted chronologically.
+    For example, if date_range_dimension evaluates to ga:week,
+    date_rage_sort_dimension would evalute to ga:year. Using
+    date_range_sort_dimension (along with date_range_dimension) when sorting
+    prevents a situation in which week 52 of 2009 gets sorted before week 1
+    of 2010.
+    
+For more information about using these dimensions in reports, see the section
+on `Using TAL and TALES in Reports`_.
+    
 Using TAL and TALES in Reports
 ==============================
 
@@ -271,22 +328,40 @@ request
 	The current request object.
 
 date
-	An alias for the datetime.date function. It is used to create dates used
-	in the query start date and query end date properties.
+	An alias for the datetime.date function.
 	
 timedelta
-	An alias for the datetime.timedelta function. It is used to create time
-	offsets for the query start date and query end date properties.
+	An alias for the datetime.timedelta function.
 	
 page_url
 	The relative URL of the current request. This is most commonly used in
 	the query filters property for creating page-specific reports.
-	
+		
+date_range_dimension
+    The temporal dimension used to segment the results. In report column
+    expressions, this variable evaluates to the value of the dimension for
+    the selected row. In all other fields, it evaluates to the name of the
+    dimension. See the section on `Dates and Reports`_ for more information
+    about how this dimension is selected.
+    
+date_range_sort_dimension
+    The name of the dimension used to sort the results chronologically (along
+    with date_range_dimension). See the section on `Dates and Reports`_ for
+    more information.
+    
+date_range_unit
+    A string containing the human-readable name of the dimension specified
+    by date_range_dimension (e.g. 'Day', 'Month', etc.)
+    
+date_range_unit_plural
+    A convenience variable that contains date_range_unit with the letter
+    's' appended.
+
 In addition to these objects, some properties have access to special objects
 and variables that represent the data returned by the query:
 
 Report Column Expressions
-	These TAL expressions have access to variables that represent the values
+	These TALES expressions have access to variables that represent the values
 	of each dimension and metric used in the query. The names of these
 	variables are found by taking the name of the dimension or metric and
 	replacing the colon with an underscore. For example, ga:exitPagePath
@@ -305,26 +380,26 @@ Creating a New Report
 Now that you are familiar with the properties that make up an Analytics report,
 it's time to try creating a new report from scratch. In this example, we will
 first create a report that calculates and displays the site-wide bounce rate
-for the last seven days segmented by browser. After we get that working, we'll
-create a second report that displays the same information for any given page
-on the site. Let's get started!
+segmented by browser. After we get that working, we'll create a second report
+that displays the same information for any given page on the site. Let's get 
+started!
 
 1. Navigate to the root of the site in the ZMI and click on the
    portal_analytics tool.
 
 2. Click the Add Google Analytics Report button.
 
-3. We'll give our new report the ID site-bounce-rate-browser-week-column,
+3. We'll give our new report the ID site-bounce-rate-browser-column,
    following the naming convention of the default reports. This naming 
    convention is optional, but it helps to keep things organized. Then 
    click the add button.
 
 4. Click on the new report to edit it. Give it a title of Site Bounce Rate
-   This Week By Browser: Column Chart and this description:
+   By Browser: Column Chart and this description:
 
-   This report displays the site-wide bounce rate for the last seven days
-   segmented by the user's browser. It is useful for gauging how effective
-   our site's new multimedia features are in each browser.
+   This report displays the site-wide bounce rate segmented by the user's 
+   browser. It is useful for gauging how effective our site's new multimedia
+   features are in each browser.
 
 5. Leave the i18n domain as analytics, the default value. If we were going
    to translate this report, we might use the domain defined in our site's
@@ -352,27 +427,12 @@ on the site. Let's get started!
     minus sign preceding the metric indicates that the sort should be in
     descending order.
 
-11. In query start date, enter this TALES expression::
-
-        python:today - timedelta(days=6)
-
-    We could create absolute dates using the date() helper function, but it's
-    ususally more useful to create relative dates using the today variable and
-    the timedelta() helper function. Common mistakes in this step include
-    forgetting the python: prefix for the expression or trying to pass the
-    number of days as a positional argument to timedelta() instead of passing
-    it as a keyword argument.
-
-12. In query end date, leave the default value, today. We could use the python:
-    prefix, but it's not required because a variable name by itself is a valid
-    TALES expression.
-
-13. In query maximum results, enter 5. Since we set ga:entrances as the sort
+11. In query maximum results, enter 5. Since we set ga:entrances as the sort
     value, this will show us results for the top five browsers based on
     entrances. We could, of course, increase this number if we wanted to see
     results for more browsers.
 
-14. Now that our query arguments are complete, we can work on our report
+12. Now that our query arguments are complete, we can work on our report
     definition. We want our report to show us two things: the name of the
     browser and the bounce rate as a percentage. So, we'll define two report
     columns. In the report column labels, enter these values on separate
@@ -381,7 +441,7 @@ on the site. Let's get started!
         string:Browser Name
         string:Bounce Rate (%)
 	
-15. In the report column expressions field, enter these TALES expressions on
+13. In the report column expressions field, enter these TALES expressions on
     separate lines::
 
         python:str(ga_browser)
@@ -400,11 +460,11 @@ on the site. Let's get started!
     easier to read, we'll multiply the decimal by 100 to get a percentage and
     round it off to the nearest integer.
 	
-16. Leave the report introduction property blank. We're going to display the
+14. Leave the report introduction property blank. We're going to display the
     title of the report as part of the visualization, so we don't have to do
     it here.
 
-17. In the report conclusion, we want to list the browsers with the lowest and
+15. In the report conclusion, we want to list the browsers with the lowest and
     highest bounce rates among the ones we are displaying. In the report
     conclusion field enter this TAL code::
 
@@ -435,17 +495,17 @@ on the site. Let's get started!
     to the value in browsers column that corresponds with the index we have
     determined.
 	
-18. Finally, we will set the visualization options for the report. In the
+16. Finally, we will set the visualization options for the report. In the
     visualization type dropdown, select ColumnChart.
 
-19. In the visualization options field, enter these options in the format
+17. In the visualization options field, enter these options in the format
     of TAL defines, one per line::
 
         height python:250
         is3D python:True
         legend string:top
         legendFontSize python:10
-        title string:7-Day Site Bounce Rate
+        title string:Site Bounce Rate
 		
     These options are all aesthetic. Once you become familiar with Google
     visualizations, you can adjust them to fit your personal preferences. For
@@ -453,7 +513,7 @@ on the site. Let's get started!
     Google Visualization Gallery referenced in the section on `Where to Learn
     More`_.
 	
-20. You're done! Click the save button in the ZMI. Then test out your new
+18. You're done! Click the save button in the ZMI. Then test out your new
     report on the site as described in the section about `Basic Use`_.
 
 Now that we've created a site-wide report for bounce rate, it's easy to create
@@ -465,11 +525,11 @@ a related report that displays the same statistics for a particular page.
    button at the bottom of the list.
 
 3. Press the paste button. A new copy of the report is created with the ID
-   copy_of_site-bounce-rate-browser-week-column.
+   copy_of_site-bounce-rate-browser-column.
 
 4. Check next to the newly pasted report and click the rename button.
 
-5. Change the ID of the new report to page-bounce-rate-browser-week-column and
+5. Change the ID of the new report to page-bounce-rate-browser-column and
    press Ok.
 
 6. Click on the new report to edit it. In the title, replace the word Site with
@@ -501,7 +561,7 @@ a related report that displays the same statistics for a particular page.
     URL of the current request.
 	
 13. In the visualization options property, edit the title of the visualization
-    to read 7-Day Page Bounce Rate.
+    to read Page Bounce Rate.
 
 14. You're done! Save your changes and try out your new report on your site. If
     you assign the report in a portlet at the root of the site and then navigate
