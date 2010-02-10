@@ -1,6 +1,9 @@
 Changelog
 =========
 
+1.0a2 - 2010-02-10
+------------------
+
 * Add security assertions for report categories.
   [2010-02-10 - yomatters]
 
