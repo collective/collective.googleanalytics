@@ -25,12 +25,6 @@ class TestInstall(FunctionalTestCase):
         self.assertEqual(report.title, 'Site Visits: Line Chart')
         self.assertTrue('ga:visits' in report.metrics)
         
-        # Test the 'Site Visits: Sparkline' report.
-        report = analytics_tool.get('site-visits-sparkline', None)
-        self.assertNotEqual(report, None)
-        self.assertEqual(report.max_results, 1000)
-        self.assertEqual(report.is_page_specific, False)
-        
         # Test the 'Top 5 Page Views: Table' report.
         report = analytics_tool.get('top-5-pageviews-table', None)
         self.assertNotEqual(report, None)

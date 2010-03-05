@@ -58,18 +58,25 @@ you assigned the portlet, you should see the results of your report.
 
 Managing Reports
 ================
-collective.googleanalytics ships with four default reports:
+collective.googleanalytics ships with twelve default reports:
 
+Site-Wide Reports
+-----------------
 * Site Visits: Line Chart
-* Site Visits: Sparkline
 * Top 5 Pages: Table
 * Top 5 Sources: Table
+* Site Page Views: Line Chart
+* Time on Site: Line Chart
+* Site Unique Visitors: Line Chart
 
-All of these reports are site-wide reports, meaning that they will produce the
-same results regardless of where they are placed on the site. It is possible,
-however, to create reports that return results based on the page where they are
-placed. For information about creating page-specific reports, see the section
-on `Creating a New Report`_.
+Page-Specific Reports
+---------------------
+* Page Views: Sparkline
+* Time on Page: Sparkline
+* Top 10 Page Sources: Table
+* Top 10 Keywords: Table
+* Top 5 Previous Pages: Table
+* Top 5 Next Pages: Table
 
 Reports live in a Plone tool called portal_analytics. To view and modify
 reports, navigate to the root of the site in the ZMI and click on the
