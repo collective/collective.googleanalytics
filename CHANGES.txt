@@ -1,6 +1,10 @@
 Changelog
 =========
 
+* Modify javascript registration and configuration javascript to be compatible
+  with Plone 3.1.
+  [2010-03-05 - yomatters]
+
 * Add more default reports.
   [2010-03-05 - yomatters]
 
