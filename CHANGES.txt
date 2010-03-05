@@ -1,6 +1,10 @@
 Changelog
 =========
 
+* Load external javascript through a viewlet instead of through the
+  registry to add support for Plone < 3.3.
+  [2010-03-05 - yomatters]
+
 1.0a2 - 2010-02-10
 ------------------
 
