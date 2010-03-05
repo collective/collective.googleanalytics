@@ -1,0 +1,16 @@
+<configure
+    xmlns:zope="http://namespaces.zope.org/zope"
+    xmlns:browser="http://namespaces.zope.org/browser"
+    xmlns:genericsetup="http://namespaces.zope.org/genericsetup"
+    i18n_domain="collective.googleanalytics">
+
+    <genericsetup:upgradeStep
+        source="1.0a2"
+        destination="1.0a3"
+        title="Upgrade from 1.0a2 to 1.0a3"
+        description=""
+        profile="collective.googleanalytics:default"
+        handler="collective.googleanalytics.upgrades.upgrade_10a2_to_10a3"
+        />
+
+</configure>

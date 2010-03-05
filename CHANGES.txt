@@ -1,6 +1,12 @@
 Changelog
 =========
 
+1.0a3 - 2010-03-05
+------------------
+
+* Add upgrade step from 1.0a2 to 1.0a3.
+  [2010-03-05 - yomatters]
+
 * Modify javascript registration and configuration javascript to be compatible
   with Plone 3.1.
   [2010-03-05 - yomatters]
