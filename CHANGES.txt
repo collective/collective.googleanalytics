@@ -1,6 +1,9 @@
 Changelog
 =========
 
+* Add a view for asynchronous results, and modify the portlet to use it.
+  [2010-03-19 - yomatters]
+
 1.0a3 - 2010-03-05
 ------------------
 
