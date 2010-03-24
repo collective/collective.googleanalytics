@@ -20,15 +20,7 @@
   	    class=".analytics_async.AsyncAnalyticsResults"
   	    permission="collective.googleanalytics.ViewAnalyticsResults"
   	    layer="..interfaces.browserlayer.IAnalyticsLayer"
-  	    />      
-  
-	<browser:page
-	    for="*"
-	    name="analytics_macros"
-	    template="analytics_macros.pt"
-	    permission="collective.googleanalytics.ViewAnalyticsResults"
-	    layer="..interfaces.browserlayer.IAnalyticsLayer"
-	    />
+  	    />
 
 	<browser:resourceDirectory
 		name="analytics_images"

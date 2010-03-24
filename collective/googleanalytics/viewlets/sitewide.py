@@ -1,9 +1,8 @@
 from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
 from Products.CMFCore.utils import getToolByName
-
 from plone.app.layout.viewlets import ViewletBase
+from collective.googleanalytics.interfaces.async import IAnalyticsAsyncLoader
 
-from collective.googleanalytics import error
 
 class SiteWideAnalyticsViewlet(ViewletBase):
     """
@@ -19,36 +18,20 @@ class SiteWideAnalyticsViewlet(ViewletBase):
         """
         super(SiteWideAnalyticsViewlet, self).update()
         self.analytics_tool = getToolByName(self.context, 'portal_analytics', None)
+        self.async_loader = IAnalyticsAsyncLoader(self.context)
         
-    def getDateRangeLabel(self):
+    def getContainerId(self):
         """
-        Returns a string the describes the date range that corresponds to
-        the resutls.
+        Returns the element ID for the results container.
         """
+        
+        return self.async_loader.getContainerId()
 
-        return 'Last 30 Days'
-        
-    def getResults(self):
+    def getJavascript(self):
         """
         Returns a list of AnalyticsReportResults objects for the selected reports.
         """
+        
         profile = getattr(self.analytics_tool, 'profile', None)
         reports = getattr(self.analytics_tool, 'reports', None)
-        if not profile or not reports:
-            return []
-        
-        results = []
-        for report_id in reports:
-            try:
-                report = self.analytics_tool[report_id]
-            except KeyError:
-                continue
-
-            try:
-                results.append(report.getResults(self.context, profile, date_range='month'))
-            except error.BadAuthenticationError:
-                return 'BadAuthenticationError'
-            except error.MissingCredentialsError:
-                return 'MissingCredentialsError'
-
-        return results
+        return self.async_loader.getJavascript(reports, profile)

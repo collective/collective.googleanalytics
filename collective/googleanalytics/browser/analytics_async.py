@@ -82,9 +82,6 @@ class AsyncAnalyticsResults(BrowserPage):
             return []
             
         date_range = self.request.get('date_range', 'month')
-        request_url = self.request.get('request_url', None)
-        if request_url:
-            self.context.request.ACTUAL_URL = request_url
         
         analytics_tool = getToolByName(self.context, 'portal_analytics')
         

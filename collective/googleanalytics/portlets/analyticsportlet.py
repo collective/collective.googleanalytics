@@ -88,12 +88,17 @@ class Renderer(base.Renderer):
         return self.data.portlet_title
             
     def getContainerId(self):
+        """
+        Returns the element ID for the results container.
+        """
+        
         return self.async_loader.getContainerId()
             
     def getJavascript(self):
         """
         Returns a list of AnalyticsReportResults objects for the selected reports.
         """
+        
         return self.async_loader.getJavascript(self.data.reports, self.data.profile)
     
     render = ViewPageTemplateFile('analyticsportlet.pt')
