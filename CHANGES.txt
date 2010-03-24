@@ -1,6 +1,9 @@
 Changelog
 =========
 
+* Modify tests to match asynchronous javascript.
+  [2010-03-24 - yomatters]
+
 * Use asynchronous view for the site-wide analytics viewlet.
   [2010-03-24 - yomatters]
 
