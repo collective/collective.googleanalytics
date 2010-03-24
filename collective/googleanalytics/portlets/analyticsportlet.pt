@@ -7,8 +7,9 @@
     </dt>
 
     <dd class="portletItem odd">
-        <h2 tal:content="view/getDateRangeLabel">Last 30 Days</h2>
-		<div metal:use-macro="context/analytics_macros/macros/reports_results"></div>
+		<div tal:attributes="id view/getContainerId;" 
+		    class="analytics-async-container"></div>
+		<script type="text/javascript" tal:content="view/getJavascript"></script>
     </dd>
 
     <dd class="portletFooter">
