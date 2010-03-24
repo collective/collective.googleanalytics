@@ -4,6 +4,9 @@ Changelog
 1.0a4 - 2010-03-24
 ------------------
 
+* Only show the portlet on the context's view template.
+  [2010-03-24 - yomatters]
+
 * Add an upgrade step from 1.0a3 to 1.0a4.
   [2010-03-24 - yomatters]
 
