@@ -1,6 +1,24 @@
 Changelog
 =========
 
+1.0a4 - 2010-03-24
+------------------
+
+* Only show the portlet on the context's view template.
+  [2010-03-24 - yomatters]
+
+* Add an upgrade step from 1.0a3 to 1.0a4.
+  [2010-03-24 - yomatters]
+
+* Modify tests to match asynchronous javascript.
+  [2010-03-24 - yomatters]
+
+* Use asynchronous view for the site-wide analytics viewlet.
+  [2010-03-24 - yomatters]
+
+* Add a view for asynchronous results, and modify the portlet to use it.
+  [2010-03-19 - yomatters]
+
 1.0a3 - 2010-03-05
 ------------------
 

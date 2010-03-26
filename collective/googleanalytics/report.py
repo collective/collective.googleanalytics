@@ -198,13 +198,14 @@ class AnalyticsReport(PropertyManager, SimpleItem):
         """
         
         request = context.REQUEST
+        absolute_url = request.get('request_url', request.ACTUAL_URL)
         return {
             'context': context,
             'request': request,
             'today': datetime.date.today(),
             'date': self._getDate,
             'timedelta': self._getTimeDelta,
-            'page_url': request.ACTUAL_URL.replace(request.SERVER_URL, ''),
+            'page_url': absolute_url.replace(request.SERVER_URL, ''),
         }
     
     security.declarePrivate('_getExpressionContext')

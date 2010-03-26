@@ -1,5 +1,5 @@
 import unittest
-
+from Acquisition import aq_inner
 from zope.component import getUtility, getMultiAdapter
 
 from plone.portlets.interfaces import IPortletManager
@@ -20,6 +20,8 @@ class TestPortlet(FunctionalTestCase):
         
         context = self.folder
         request = self.folder.REQUEST
+        # Simulate being on the default view.
+        request.set('ACTUAL_URL', aq_inner(context).absolute_url() + '/view')
         view = self.folder.restrictedTraverse('@@plone')
         manager = getUtility(IPortletManager, name='plone.leftcolumn', context=self.portal)
         assignment = analyticsportlet.Assignment()

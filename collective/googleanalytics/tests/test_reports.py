@@ -96,10 +96,9 @@ class TestReports(FunctionalTestCase):
         
         # Test that the results match what we expect.
         self.assertEqual(
-            re.sub(whitespace, ' ', results.getVizJS()),
-            re.sub(whitespace, ' ', results_js)
+            re.sub(whitespace, ' ', results.getVizJS()).strip(),
+            re.sub(whitespace, ' ', results_js).strip()
         )
-        
 
 def test_suite():
     suite = unittest.TestSuite()
