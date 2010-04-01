@@ -5,18 +5,17 @@ except ImportError:
 from AccessControl import ClassSecurityInfo
 
 from zope.interface import implements
-from zope.tales.tales import CompilerError
 
 from OFS.PropertyManager import PropertyManager
 from OFS.SimpleItem import SimpleItem
 
-from Products.CMFCore.Expression import Expression, getEngine
-from Products.PageTemplates.ZopePageTemplate import ZopePageTemplate
-
 from plone.memoize.volatile import cache
 
 from collective.googleanalytics.interfaces.report import IAnalyticsReport
-from collective.googleanalytics.config import METRICS_CHOICES, DIMENSIONS_CHOICES, VISUALIZATION_CHOICES
+from collective.googleanalytics.utils import getExpressionContextDict, \
+    getExpressionContext, evaluateExpression, evaluateList, evaluateTAL
+from collective.googleanalytics.config import METRICS_CHOICES, \
+    DIMENSIONS_CHOICES, VISUALIZATION_CHOICES
 
 from string import Template
 
@@ -177,79 +176,6 @@ class AnalyticsReport(PropertyManager, SimpleItem):
         """
         return VISUALIZATION_CHOICES
         
-    security.declarePublic('_getTimeDelta')
-    def _getTimeDelta(self, **kwargs):
-        """
-        Return a python timedelta for use in TALES expressions.
-        """
-        return datetime.timedelta(**kwargs)
-        
-    security.declarePublic('_getDate')
-    def _getDate(self, year, month, day):
-        """
-        Return a python date for use in TALES expressions.
-        """
-        return datetime.date(year, month, day)
-        
-    security.declarePrivate('_getExpressionContextDict')
-    def _getExpressionContextDict(self, context):
-        """
-        Return the dictonary used to form the expression context.
-        """
-        
-        request = context.REQUEST
-        absolute_url = request.get('request_url', request.ACTUAL_URL)
-        return {
-            'context': context,
-            'request': request,
-            'today': datetime.date.today(),
-            'date': self._getDate,
-            'timedelta': self._getTimeDelta,
-            'page_url': absolute_url.replace(request.SERVER_URL, ''),
-        }
-    
-    security.declarePrivate('_getExpressionContext')
-    def _getExpressionContext(self, context, extra={}):
-        """
-        Return the context for evaluating TALES expressions.
-        """
-        
-        context_dict = self._getExpressionContextDict(context)
-        context_dict.update(extra)
-        return getEngine().getContext(context_dict)
-
-    security.declarePrivate('_evaluateExpression')
-    def _evaluateExpression(self, expression, exp_context):
-        """
-        Evalute a TALES expression using the given context.
-        """
-        try:
-            return Expression(str(expression))(exp_context)
-        except (KeyError, CompilerError):
-            return expression
-
-    security.declarePrivate('_evaluateList')
-    def _evaluateList(self, parent, exp_context):
-        """
-        Evaluate each TALES expression in a list.
-        """
-        results = []
-        if hasattr(parent, '__iter__'):
-            for child in parent:
-                results.append(self._evaluateList(child, exp_context))
-            return results
-        return self._evaluateExpression(parent, exp_context)
-        
-    security.declarePrivate('_evaluateTAL')
-    def _evaluateTAL(self, tal, context, extra={}):
-        """
-        Evalute HTML containing TAL.
-        """
-        
-        pt = ZopePageTemplate(id='__collective_googleanalytics__')
-        pt.pt_edit(tal, 'text/html')
-        return pt.__of__(context).pt_render(extra_context=extra)
-        
     security.declarePrivate('_getDateRange')
     def _getDateRange(self, context, date_range='month'):
         """
@@ -313,13 +239,13 @@ class AnalyticsReport(PropertyManager, SimpleItem):
         """
         
         date_context = self._getDateContext(start_date, end_date)
-        exp_context = self._getExpressionContext(context, date_context)
+        exp_context = getExpressionContext(context, date_context)
         criteria = {
             'ids': profiles,
-            'dimensions': self._evaluateList(self.dimensions, exp_context),
-            'metrics': self._evaluateList(self.metrics, exp_context),
-            'filters': self._evaluateList(self.filters, exp_context),
-            'sort': self._evaluateList(self.sort, exp_context),
+            'dimensions': evaluateList(self.dimensions, exp_context),
+            'metrics': evaluateList(self.metrics, exp_context),
+            'filters': evaluateList(self.filters, exp_context),
+            'sort': evaluateList(self.sort, exp_context),
             'start_date': start_date,
             'end_date': end_date,
             'max_results': self.max_results,
@@ -371,8 +297,8 @@ class AnalyticsReport(PropertyManager, SimpleItem):
                     for date_var in date_context.keys():
                         if column.name == date_context[date_var]:
                             extra_context.update({date_var: value})
-            exp_context = self._getExpressionContext(context, extra_context)
-            row = self._evaluateList(column_exps, exp_context)
+            exp_context = getExpressionContext(context, extra_context)
+            row = evaluateList(column_exps, exp_context)
             rows.append(row)
         return rows
     
@@ -383,15 +309,15 @@ class AnalyticsReport(PropertyManager, SimpleItem):
         """
         
         date_context = self._getDateContext(criteria['start_date'], criteria['end_date'])
-        exp_context = self._getExpressionContext(context, date_context)
+        exp_context = getExpressionContext(context, date_context)
         viz_options = {}
         for option in self.viz_options:
             try:
                 option_key, option_value = option.split(' ', 1)
             except ValueError:
                 continue
-            viz_options.update({option_key: self._evaluateExpression(option_value, exp_context)})
-        tal_dict = self._getExpressionContextDict(context)
+            viz_options.update({option_key: evaluateExpression(option_value, exp_context)})
+        tal_dict = getExpressionContextDict(context)
         tal_dict.update({
             'data_length': len(data),
             'data_rows': data, 
@@ -399,11 +325,11 @@ class AnalyticsReport(PropertyManager, SimpleItem):
         })
         tal_dict.update(date_context)
         definition = {
-            'introduction': self._evaluateTAL(self.introduction, context, tal_dict),
-            'conclusion': self._evaluateTAL(self.conclusion, context, tal_dict),
+            'introduction': evaluateTAL(self.introduction, context, tal_dict),
+            'conclusion': evaluateTAL(self.conclusion, context, tal_dict),
             'viz_type': self.viz_type,
             'viz_options': viz_options,
-            'column_labels': self._evaluateList(self.column_labels, exp_context),
+            'column_labels': evaluateList(self.column_labels, exp_context),
         }
         return definition
         

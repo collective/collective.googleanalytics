@@ -6,6 +6,8 @@ from string import Template
 from Products.CMFCore.utils import getToolByName
 from collective.googleanalytics.tests.base import FunctionalTestCase
 from collective.googleanalytics.report import AnalyticsReport
+from collective.googleanalytics.utils import getExpressionContext, \
+    evaluateExpression, getDate, getTimeDelta
 from gdata.analytics import AnalyticsDataFeedFromString
 
 class TestReports(FunctionalTestCase):
@@ -16,8 +18,7 @@ class TestReports(FunctionalTestCase):
         Analytics report is populated with the correct objects.
         """
         
-        report = AnalyticsReport('foo')
-        exp_context = report._getExpressionContext(self.portal)
+        exp_context = getExpressionContext(self.portal)
         
         expression = 'python:[context, request, today, date, timedelta, page_url]'
         
@@ -25,12 +26,12 @@ class TestReports(FunctionalTestCase):
             self.portal,
             self.portal.REQUEST,
             datetime.date.today(),
-            report._getDate,
-            report._getTimeDelta,
+            getDate,
+            getTimeDelta,
             self.portal.REQUEST.ACTUAL_URL.replace(self.portal.REQUEST.SERVER_URL, '')
         ]
         
-        evaluated_exp = report._evaluateExpression(expression, exp_context)
+        evaluated_exp = evaluateExpression(expression, exp_context)
         
         self.assertEqual(evaluated_exp, RESULT)
         
