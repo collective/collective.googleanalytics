@@ -154,7 +154,8 @@ class AnalyticsVariableDateRange(AnalyticsBasePlugin):
         
 class AnalyticsContextualResults(AnalyticsBasePlugin):
     """
-    A plugin that allows results 
+    A plugin that allows results of an Analytics report to be specific to the
+    requested page.
     """
     
     name = 'Contextual Results'

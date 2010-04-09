@@ -37,7 +37,7 @@ class AnalyticsDefaultExpressionVars(AnalyticsBaseAdapter):
 
 class DefaultDateRangeChoices(AnalyticsBaseAdapter):
     """
-    A utility to list the possible date ranges for this report, request
+    An adapter to list the possible date ranges for this report, request
     and content.
     """
     
