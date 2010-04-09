@@ -14,7 +14,7 @@ from Products.CMFCore.Expression import getEngine
 from Products.CMFCore.utils import getToolByName
 from Products.PageTemplates.ZopePageTemplate import ZopePageTemplate
 from zope.app.pagetemplate.viewpagetemplatefile import ViewPageTemplateFile
-from plone.memoize.volatile import cache
+from plone.memoize.volatile import cache, ATTR, CONTAINER_FACTORY
 from plone.memoize.instance import memoize, memoizedproperty
 from collective.googleanalytics.interfaces.adapters import IAnalyticsExpressionVars
 from collective.googleanalytics.interfaces.report import IAnalyticsReport, IAnalyticsReportRenderer
@@ -31,19 +31,6 @@ import os
 
 import logging
 logger = logging.getLogger("analytics")
-
-# def report_results_cache_key(method, instance, profiles, options):
-#     analytics_tool = instance.report.aq_parent
-#     cache_interval = analytics_tool.cache_interval
-#     cache_interval = (cache_interval > 0 and cache_interval * 60) or 1
-#     time_key = time.time() // cache_interval
-#     modification_time = str(instance.bobobase_modification_time())
-#     cache_vars = [time_key, modification_time, profiles]
-#     
-#     for plugin in instance.getPlugins():
-#         plugin.processCacheArguments(cache_vars)
-#         
-#     return hash(tuple(cache_vars))
 
 class AnalyticsReport(PropertyManager, SimpleItem):
     """
@@ -160,7 +147,7 @@ class AnalyticsReport(PropertyManager, SimpleItem):
         """
         return VISUALIZATION_CHOICES
         
-    security.declarePrivate('getPluginInterfaceChoices')
+    security.declarePrivate('getPluginNameChoices')
     def getPluginNameChoices(self):
         """
         Return the list of plugin names.
@@ -176,6 +163,27 @@ class AnalyticsReport(PropertyManager, SimpleItem):
 
 InitializeClass(AnalyticsReport)
 
+def renderer_cache_key(method, instance):
+    analytics_tool = getToolByName(instance.context, 'portal_analytics')
+    cache_interval = analytics_tool.cache_interval
+    cache_interval = (cache_interval > 0 and cache_interval * 60) or 1
+    time_key = time.time() // cache_interval
+    modification_time = str(instance.report.bobobase_modification_time())
+    report_id = instance.report.id
+    cache_vars = [time_key, modification_time, report_id, tuple(instance.profile_ids)]
+    
+    for plugin in instance.plugins:
+        plugin.processCacheArguments(cache_vars)
+    
+    return hash(tuple(cache_vars))
+
+def renderer_cache_storage(method, instance):
+    for plugin in instance.plugins:
+        cache_object = plugin.getCacheStorageObject()
+        if cache_object:
+            return cache_object.__dict__.setdefault(ATTR, CONTAINER_FACTORY())
+    return getSite().__dict__.setdefault(ATTR, CONTAINER_FACTORY())
+
 class AnalyticsReportRenderer(object):
     """
     The renderer for an Analytics report. It is a multiadapter on the context,
@@ -189,7 +197,11 @@ class AnalyticsReportRenderer(object):
         self.request = request
         self.report = report
     
-    __call__ = ViewPageTemplateFile('async.pt')
+    @cache(renderer_cache_key, renderer_cache_storage)
+    def __call__(self):
+        return self.render()
+    
+    render = ViewPageTemplateFile('async.pt')
     
     @memoizedproperty
     def data_feed(self):
@@ -224,6 +236,18 @@ class AnalyticsReportRenderer(object):
         return results
         
     @memoizedproperty
+    def profile_ids(self):
+        """
+        Returns a list of Google Analytics profiles for which this report
+        should be evaluated.
+        """
+        
+        profile_ids = self.request.get('profile_ids', [])
+        if type(profile_ids) is str:
+            profile_ids = [profile_ids]
+        return profile_ids
+        
+    @memoizedproperty
     def query_criteria(self):
         """
         Evaluates the query criteria provided by the report.
@@ -240,12 +264,7 @@ class AnalyticsReportRenderer(object):
         }
         
         criteria = evaluateTALES(expressions, self._getExpressionContext())
-        
-        profile_ids = self.request.get('profile_ids')
-        if type(profile_ids) is str:
-              profile_ids = [profile_ids]
-              
-        criteria['ids'] = profile_ids
+        criteria['ids'] = self.profile_ids
         
         for plugin in self.plugins:
             plugin.processQueryCriteria(criteria)

@@ -9,6 +9,12 @@ class IAnalyticsPlugin(Interface):
     
     name = Attribute('Plugin name')
     
+    def getCacheStorageObject():
+        """
+        Returns the object on which the cache should be stored as a volatile
+        attribute.
+        """
+    
     def processCacheArguments(cache_args):
         """
         Process the cache arguments.

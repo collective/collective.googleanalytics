@@ -19,6 +19,13 @@ class AnalyticsBasePlugin(object):
     
     name = 'Analytics Base Plugin'
     
+    def getCacheStorageObject(self):
+        """
+        Returns the object on which the cache should be stored as a volatile
+        attribute.
+        """
+        pass
+    
     def processCacheArguments(self, cache_args):
         """
         Process the cache arguments.
@@ -57,14 +64,6 @@ class AnalyticsVariableDateRange(AnalyticsBasePlugin):
         
         if not self.start_date or not self.end_date:
             self.start_date, self.end_date = self._getDateRange(date_range)
-    
-    def processCacheArguments(self, cache_args):
-        """
-        Process the cache arguments.
-        """
-        
-        if self.start_date and self.end_date:
-            cache_args.extend([self.start_date, self.end_date])
         
     def processQueryCriteria(self, criteria):
         """
@@ -171,12 +170,14 @@ class AnalyticsContextualResults(AnalyticsBasePlugin):
         if self.relative_url.endswith('/'):
             self.relative_url = self.relative_url[:-1]
 
-    def processCacheArguments(self, cache_args):
+    
+    def getCacheStorageObject(self):
         """
-        Process the cache arguments.
+        Returns the object on which the cache should be stored as a volatile
+        attribute.
         """
 
-        cache_args.append(self.relative_url)
+        return self.context
 
     def processExpressionContext(self, exp_context):
         """
