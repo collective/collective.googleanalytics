@@ -8,7 +8,7 @@ jq(function () {
     });
     jq('#${container_id}').load('@@analytics_async', {
        'report_ids': ${report_ids},
-       'profile_id': '${profile_id}',
+       'profile_ids': ${profile_ids},
        'request_url': '${request_url}',
        'date_range': '${date_range}'
     }, function () {

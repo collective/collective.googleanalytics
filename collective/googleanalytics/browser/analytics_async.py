@@ -1,9 +1,10 @@
 from zope.interface import implements
+from zope.component import getMultiAdapter
 from zope.publisher.browser import BrowserPage
 from plone.memoize.instance import memoize
-from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
 from Products.CMFCore.utils import getToolByName
 from collective.googleanalytics.interfaces.async import IAnalyticsAsyncLoader
+from collective.googleanalytics.interfaces.report import IAnalyticsReportRenderer
 from collective.googleanalytics import error
 from string import Template
 import md5
@@ -53,7 +54,7 @@ class DefaultAnalyticsAsyncLoader(object):
             'visualization_packages': '[%s]' % ', '.join(["'%s'" % p for p in packages]), 
             'container_id': container_id, 
             'report_ids': '[%s]' % ', '.join(["'%s'" % r for r in reports]), 
-            'profile_id': profile_id,
+            'profile_ids': "['%s']" % profile_id,
             'portal_url': portal_url,
             'request_url': self.context.request.ACTUAL_URL, 
             'date_range': date_range,
@@ -67,22 +68,17 @@ class AsyncAnalyticsResults(BrowserPage):
     in the page.
     """
     
-    __call__ = ViewPageTemplateFile('analytics_async.pt')
-    
-    def getResults(self):
+    def __call__(self):
         """
         Returns a list of AnalyticsReportResults objects for the selected reports.
         """        
         report_ids = self.request.get('report_ids', [])
-        profile_id = self.request.get('profile_id', '')
         if type(report_ids) is str:
               report_ids = [report_ids]
         
-        if not report_ids and profile_id:
+        if not report_ids:
             return []
             
-        date_range = self.request.get('date_range', 'month')
-        
         analytics_tool = getToolByName(self.context, 'portal_analytics')
         
         results = []
@@ -93,10 +89,14 @@ class AsyncAnalyticsResults(BrowserPage):
                 continue
                 
             try:
-                results.append(report.getResults(self.context, profile_id, date_range=date_range))
+                renderer = getMultiAdapter(
+                    (self.context, self.request, report),
+                    interface=IAnalyticsReportRenderer
+                )
+                results.append(renderer())
             except error.BadAuthenticationError:
                 return 'BadAuthenticationError'
             except error.MissingCredentialsError:
                 return 'MissingCredentialsError'
                 
-        return results
+        return '\n'.join(results)

@@ -1,5 +1,4 @@
-from Products.CMFCore.Expression import Expression, getEngine
-from Products.PageTemplates.ZopePageTemplate import ZopePageTemplate
+from Products.CMFCore.Expression import Expression
 from zope.tales.tales import CompilerError
 import datetime
 
@@ -14,57 +13,65 @@ def getDate(year, month, day):
     Return a python date for use in TALES expressions.
     """
     return datetime.date(year, month, day)
-    
-def getExpressionContextDict(context):
-    """
-    Return the dictonary used to form the expression context.
-    """
-    
-    request = context.REQUEST
-    absolute_url = request.get('request_url', request.ACTUAL_URL)
-    return {
-        'context': context,
-        'request': request,
-        'today': datetime.date.today(),
-        'date': getDate,
-        'timedelta': getTimeDelta,
-        'page_url': absolute_url.replace(request.SERVER_URL, ''),
-    }
 
-def getExpressionContext(context, extra={}):
+def evaluateTALES(parent, exp_context, evaluate_keys=False):
     """
-    Return the context for evaluating TALES expressions.
+    Evaluates each TALES expression in a list, set, tuple, dictionary
+    or string.
     """
     
-    context_dict = getExpressionContextDict(context)
-    context_dict.update(extra)
-    return getEngine().getContext(context_dict)
-
-def evaluateExpression(expression, exp_context):
-    """
-    Evalute a TALES expression using the given context.
-    """
-    try:
-        return Expression(str(expression))(exp_context)
-    except (KeyError, CompilerError):
-        return expression
-
-def evaluateList(parent, exp_context):
-    """
-    Evaluate each TALES expression in a list.
-    """
-    results = []
-    if hasattr(parent, '__iter__'):
+    if type(parent) in [list, set, tuple]:
+        results = []
         for child in parent:
-            results.append(evaluateList(child, exp_context))
+            results.append(evaluateTALES(child, exp_context))
+        return type(parent)(results)
+    if type(parent) is dict:
+        results = {}
+        for key, value in parent.items():
+            if evaluate_keys:
+                results[evaluateTALES(key, exp_context)] = evaluateTALES(value, exp_context)
+            else:
+                results[key] = evaluateTALES(value, exp_context)
         return results
-    return evaluateExpression(parent, exp_context)
+    try:
+        return Expression(str(parent))(exp_context)
+    except (KeyError, CompilerError):
+        return parent
     
-def evaluateTAL(tal, context, extra={}):
+def makeDate(date_stamp):
     """
-    Evalute HTML containing TAL.
+    Given a date string returned by Google, return the corresponding python
+    date object.
+    """
+    date_string = str(date_stamp)
+    year = int(date_string[0:4])
+    month = int(date_string[4:6])
+    day = int(date_string[6:8])
+    return datetime.date(year, month, day)
+    
+def makeGoogleVarName(google_name):
+    """
+    Determine if the given name is a Google dimension or metric.  If it is,
+    return the corresponding variable name (i.e. replace the colon with an
+    underscore). Otherwise, return the variable name as is.
     """
     
-    pt = ZopePageTemplate(id='__collective_googleanalytics__')
-    pt.pt_edit(tal, 'text/html')
-    return pt.__of__(context).pt_render(extra_context=extra)
+    if len(google_name) > 3 and google_name[:3] == 'ga:':
+        return 'ga_' + google_name[3:]
+    return google_name
+    
+def getJSValue(value):
+    """
+    Given a python value, return the corresponding javascript value.
+    """
+    # A date
+    if isinstance(value, datetime.date):
+        return 'new Date(%i, %i, %i)' % (value.year, value.month, value.day)
+    # A boolean
+    if isinstance(value, bool):
+        return str(value).lower()
+    # A string
+    if isinstance(value, str):
+        return '"%s"' % (value.replace('"', '\\"').replace("'", "\\'"))
+    # A number
+    return str(value)

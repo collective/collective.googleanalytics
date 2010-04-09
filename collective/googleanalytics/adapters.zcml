@@ -1,0 +1,15 @@
+<configure
+    xmlns="http://namespaces.zope.org/zope"
+    i18n_domain="collective.googleanalytics">
+    
+    <adapter factory=".adapters.AnalyticsDefaultExpressionVars"
+        for="*
+             zope.publisher.interfaces.IRequest
+             collective.googleanalytics.interfaces.report.IAnalyticsReport" />
+           
+   <adapter factory=".adapters.DefaultDateRangeChoices"
+       for="*
+            zope.publisher.interfaces.IRequest
+            collective.googleanalytics.interfaces.report.IAnalyticsReport" />
+
+</configure>

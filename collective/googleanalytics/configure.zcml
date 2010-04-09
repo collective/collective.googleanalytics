@@ -20,14 +20,15 @@
   <include package=".browser" />
   <include package=".portlets" />
   <include package=".viewlets" />
+  <include file="adapters.zcml" />
+  <include file="plugins.zcml" />
   <include zcml:condition="installed Products.GenericSetup.upgrade"
     file="upgrades.zcml"/>
-  
 
   <five:registerClass
       class=".report.AnalyticsReport"
       meta_type="Google Analytics Report"
-	  addview="add_analytics_report"
+	    addview="add_analytics_report"
       permission="collective.googleanalytics.ManageAnalyticsReports"
       global="False"
       />

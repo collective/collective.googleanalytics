@@ -1,0 +1,7 @@
+<h2 class="analytics-date-range-label">Last 30 Days</h2>
+<div tal:content="structure view/introduction"></div>
+<div tal:define="height view/visualization/height;" 
+    tal:attributes="id view/visualization/id;
+        style python:(height and 'height:' + str(height) + 'px;;') or ''"></div>
+<script type="text/javascript" tal:content="view/visualization/javascript"></script>
+<div tal:content="structure view/conclusion"></div>
