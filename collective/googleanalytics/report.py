@@ -11,6 +11,7 @@ from zope.component import getGlobalSiteManager
 from OFS.PropertyManager import PropertyManager
 from OFS.SimpleItem import SimpleItem
 from Products.CMFCore.Expression import getEngine
+from Products.CMFCore.utils import getToolByName
 from Products.PageTemplates.ZopePageTemplate import ZopePageTemplate
 from zope.app.pagetemplate.viewpagetemplatefile import ViewPageTemplateFile
 from plone.memoize.volatile import cache
@@ -196,7 +197,7 @@ class AnalyticsReportRenderer(object):
         Returns a Google Analytics data feed.
         """
         
-        analytics_tool = self.report.aq_parent
+        analytics_tool = getToolByName(self.context, 'portal_analytics')
         query_args = self.query_arguments
         data_feed = analytics_tool.makeClientRequest('data', 'GetData', **query_args)
         logger.info("Querying Google for report '%s' on context '%s'." % 
