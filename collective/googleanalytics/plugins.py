@@ -18,12 +18,19 @@ class AnalyticsBasePlugin(object):
         self.report = report
     
     name = 'Analytics Base Plugin'
-    
-    def getCacheStorageObject(self):
+        
+    def processDimensionsChoices(self, choices):
         """
-        Returns the object on which the cache should be stored as a volatile
-        attribute.
+        Process the dimensions choices.
         """
+
+        pass
+        
+    def processMetricsChoices(self, choices):
+        """
+        Process the metrics choices.
+        """
+
         pass
     
     def processCacheArguments(self, cache_args):
@@ -65,6 +72,13 @@ class AnalyticsVariableDateRange(AnalyticsBasePlugin):
         if not self.start_date or not self.end_date:
             self.start_date, self.end_date = self._getDateRange(date_range)
         
+    def processDimensionsChoices(self, choices):
+        """
+        Process the dimensions choices.
+        """
+
+        choices.extend(['date_range_dimension', 'date_range_sort_dimension'])
+    
     def processQueryCriteria(self, criteria):
         """
         Process the query criteria.
@@ -75,11 +89,6 @@ class AnalyticsVariableDateRange(AnalyticsBasePlugin):
                 'start_date': self.start_date,
                 'end_date': self.end_date,
             })
-            date_context = self._getDateContext()
-            criteria['dimensions'].extend([
-                date_context['date_range_dimension'],
-                date_context['date_range_sort_dimension'],
-            ])
             
     def processExpressionContext(self, exp_context):
         """
@@ -171,13 +180,12 @@ class AnalyticsContextualResults(AnalyticsBasePlugin):
             self.relative_url = self.relative_url[:-1]
 
     
-    def getCacheStorageObject(self):
+    def processCacheArguments(self, cache_args):
         """
-        Returns the object on which the cache should be stored as a volatile
-        attribute.
+        Process the cache arguments.
         """
 
-        return self.context
+        cache_args.append(self.relative_url)
 
     def processExpressionContext(self, exp_context):
         """
