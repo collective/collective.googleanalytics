@@ -1,6 +1,5 @@
 from zope.interface import implements
 from zope.component import getMultiAdapter
-from collective.googleanalytics.utils import makeGoogleVarName
 from collective.googleanalytics.interfaces.adapters import IAnalyticsDateRangeChoices
 from collective.googleanalytics.interfaces.plugins import IAnalyticsPlugin
 import datetime
@@ -97,11 +96,6 @@ class AnalyticsVariableDateRange(AnalyticsBasePlugin):
         
         date_context = self._getDateContext()
         exp_context.update(date_context)
-        date_dimension = date_context['date_range_dimension']
-        date_var = makeGoogleVarName(date_dimension)
-        if date_var in exp_context.keys():
-            exp_context['date_range_dimension'] = exp_context[date_var]
-        
         
     def _getDateRange(self, date_range='month'):
         """

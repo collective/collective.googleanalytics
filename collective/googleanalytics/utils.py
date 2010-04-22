@@ -49,17 +49,6 @@ def makeDate(date_stamp):
     day = int(date_string[6:8])
     return datetime.date(year, month, day)
     
-def makeGoogleVarName(google_name):
-    """
-    Determine if the given name is a Google dimension or metric.  If it is,
-    return the corresponding variable name (i.e. replace the colon with an
-    underscore). Otherwise, return the variable name as is.
-    """
-    
-    if len(google_name) > 3 and google_name[:3] == 'ga:':
-        return 'ga_' + google_name[3:]
-    return google_name
-    
 def getJSValue(value):
     """
     Given a python value, return the corresponding javascript value.
@@ -75,3 +64,16 @@ def getJSValue(value):
         return '"%s"' % (value.replace('"', '\\"').replace("'", "\\'"))
     # A number
     return str(value)
+    
+def extract_value(column):
+    """
+    Returns a tuple containing the diimension or metric name and value value
+    for an entry from a Google Analytics data feed.
+    """
+    
+    value = column.value
+    if column.name == 'ga:date':
+        value = makeDate(column)
+    elif column.type == 'integer':
+        value = int(value)
+    return (column.name, value)

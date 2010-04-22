@@ -8,7 +8,7 @@
            zope.publisher.interfaces.IRequest
            collective.googleanalytics.interfaces.report.IAnalyticsReport" />
            
-   <adapter factory=".report.AnalyticsReportRenderer"
+   <adapter factory=".renderer.AnalyticsReportRenderer"
        provides='collective.googleanalytics.interfaces.report.IAnalyticsReportRenderer'
        for="*
             zope.publisher.interfaces.IRequest
