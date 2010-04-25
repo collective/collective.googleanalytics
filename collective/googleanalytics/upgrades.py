@@ -1,4 +1,9 @@
-from Products.CMFPlone.migrations.migration_util import loadMigrationProfile
+try:
+    # Plone < 4
+    from Products.CMFPlone.migrations.migration_util import loadMigrationProfile
+except:
+    # Plone >= 4
+    from plone.app.upgrade.utils import loadMigrationProfile
 
 def null_upgrade_step(setup_tool):
     """
