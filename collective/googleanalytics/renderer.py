@@ -80,6 +80,7 @@ class AnalyticsReportRenderer(object):
             error_log.raising(sys.exc_info())
             return self.error()
         
+    security.declarePublic('data_feed')
     @memoize
     def data_feed(self):
         """
@@ -94,6 +95,7 @@ class AnalyticsReportRenderer(object):
 
         return data_feed
         
+    security.declarePublic('profile_ids')
     @memoize
     def profile_ids(self):
         """
@@ -106,6 +108,7 @@ class AnalyticsReportRenderer(object):
             profile_ids = [profile_ids]
         return profile_ids
         
+    security.declarePublic('query_criteria')
     @memoize
     def query_criteria(self):
         """
@@ -130,6 +133,7 @@ class AnalyticsReportRenderer(object):
         
         return criteria
         
+    security.declarePublic('query_arguments')
     @memoize
     def query_arguments(self):
         """
@@ -149,6 +153,7 @@ class AnalyticsReportRenderer(object):
         }
         return query_args
         
+    security.declarePublic('data')
     @memoize
     def data(self):
         """
@@ -161,6 +166,7 @@ class AnalyticsReportRenderer(object):
             results.append(dict([extract_value(row) for row in entry.dimension + entry.metric]))
         return results
         
+    security.declarePublic('columns')
     @memoize
     def columns(self):
         """
@@ -172,12 +178,13 @@ class AnalyticsReportRenderer(object):
             'value': self.value,
             'dimension': self.dimension,
             'metric': self.metric,
-            'possible': self.possible,
+            'possible_dates': self.possible_dates,
         }
         
         columns_context = self._getExpressionContext(values_context)
         return evaluateTALES(self.report.columns, columns_context)
         
+    security.declarePublic('rows')
     @memoize
     def rows(self):
         """
@@ -189,7 +196,7 @@ class AnalyticsReportRenderer(object):
             'value': self.value,
             'dimension': self.dimension,
             'metric': self.metric,
-            'possible': self.possible,
+            'possible_dates': self.possible_dates,
         }
         
         repeat_context = self._getExpressionContext(values_vars)
@@ -199,7 +206,6 @@ class AnalyticsReportRenderer(object):
         
         row_vars = values_vars.copy()
         row_vars.update({'columns': self.columns()})
-        
         for row in repeat:
             row_vars['row'] = row
             row_context = self._getExpressionContext(row_vars)
@@ -249,41 +255,47 @@ class AnalyticsReportRenderer(object):
             return default
         return aggregate(values)
         
-    security.declarePublic('possible')
-    def possible(self, dimensions, aggregate=list):
+    security.declarePublic('possible_dates')
+    def possible_dates(self, dimensions=[], aggregate=list):
         """
-        Returns all possible values for a date dimension given the current
-        date range.
+        Returns a list of dictionaries containing all possible values for the given
+        date dimension in the current date range.
         """
         
         start = self.query_criteria()['start_date']
         end = self.query_criteria()['end_date']
         delta = end - start
+        
+        if not dimensions:
+            dimensions = self.query_criteria()['dimensions']
+            
+        DATE_DIMENSIONS = ['ga:date', 'ga:day', 'ga:week', 'ga:month', 'ga:year']
+        date_dimensions = list(set(dimensions) & set(DATE_DIMENSIONS))
         results = []
         
         for delta_days in range(0, delta.days + 1):
             date = start + datetime.timedelta(days=delta_days)
-            values = []
-            for dimension in dimensions:
-                if dimension == 'ga:date':
-                    values.append(date)
-                elif dimension == 'ga:day':
-                    values.append(date.day)
-                elif dimension == 'ga:week':
-                    # According to Google, weeks start on Sunday, and week 1 of a
-                    # particular year begins on January 1 and ends on the first
-                    # possible Saturday (which may be January 1, making a 1-day
-                    # week).
-                    first = datetime.date(date.year, 1, 1)
-                    firstweek_days = 6 - first.weekday() or 7
-                    ytd = date - first
-                    ytd_days = ytd.days + 1
-                    
-                    values.append(int(math.ceil(float(ytd_days - firstweek_days)/7)) + 1)
-                elif dimension == 'ga:month':
-                    values.append(date.month)
-                elif dimension == 'ga:year':
-                    values.append(date.year)
+            values = {}
+            
+            if 'ga:date' in date_dimensions:
+                values['ga:date'] = date
+            if 'ga:day' in date_dimensions:
+                values['ga:day'] = date.day
+            if 'ga:week' in date_dimensions:
+                # According to Google, weeks start on Sunday, and week 1 of a
+                # particular year begins on January 1 and ends on the first
+                # possible Saturday (which may be January 1, making a 1-day
+                # week).
+                first = datetime.date(date.year, 1, 1)
+                firstweek_days = 6 - first.weekday() or 7
+                ytd = date - first
+                ytd_days = ytd.days + 1
+                
+                values['ga:week'] = int(math.ceil(float(ytd_days - firstweek_days)/7)) + 1
+            if 'ga:month' in date_dimensions:
+                values['ga:month'] = date.month
+            if 'ga:year' in date_dimensions:
+                values['ga:year'] = date.year
                 
             if values and not values in results:
                 results.append(values)
