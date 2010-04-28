@@ -81,3 +81,13 @@ def extract_value(column):
     elif column.type in ['float', 'percent', 'time', 'currency', 'us_currency']:
         value = float(value)
     return (column.name, value)
+    
+def unique_list(original):
+    """
+    Returns a list of unique items while preserving the order of the
+    original list.
+    """
+    
+    used = set()
+    return [x for x in original if x not in used and not used.add(x)]
+    

@@ -1,6 +1,6 @@
 from zope.interface import implements
 from DateTime import DateTime
-from collective.googleanalytics.utils import getDate, getTimeDelta
+from collective.googleanalytics.utils import getDate, getTimeDelta, unique_list
 from collective.googleanalytics.interfaces.adapters import IAnalyticsExpressionVars, \
     IAnalyticsDateRangeChoices
 import datetime
@@ -33,6 +33,7 @@ class AnalyticsDefaultExpressionVars(AnalyticsBaseAdapter):
             'today': datetime.date.today(),
             'date': getDate,
             'timedelta': getTimeDelta,
+            'unique_list': unique_list,
         }
 
 class DefaultDateRangeChoices(AnalyticsBaseAdapter):

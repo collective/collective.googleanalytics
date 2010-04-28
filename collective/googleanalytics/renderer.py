@@ -15,7 +15,7 @@ from plone.memoize.instance import memoize
 from collective.googleanalytics.interfaces.adapters import IAnalyticsExpressionVars
 from collective.googleanalytics.interfaces.report import IAnalyticsReportRenderer
 from collective.googleanalytics.visualization import AnalyticsReportVisualization
-from collective.googleanalytics.utils import evaluateTALES, extract_value
+from collective.googleanalytics.utils import evaluateTALES, extract_value, unique_list
 
 import datetime
 import math
@@ -227,7 +227,7 @@ class AnalyticsReportRenderer(object):
         return AnalyticsReportVisualization(self.report, self.columns(), self.rows(), options)()
         
     security.declarePublic('dimension')
-    def dimension(self, dimension, specified={}, aggregate=list, default=[]):
+    def dimension(self, dimension, specified={}, aggregate=unique_list, default=[]):
         """
         Returns the value of the given dimension across the specified
         metrics using the specified aggregation method.
