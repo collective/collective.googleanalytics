@@ -21,14 +21,6 @@
   	    permission="collective.googleanalytics.ViewAnalyticsResults"
   	    layer="..interfaces.browserlayer.IAnalyticsLayer"
   	    />
-  	    
-  	<browser:page
-  	    for="*"
-  	    name="fix_reports"
-  	    class=".fix_reports.FixReports"
-  	    permission="collective.googleanalytics.ViewAnalyticsResults"
-  	    layer="..interfaces.browserlayer.IAnalyticsLayer"
-  	    />
 
 	<browser:resourceDirectory
 		name="analytics_images"

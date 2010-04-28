@@ -1,6 +1,7 @@
 from zope.interface import implements
 from zope.component import getMultiAdapter
 from zope.publisher.browser import BrowserPage
+from zope.app.pagetemplate.viewpagetemplatefile import ViewPageTemplateFile
 from plone.memoize.instance import memoize
 from Products.CMFCore.utils import getToolByName
 from collective.googleanalytics.interfaces.async import IAnalyticsAsyncLoader
@@ -68,6 +69,9 @@ class AsyncAnalyticsResults(BrowserPage):
     in the page.
     """
     
+    bad_auth = ViewPageTemplateFile('../loader_templates/badauth.pt')
+    missing_cred = ViewPageTemplateFile('../loader_templates/missingcred.pt')
+    
     def __call__(self):
         """
         Returns a list of AnalyticsReportResults objects for the selected reports.
@@ -95,8 +99,8 @@ class AsyncAnalyticsResults(BrowserPage):
                 )
                 results.append(renderer())
             except error.BadAuthenticationError:
-                return 'BadAuthenticationError'
+                return self.bad_auth()
             except error.MissingCredentialsError:
-                return 'MissingCredentialsError'
+                return self.missing_cred()
                 
         return '\n'.join(results)

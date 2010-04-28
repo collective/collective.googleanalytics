@@ -74,6 +74,9 @@ def extract_value(column):
     value = column.value
     if column.name == 'ga:date':
         value = makeDate(column)
+        
+    elif column.name in ['ga:day', 'ga:week', 'ga:month', 'ga:year']:
+        value = int(value)
     elif column.type == 'integer':
         value = int(value)
     return (column.name, value)

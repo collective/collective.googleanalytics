@@ -1,5 +1,11 @@
+try:
+    from App.class_init import InitializeClass
+except ImportError:
+    from Globals import InitializeClass
+from AccessControl import ClassSecurityInfo
 from zope.interface import implements
 from zope.component import getMultiAdapter
+from zope.app.pagetemplate.viewpagetemplatefile import ViewPageTemplateFile
 from Products.CMFCore.Expression import getEngine
 from Products.CMFCore.utils import getToolByName
 from Products.PageTemplates.ZopePageTemplate import ZopePageTemplate
@@ -14,6 +20,7 @@ from collective.googleanalytics.utils import evaluateTALES, extract_value
 import datetime
 import math
 import time
+import sys
 
 import logging
 logger = logging.getLogger("analytics")
@@ -41,7 +48,12 @@ class AnalyticsReportRenderer(object):
     the request and the report.
     """
     
-    implements(IAnalyticsReportRenderer)    
+    implements(IAnalyticsReportRenderer)
+    
+    security = ClassSecurityInfo()
+    
+    no_results = ViewPageTemplateFile('report_templates/noresults.pt')
+    error = ViewPageTemplateFile('report_templates/error.pt')
     
     def __init__(self, context, request, report):
         self.context = context
@@ -50,14 +62,23 @@ class AnalyticsReportRenderer(object):
     
     @cache(renderer_cache_key, renderer_cache_storage)
     def __call__(self):
-        tal_context = self._getExpressionContext(
-            extra={'view': self,},
-            tal=True,
-        )
+        if not self.data():
+            return self.no_results()
+            
+        try:
+            tal_context = self._getExpressionContext(
+                extra={'view': self,},
+                tal=True,
+            )
         
-        pt = ZopePageTemplate(id='__collective_googleanalytics__')
-        pt.pt_edit(self.report.body, 'text/html')
-        return pt.__of__(self.context).pt_render(extra_context=tal_context)
+            pt = ZopePageTemplate(id='__collective_googleanalytics__')
+            pt.pt_edit(self.report.body, 'text/html')
+            return pt.__of__(self.context).pt_render(extra_context=tal_context)
+        except Exception:
+            logger.exception('Error while rendering %r' % self.report.id)
+            error_log = getToolByName(self.context, 'error_log')
+            error_log.raising(sys.exc_info())
+            return self.error()
         
     @memoize
     def data_feed(self):
@@ -151,6 +172,7 @@ class AnalyticsReportRenderer(object):
             'value': self.value,
             'dimension': self.dimension,
             'metric': self.metric,
+            'possible': self.possible,
         }
         
         columns_context = self._getExpressionContext(values_context)
@@ -167,6 +189,7 @@ class AnalyticsReportRenderer(object):
             'value': self.value,
             'dimension': self.dimension,
             'metric': self.metric,
+            'possible': self.possible,
         }
         
         repeat_context = self._getExpressionContext(values_vars)
@@ -184,6 +207,7 @@ class AnalyticsReportRenderer(object):
 
         return rows
         
+    security.declarePublic('visualization')
     @memoize
     def visualization(self):
         """
@@ -192,10 +216,11 @@ class AnalyticsReportRenderer(object):
         
         # Evaluate the visualization options.
         exp_context = self._getExpressionContext()
-        options = evaluateTALES(dict([v.split(' ') for v in self.report.viz_options]), exp_context)
+        options = evaluateTALES(dict([v.split(' ', 1) for v in self.report.viz_options]), exp_context)
 
-        return AnalyticsReportVisualization(self.report, self.columns(), self.rows(), options)
+        return AnalyticsReportVisualization(self.report, self.columns(), self.rows(), options)()
         
+    security.declarePublic('dimension')
     def dimension(self, dimension, specified={}, aggregate=list, default=[]):
         """
         Returns the value of the given dimension across the specified
@@ -204,14 +229,15 @@ class AnalyticsReportRenderer(object):
         
         return self.value(dimension, specified, aggregate, default)
                     
+    security.declarePublic('metric')
     def metric(self, metric, specified={}, aggregate=sum, default=0):
         """
         Returns the value of the given metic across the specified
         dimensions using the specified aggregation method.
         """
-
         return self.value(metric, specified, aggregate, default)
         
+    security.declarePublic('value')
     def value(self, name, specified={}, aggregate=sum, default=0):
         """
         Returns the value of a dimension or metric from the data feed accross
@@ -223,7 +249,8 @@ class AnalyticsReportRenderer(object):
             return default
         return aggregate(values)
         
-    def possible(self, name):
+    security.declarePublic('possible')
+    def possible(self, dimensions, aggregate=list):
         """
         Returns all possible values for a date dimension given the current
         date range.
@@ -233,35 +260,35 @@ class AnalyticsReportRenderer(object):
         end = self.query_criteria()['end_date']
         delta = end - start
         results = []
-        previous = None
         
-        for delta_days in range(0, delta.days):
+        for delta_days in range(0, delta.days + 1):
             date = start + datetime.timedelta(days=delta_days)
-            if name == 'ga:date':
-                value = date
-            elif name == 'ga:day':
-                value = date.day
-            elif name == 'ga:week':
-                # According to Google, weeks start on Sunday, and week 1 of a
-                # particular year begins on January 1 and ends on the first
-                # possible Saturday (which may be January 1, making a 1-day
-                # week).
-                first = datetime.date(date.year, 1, 1)
-                firstweek_days = 6 - first.weekday() or 7
-                ytd = date - first
-                ytd_days = ytd.days + 1
+            values = []
+            for dimension in dimensions:
+                if dimension == 'ga:date':
+                    values.append(date)
+                elif dimension == 'ga:day':
+                    values.append(date.day)
+                elif dimension == 'ga:week':
+                    # According to Google, weeks start on Sunday, and week 1 of a
+                    # particular year begins on January 1 and ends on the first
+                    # possible Saturday (which may be January 1, making a 1-day
+                    # week).
+                    first = datetime.date(date.year, 1, 1)
+                    firstweek_days = 6 - first.weekday() or 7
+                    ytd = date - first
+                    ytd_days = ytd.days + 1
+                    
+                    values.append(int(math.ceil(float(ytd_days - firstweek_days)/7)) + 1)
+                elif dimension == 'ga:month':
+                    values.append(date.month)
+                elif dimension == 'ga:year':
+                    values.append(date.year)
                 
-                value = int(math.ceil(float(ytd_days - firstweek_days)/7)) + 1
-            elif name == 'ga:month':
-                value = date.month
-            elif name == 'ga:year':
-                value = date.year
-                
-            if value and not value == previous:
-                results.append(value)
-                previous = value
+            if values and not values in results:
+                results.append(values)
             
-        return results
+        return aggregate(results)
         
     def _getExpressionContext(self, extra={}, tal=False):
         """
@@ -281,3 +308,5 @@ class AnalyticsReportRenderer(object):
         if tal:
             return context_vars
         return getEngine().getContext(context_vars)
+        
+InitializeClass(AnalyticsReportRenderer)

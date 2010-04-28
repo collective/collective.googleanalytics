@@ -1,0 +1,4 @@
+<p class="analytics-no-results">
+    The report <strong tal:content="view/report/title">Report Title</strong>
+    did not return any results.
+</p>
