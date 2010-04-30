@@ -20,6 +20,7 @@
   <include package=".browser" />
   <include package=".portlets" />
   <include package=".viewlets" />
+  <include file="loader.zcml" />
   <include file="renderer.zcml" />
   <include file="plugins.zcml" />
   <include zcml:condition="installed Products.GenericSetup.upgrade"

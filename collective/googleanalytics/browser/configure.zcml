@@ -11,17 +11,6 @@
         layer="..interfaces.browserlayer.IAnalyticsLayer"
         />
 
-    <adapter for="*"
-        factory=".analytics_async.DefaultAnalyticsAsyncLoader" />
-  
-  	<browser:page
-  	    for="*"
-  	    name="analytics_async"
-  	    class=".analytics_async.AsyncAnalyticsResults"
-  	    permission="collective.googleanalytics.ViewAnalyticsResults"
-  	    layer="..interfaces.browserlayer.IAnalyticsLayer"
-  	    />
-
 	<browser:resourceDirectory
 		name="analytics_images"
 		directory="images"

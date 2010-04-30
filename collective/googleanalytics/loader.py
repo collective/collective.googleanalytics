@@ -48,7 +48,7 @@ class DefaultAnalyticsAsyncLoader(object):
         url_tool = getToolByName(self.context, 'portal_url')
         portal_url = url_tool.getPortalObject().absolute_url()
         
-        template_file = os.path.join(os.path.dirname(__file__), 'analytics_async_loader.js.tpl')
+        template_file = os.path.join(os.path.dirname(__file__), 'loader.tpl')
         template = Template(open(template_file).read())
         
         template_vars = {
@@ -69,8 +69,8 @@ class AsyncAnalyticsResults(BrowserPage):
     in the page.
     """
     
-    bad_auth = ViewPageTemplateFile('../loader_templates/badauth.pt')
-    missing_cred = ViewPageTemplateFile('../loader_templates/missingcred.pt')
+    bad_auth = ViewPageTemplateFile('loader_templates/badauth.pt')
+    missing_cred = ViewPageTemplateFile('loader_templates/missingcred.pt')
     
     def __call__(self):
         """
