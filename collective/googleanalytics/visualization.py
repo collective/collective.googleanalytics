@@ -20,7 +20,7 @@ class AnalyticsReportVisualization(object):
         self.options = options
             
     @memoize
-    def __call__(self):
+    def render(self):
         """
         Returns the markup and javascript to create the visualization.
         """

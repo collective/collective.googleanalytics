@@ -58,6 +58,7 @@ class AnalyticsReportRenderer(object):
         self.context = context
         self.request = request
         self.report = report
+        self._data_feed = None
     
     @cache(renderer_cache_key, renderer_cache_storage)
     def __call__(self):
@@ -89,6 +90,9 @@ class AnalyticsReportRenderer(object):
         """
         Returns a Google Analytics data feed.
         """
+        
+        if self._data_feed:
+            return self._data_feed
         
         analytics_tool = getToolByName(self.context, 'portal_analytics')
         query_args = self.query_arguments()
@@ -220,14 +224,10 @@ class AnalyticsReportRenderer(object):
     @memoize
     def visualization(self):
         """
-        Returns an AnalyticsReportVisualization for this report.
+        Renders the visualization for this report.
         """
         
-        # Evaluate the visualization options.
-        exp_context = self._getExpressionContext()
-        options = evaluateTALES(dict([v.split(' ', 1) for v in self.report.viz_options]), exp_context)
-
-        return AnalyticsReportVisualization(self.report, self.columns(), self.rows(), options)()
+        return self._getVisualization().render()
         
     security.declarePublic('dimension')
     def dimension(self, dimension, specified={}, aggregate=unique_list, default=[]):
@@ -305,6 +305,20 @@ class AnalyticsReportRenderer(object):
             
         return aggregate(results)
         
+    security.declarePrivate('_getVisualization')
+    @memoize
+    def _getVisualization(self):
+        """
+        Returns an AnalyticsReportVisualization for this report.
+        """
+
+        # Evaluate the visualization options.
+        exp_context = self._getExpressionContext()
+        options = evaluateTALES(dict([v.split(' ', 1) for v in self.report.viz_options]), exp_context)
+
+        return AnalyticsReportVisualization(self.report, self.columns(), self.rows(), options)
+        
+    security.declarePrivate('_getExpressionContext')
     def _getExpressionContext(self, extra={}, tal=False):
         """
         Returns the context for rendering TALES or TAL. If the tal argument

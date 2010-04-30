@@ -2,6 +2,7 @@ from zope.interface import implements
 from zope.component import getMultiAdapter
 from collective.googleanalytics.interfaces.plugins import IAnalyticsPlugin, \
     IAnalyticsDateRangeChoices
+from collective.googleanalytics.utils import makeDate
 from DateTime import DateTime
 import datetime
 
@@ -72,12 +73,23 @@ class AnalyticsVariableDateRange(AnalyticsBasePlugin):
     def __init__(self, context, request, report):
         super(AnalyticsVariableDateRange, self).__init__(context, request, report)
         
-        self.start_date = request.get('start_date', None)
-        self.end_date = request.get('end_date', None)
-        date_range = request.get('date_range', 'month')
+        start_date = request.get('start_date', '')
+        end_date = request.get('end_date', '')
         
-        if not self.start_date or not self.end_date:
+        try:
+            self.start_date = makeDate(start_date)
+            self.end_date = makeDate(end_date)
+        except ValueError:
+            date_range = request.get('date_range', 'month')
             self.start_date, self.end_date = self._getDateRange(date_range)
+            
+    def processCacheArguments(self, cache_args):
+        """
+        Process the cache arguments.
+        """
+
+        if self.start_date and self.end_date:
+            cache_args.extend([str(self.start_date), str(self.end_date)])
         
     def processDimensionsChoices(self, choices):
         """

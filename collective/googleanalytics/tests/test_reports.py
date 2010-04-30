@@ -3,11 +3,11 @@ import datetime
 import os
 import re
 from string import Template
+from zope.component import getMultiAdapter
 from Products.CMFCore.utils import getToolByName
 from collective.googleanalytics.tests.base import FunctionalTestCase
-from collective.googleanalytics.report import AnalyticsReport
-from collective.googleanalytics.utils import getExpressionContext, \
-    evaluateExpression, getDate, getTimeDelta
+from collective.googleanalytics.interfaces.report import IAnalyticsReportRenderer
+from collective.googleanalytics.utils import evaluateTALES, getDate, getTimeDelta, unique_list
 from gdata.analytics import AnalyticsDataFeedFromString
 
 class TestReports(FunctionalTestCase):
@@ -18,22 +18,31 @@ class TestReports(FunctionalTestCase):
         Analytics report is populated with the correct objects.
         """
         
-        exp_context = getExpressionContext(self.portal)
+        analytics_tool = getToolByName(self.portal, 'portal_analytics', None)
+        report = analytics_tool['site-visits-line']
+
+        context = self.portal
+        request = self.portal.REQUEST
         
-        expression = 'python:[context, request, today, date, timedelta, page_url]'
+        renderer = getMultiAdapter(
+            (context, request, report),
+            interface=IAnalyticsReportRenderer
+        )
+                
+        expression = 'python:[context, request, today, date, timedelta, unique_list]'
         
-        RESULT = [
+        result = [
             self.portal,
             self.portal.REQUEST,
             datetime.date.today(),
             getDate,
             getTimeDelta,
-            self.portal.REQUEST.ACTUAL_URL.replace(self.portal.REQUEST.SERVER_URL, '')
+            unique_list,
         ]
         
-        evaluated_exp = evaluateExpression(expression, exp_context)
-        
-        self.assertEqual(evaluated_exp, RESULT)
+        exp_context = renderer._getExpressionContext()
+        evaluated_exp = evaluateTALES(expression, exp_context)
+        self.assertEqual(evaluated_exp, result)
         
     def test_report_returns_correct_results(self):
         """
@@ -42,52 +51,36 @@ class TestReports(FunctionalTestCase):
         """
         
         analytics_tool = getToolByName(self.portal, 'portal_analytics', None)
+        report = analytics_tool['site-visits-line']
+        
+        context = self.portal
+        request = self.portal.REQUEST
+        
+        # Set the start and end date in the request.
+        request.set('start_date', '20100401')
+        request.set('end_date', '20100430')
         
         # Load the example feed data from a file.
         feed_xml_file = os.path.join(os.path.dirname(__file__), 'data_feed.xml')
         feed_xml = open(feed_xml_file).read()
         feed = AnalyticsDataFeedFromString(feed_xml)
-        
-        # Create a report.
-        report = AnalyticsReport(id='results-test',
-            title='Site Visits: Line Chart',
-            description='Displays the number of site visits as a line graph.',
-            i18n_domain='analytics',
-            is_page_specific=False,
-            categories=['Site Wide',],
-            metrics=['ga:visits'],
-            dimensions=['date_range_dimension', 'date_range_sort_dimension'],
-            filters=[],
-            sort=['date_range_sort_dimension', 'date_range_dimension'],
-            max_results=1000,
-            column_labels=['python:date_range_unit', 'string:Visits'],
-            column_exps=['python:str(date_range_dimension)', 'python:int(ga_visits)'],
-            introduction='',
-            conclusion='''<p tal:condition="data_length"><strong tal:content="python:sum(data_columns[1])">1000</strong> visits in the last <span tal:replace="string:${data_length} ${date_range_unit_plural/lower}"></span></p>
-            <p tal:condition="data_length"><strong tal:content="python:int(sum(data_columns[1])/len(data_columns[1]))">1000</strong> 
-            average visits per <span tal:replace="string:${date_range_unit/lower}"></span></p>''',
-            viz_type='LineChart',
-            viz_options=[
-            'title string:Site Visits',
-            'height python:250',
-            'legend string:none',
-            'titleX python:date_range_unit',
-            'titleY string:Visits',
-            'axisFontSize python:10',
-            ]
+            
+        renderer = getMultiAdapter(
+            (context, request, report),
+            interface=IAnalyticsReportRenderer
         )
-                
-        # Set the aquisition parent for the report.
-        report.aq_parent = analytics_tool
         
-        # Get the results object.
-        results = report.getResults(self.portal, profile=12345, data_feed=feed)
+        # Set the test data feed.
+        renderer._data_feed = feed
+        
+        # Render the results.
+        results = renderer()
         
         # Load the expected results.
-        results_js_file = os.path.join(os.path.dirname(__file__), 'report_results.js.tpl')
+        results_js_file = os.path.join(os.path.dirname(__file__), 'report_results.tpl')
         template = Template(open(results_js_file).read())
         template_vars = {
-            'id': results.getVizID(),
+            'id': renderer._getVisualization().id(),
         }
         results_js = template.substitute(template_vars)
         
@@ -97,7 +90,7 @@ class TestReports(FunctionalTestCase):
         
         # Test that the results match what we expect.
         self.assertEqual(
-            re.sub(whitespace, ' ', results.getVizJS()).strip(),
+            re.sub(whitespace, ' ', results).strip(),
             re.sub(whitespace, ' ', results_js).strip()
         )
 
