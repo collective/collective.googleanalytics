@@ -81,6 +81,9 @@ def upgrade_10a4_to_10b1(setup_tool):
 
             del report.column_labels
             del report.column_exps
+            
+        if report.i18n_domain == 'analytics':
+            report.i18n_domain = 'collective.googleanalytics'
 
     profile_id = 'profile-collective.googleanalytics:default'
     step_id = 'analytics'
