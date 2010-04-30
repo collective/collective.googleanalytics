@@ -1,7 +1,7 @@
 from zope.interface import implements
 from zope.component import getMultiAdapter
-from collective.googleanalytics.interfaces.adapters import IAnalyticsDateRangeChoices
-from collective.googleanalytics.interfaces.plugins import IAnalyticsPlugin
+from collective.googleanalytics.interfaces.plugins import IAnalyticsPlugin, \
+    IAnalyticsDateRangeChoices
 from DateTime import DateTime
 import datetime
 

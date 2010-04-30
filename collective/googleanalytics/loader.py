@@ -4,7 +4,7 @@ from zope.publisher.browser import BrowserPage
 from zope.app.pagetemplate.viewpagetemplatefile import ViewPageTemplateFile
 from plone.memoize.instance import memoize
 from Products.CMFCore.utils import getToolByName
-from collective.googleanalytics.interfaces.async import IAnalyticsAsyncLoader
+from collective.googleanalytics.interfaces.loader import IAnalyticsAsyncLoader
 from collective.googleanalytics.interfaces.report import IAnalyticsReportRenderer
 from collective.googleanalytics import error
 from string import Template
@@ -40,7 +40,7 @@ class DefaultAnalyticsAsyncLoader(object):
                 report = analytics_tool[report_id]
                 reports.append(report_id)
                 package = report.viz_type.lower()
-                if not package in packages:
+                if not package in packages and not package == 'none':
                     packages.append(package)
             except KeyError:
                 continue

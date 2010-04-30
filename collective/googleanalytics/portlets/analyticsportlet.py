@@ -12,7 +12,7 @@ from Products.CMFCore.utils import getToolByName
 from zope.i18nmessageid import MessageFactory
 _ = MessageFactory('analytics')
 
-from collective.googleanalytics.interfaces.async import IAnalyticsAsyncLoader
+from collective.googleanalytics.interfaces.loader import IAnalyticsAsyncLoader
 
 class IAnalyticsPortlet(IPortletDataProvider):
     """A portlet

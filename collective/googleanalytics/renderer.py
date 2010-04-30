@@ -61,6 +61,10 @@ class AnalyticsReportRenderer(object):
     
     @cache(renderer_cache_key, renderer_cache_storage)
     def __call__(self):
+        """
+        Renders the report.
+        """
+        
         if not self.data():
             return self.no_results()
             
@@ -156,7 +160,7 @@ class AnalyticsReportRenderer(object):
     @memoize
     def data(self):
         """
-        Returns a generator of dictionaries containing the values of the
+        Returns a list of dictionaries containing the values of the
         dimensions and metrics for each data feed entry.
         """
 
