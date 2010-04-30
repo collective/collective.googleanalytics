@@ -28,12 +28,9 @@ Basic Use
 After you have set your credentials in the control panel, you can begin using
 Analytics reports. First navigate to the page where you would like to display
 the report results. Where you place the portlet depends on your goals and the
-type of report you are displaying. For site-wide reports, your user dashboard
-may be the most appropriate place. For reports that monitor a specific page
-or section of the site, it may makes sense to place the portlet on the page
-that it references. Even if you place a portlet on a public page, the portlet
-will only be visible to users who have the "View Google Analytics Reports"
-permission, which, by default is assigned to Managers.
+type of reports you are displaying. Even if you place a portlet on a public 
+page, the portlet will only be visible to users who have the "View Google 
+Analytics Reports" permission, which, by default is assigned to Managers.
 
 Next, place the portlet as you normally would, using the manage portlets page
 and selecting Google Analytics from the list of available portlets. In the
@@ -107,11 +104,15 @@ Description
 I18n Domain
 	The domain for translating the report.
 	
-Page Specific
-	A boolean value for whether the report results change based on the page
-	where the report is displayed. This value is used to determine whether
-	the report results should be cached for the entire site or on a 
-	page-by-page basis.
+Categories
+    A list of categories to which the report belongs. Categories are used to
+    determine where the report can be displayed.
+    
+Plugins
+    Plugins are multi-adapters on the context, the request and the report
+    that extend the default functionality of the report. Two plugins ship
+    with collective.googleanalytics. See the sections on `Contextual Results
+    Plugin`_ and `Variable Date Range Plugin`_ for more details.
 	
 Query Metrics
 	A list of Google Analytics metrics to use in the query.
@@ -135,73 +136,93 @@ Query Sort
 	addition, the name of the dimension or metric can be preceded by a minus
 	sign (-) to change the sort order from ascending to descending.
 	
+Query Start Date
+    The start date for query results. It must be a TALES expression that
+    evaluates to a Python datetime.date object. In reports that use the
+    `Variable Date Range Plugin`_, it is not necessary to specify the
+    start date or end date.
+    
+Query End Date
+    The end date for the query results. See Query Start Date above for more
+    information.
+	
 Query Maximum Results
-	The maximum number of records that the query should return. It must be
-	a positive integer, and 1000 is the default value.
+	The maximum number of results that the query can return. It must be a TALES
+	expression that evaluates to a positive integer.
 	
-Report Column Labels
-	The labels for the report columns. These are defined using strings or TALES
-	expressions that evaluate to strings. Where they appear depends on type of
-	visualization. For the Table visualization, for example, they appear as the
-	table column headings.
+Table Columns Expression
+	The titles for the table columns. It must be a TALES expression that evaluates
+	to a Python list of strings. If and where these titles appear depends on
+	the type of visualization. For the Table visualization, for example, they
+	appear as the table column headings.
 	
-Report Column Expressions
-	A list of TALES expressions used to calculate the values of the report based
-	on the data returned by Google. After the query is performed, the report
-	iterates over the rows of data returned and calculates the value of each
-	column. Naturally the values available in these calculations depend on the
-	dimensions and metrics found in the query. Each dimension and metric is
-	converted to a variable name by replacing the colon with an underscore.
-	For example, the value of ga:uniquePageviews is stored in the variable
-	ga_uniquePageviews.
+	In most reports, the Table Columns Expression is a static Python list::
+	    
+	    python:['Visits']
+	    
+	It is, of course, possible to use TALES variables to populate the
+	columns list::
 	
-	When writing column expressions, it is important to convert value of the
-	variable to the appropriate type before attempting to perform calculations.
-	Google returns all data, including numbers, as strings, so expressions must
-	use the appropriate Python functions (int(), bool(), etc.) to convert to
-	the correct type. Similarly, the result of the expression must be returned
-	as the type that the selected visualization expects.
+	    python:[date_range_unit, 'Visits']
+	    
+	In complex tables, the number of columns may be determined by the results
+	returned by the query. In this example, the first column is "Date" and the
+	names of the remaining columns are the names of the browsers returned
+	by the query::
 	
-Report Introduction
-	A block of TAL code that precedes the visualization containing the report
-	results. TALES expressions within this code have access to the normal
-	objects described in the section on `Using TAL and TALES in Reports`_. They
-	also get two special Python lists called data_rows and data_columns.
-	data_rows contains lists of the the evaluated column expression for each
-	row of query data. data_columns is a convenience list that reformats the
-	data in data_rows by column instead of row.
+	    python:['Date'] + dimension('ga:browser')
 	
-	As an example, take a report that defines these columns::
+Table Row Repeat Expression
+    The expression that produces the set of row keys used generate the rows in
+    the results table. It is specified as a TALES expression that evaluates to
+    a Python iterable with one element for each row in the final table.
+    
+    When the report renderer is asked for the results table rows, it first
+    evaluates the row repeat expression. It then iterates over each element
+    in the resulting list and evaluates the Table Rows Expression with
+    the current element assigned to the variable "row."
+    
+    Typically the values of the row repeat expression are generated using the
+    dimension function or the possible_dates function::
+    
+        python:dimension('ga:pagePath')
+        
+    or::
+    
+        possible_dates
+    
+    See the section on `Using TAL and TALES in Reports`_ for more information
+    about the use of these functions.
 	
-		python:str(ga_city)
-		python:int(ga_visits)
-	
-	data_rows and data_columns might evaluate to the following python lists::
-	
-		data_rows = [
-			['Seattle', 50],
-			['Portland', 25],
-			['San Francisco', 15]
-		]
-		data_columns = [
-			['Seattle', 'Portland', 'San Francisco'],
-			[50, 25, 15]
-		]
-	
-	If you wanted to display the total number of visits in the title, you could
-	includes this TAL in the report introduction::
-	
-		<h3>
-			<span tal:replace="python:sum(data_columns[0])">
-				[Total visits]
-			</span>
-			Visits
-		</h3>
-	
-Report Conclusion
-	A block of TAL code that follows the visualization containing the report
-	results. See Report Introduction above for instructions on writing the
-	TAL for this property.
+Table Rows Expression
+    The contents of each table row. It is must be a TALES expression that
+    evaluates to a Python list containing the value of the "cells" for that
+    table row. The Table Rows Expression has access to two special TALES
+    varables::
+    
+    row
+        The value of the row key for the row that is currently being evaluated.
+        These values come from the list produced by evaluating the Table Row
+        Repeat Expression.
+        
+    columns
+        The list of table column headings produced by evaluating the Table
+        Columns Expression.
+        
+    In tables with only one column, the value of the rows expression is
+    often the same as the value of the row key::
+    
+        python:[row]
+        
+    In two column tables, the value of one column is typically the row key,
+    and the other is a metric value looked up using the row key::
+    
+        python:[row, metric('ga:visits', {'ga:browser': row})]
+        
+    In complex, multi-column tables, it may be necessary to iterate over the
+    columns variable using a Python list comprehension::
+    
+        python:[row] + [metric('ga:visits', {'ga:browser': r}) for r in columns[1:]]
 
 Visualization Type
 	The type of Google Visualization to use to display the report results.
@@ -211,14 +232,66 @@ Visualization Type
 Visualization Options
 	A list of options and values, in the format of TAL defines, that specify
 	the options for the visualization. The available options depend on the
-	type of visualization selected. As with the report column expressions,
-	it is important that the option expressions evaluate to the data type
-	that the visualization expects.
-	
+	type of visualization selected. It is important that the option expressions
+	evaluate to the data type that the visualization expects.
+
 	For example, the height of a visualization that accepts an integer height
 	option could be set as follows::
-	
+
 		height python:300
+
+Report Body
+	The block of TAL code that is evaluated when the report is rendered.
+	TALES expressions within this code have access to the normal objects
+	described in the section on `Using TAL and TALES in Reports`_. They also
+	can access all of the public methods provided by the report renderer::
+
+    profile_ids()
+        Returns a list of Google Analytics profiles for which the report
+        is being evaluated.
+
+    query_criteria()
+        Returns the evaluated query criteria.
+
+    data()
+        Returns a list of dictionaries containing the values of the
+        dimensions and metrics for each entry in the data feed returned
+        by Google.
+
+    columns()
+        Returns the evaluated table column headings.
+
+    rows()
+        Returns the evaluated table rows.
+        
+    visualization()
+        Returns the rendered visualization.
+
+    dimension(dimension, specified={}, aggregate=unique_list, default=[])
+        Returns the value of the given dimension across the specified
+        dimensions and metrics using the specified aggregation method
+        (unique_list by default). If no values are found, the default value,
+        an empty list by default, is returned.
+        
+        For example, the following TALES expression would return a list of all
+        the browsers returned by the query::
+        
+            python:dimension('ga:browser')
+                    
+    metric(metric, specified={}, aggregate=sum, default=0)
+        Returns the value of the given metric across the specified
+        dimensions and metrics using the specified aggregation method (sum by
+        default). If no values are found, the default value, 0 by default, is
+        returned.
+        
+        To get the sum of the values of 'ga:visits' in records where
+        'ga:browser' equals 'Mozilla,' we could use this expression::
+        
+            python:metric('ga:visits', {'ga:browser': 'Mozilla'})
+        
+    possible_dates(dimensions=[], aggregate=unique_list)
+        Returns a list of dictionaries containing all possible values for the given
+        date dimension in the current date range.
 
 It may be helpful to think of Analytics reports as having four logical
 sections:
@@ -254,69 +327,6 @@ Finally the visualizaiton settings section of the report consists of the
 visualization type and visualization options properties. These properties
 are used to produce javascript that uses the Google Visualizations API
 to render the report data.
-
-Dates and Reports
-=================
-
-Analytics reports do not specify start and end dates for their queries.
-Instead, they accecpt date range arguments when they are evaluated. (This
-dynamic selection of date ranges is not currently exposed in the user
-interface.) These date range arguments are passed to the report's getResults
-method. getResults can accept these date-related keyword arguments:
-
-start_date and end_date
-    Python start and end dates.
-
-date_range
-    An integer specifying the number of days prior to the current date use
-    as the report start date. The end date is assumed to be the current date.
-    The date_range argument can also accept a string keyword that evaluates 
-    to a particular date range depending on the current context. Current 
-    keywords include:
-    
-    week
-        Last seven days.
-        
-    month
-        Last 30 days.
-        
-    quarter
-        Last 90 days.
-        
-    year
-        Last 356 days.
-        
-    mtd
-        Month-to-date.
-        
-    ytd
-        Year-to-date.
-    
-    published
-        Since the item was published.
-        
-Since dates for reports are dynamic, Analytics reports implement two special
-dimensions that are date sensitive. This allows the granularity of the report
-results to be set based on the date range selected. (For example, if you specify
-a date range of a year, you probably don't want to segment your results by day.
-Instead, viewing results by month would be a more appropriate choice.) The two 
-special dimensions are:
-
-date_range_dimension
-    This is the dimension, selected based on the date range, that will be used
-    to segment the results.
-    
-date_range_sort_dimension
-    This is the date-related dimension that is used as a helper to ensure that
-    results segmented by date_range_dimension can be sorted chronologically.
-    For example, if date_range_dimension evaluates to ga:week,
-    date_rage_sort_dimension would evalute to ga:year. Using
-    date_range_sort_dimension (along with date_range_dimension) when sorting
-    prevents a situation in which week 52 of 2009 gets sorted before week 1
-    of 2010.
-    
-For more information about using these dimensions in reports, see the section
-on `Using TAL and TALES in Reports`_.
     
 Using TAL and TALES in Reports
 ==============================
@@ -380,6 +390,69 @@ Report Introduction and Report Conclusion
 	and data_columns--that contain the results of the evaluated report
 	column expressions. For more information about using these data structures
 	to perform calculations, see the section on `Report Properties`_ above.
+
+Variable Date Range Plugin
+==========================
+
+Analytics reports do not specify start and end dates for their queries.
+Instead, they accecpt date range arguments when they are evaluated. (This
+dynamic selection of date ranges is not currently exposed in the user
+interface.) These date range arguments are passed to the report's getResults
+method. getResults can accept these date-related keyword arguments:
+
+start_date and end_date
+    Python start and end dates.
+
+date_range
+    An integer specifying the number of days prior to the current date use
+    as the report start date. The end date is assumed to be the current date.
+    The date_range argument can also accept a string keyword that evaluates 
+    to a particular date range depending on the current context. Current 
+    keywords include:
+
+    week
+        Last seven days.
+
+    month
+        Last 30 days.
+
+    quarter
+        Last 90 days.
+
+    year
+        Last 356 days.
+
+    mtd
+        Month-to-date.
+
+    ytd
+        Year-to-date.
+
+    published
+        Since the item was published.
+
+Since dates for reports are dynamic, Analytics reports implement two special
+dimensions that are date sensitive. This allows the granularity of the report
+results to be set based on the date range selected. (For example, if you specify
+a date range of a year, you probably don't want to segment your results by day.
+Instead, viewing results by month would be a more appropriate choice.) The two 
+special dimensions are:
+
+date_range_dimension
+    This is the dimension, selected based on the date range, that will be used
+    to segment the results.
+
+date_range_sort_dimension
+    This is the date-related dimension that is used as a helper to ensure that
+    results segmented by date_range_dimension can be sorted chronologically.
+    For example, if date_range_dimension evaluates to ga:week,
+    date_rage_sort_dimension would evalute to ga:year. Using
+    date_range_sort_dimension (along with date_range_dimension) when sorting
+    prevents a situation in which week 52 of 2009 gets sorted before week 1
+    of 2010.
+
+For more information about using these dimensions in reports, see the section
+on `Using TAL and TALES in Reports`_.
 
 Creating a New Report
 =====================
