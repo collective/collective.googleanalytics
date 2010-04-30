@@ -1,4 +1,4 @@
-from Products.CMFPlone.migrations.migration_util import loadMigrationProfile
+from Products.CMFCore.utils import getToolByName
 
 def null_upgrade_step(setup_tool):
     """
@@ -15,3 +15,72 @@ def upgrade_10a2_to_10a3(setup_tool):
     name = 'profile-collective.googleanalytics:upgrade_10a2_10a3'
     setup_tool.runAllImportStepsFromProfile(name)
     
+def upgrade_10a4_to_10b1(setup_tool):
+    """
+    Update reports to use new attributes and reimport default reports.
+    """
+
+    analytics_tool = getToolByName(setup_tool, 'portal_analytics')
+    reports = analytics_tool.getReports()
+    
+    BODY_TEMPLATE = """<!--
+    %s
+    <div tal:replace="structure view/visualization"></div>
+    %s
+    -->
+    This report needs to be updated to use the new table building fields
+    introduced in collective.googleanalytics 1.0b1.
+    """
+    
+    COLUMNS_TEMPLATE = """<!--
+    COLUMN LABELS:
+    %s
+    
+    COLUMN EXPRESSIONS:
+    %s
+    -->
+    """
+
+    for report in reports:
+        if not hasattr(report, 'plugin_names'):
+            report.plugin_names = []
+            
+            if hasattr(report, 'is_page_specific') and report.is_page_specific:
+                report.plugin_names.append(u'Contextual Results')
+                
+            if hasattr(report, 'is_page_specific'):
+                del report.is_page_specific
+        
+            report.plugin_names.append(u'Variable Date Range')
+        
+        if not hasattr(report, 'start_date'):
+            report.start_date = u''
+            
+        if not hasattr(report, 'end_date'):
+            report.end_date = u''
+        
+        if type(report.max_results) is int:
+            report.max_results = u'python:%i' % report.max_results
+        
+        if hasattr(report, 'introduction') and hasattr(report, 'conclusion'):
+            report.body = BODY_TEMPLATE % (
+                report.introduction,
+                report.conclusion,
+            )
+        
+            del report.introduction
+            del report.conclusion
+            
+        if hasattr(report, 'column_labels') and hasattr(report, 'column_exps'):
+            report.columns = report.row_repeat = report.rows = ''
+            
+            report.body += COLUMNS_TEMPLATE % (
+                report.column_labels,
+                report.column_exps,
+            )
+
+            del report.column_labels
+            del report.column_exps
+
+    name = 'profile-collective.googleanalytics:default'
+    # setup_tool.runAllImportStepsFromProfile(name)
