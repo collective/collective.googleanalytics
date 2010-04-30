@@ -1,5 +1,5 @@
 from plone.memoize.instance import memoize
-from collective.googleanalytics.utils import getJSValue
+from collective.googleanalytics.utils import json_serialize, js_literal
 from string import Template
 import datetime
 import time
@@ -31,7 +31,7 @@ class AnalyticsReportVisualization(object):
         template_vars = {
             'package_name': self.report.viz_type.lower(), 
             'columns': self._getColumns(), 
-            'data': self._getData(), 
+            'data': json_serialize(self.rows), 
             'chart_type': self.report.viz_type, 
             'id': self.id(),
             'options': self._getOptions()
@@ -53,20 +53,6 @@ class AnalyticsReportVisualization(object):
             viz_id = md5.new(self.report.id + str(time.time())).hexdigest()
 
         return 'analytics-' + viz_id
-
-    @memoize
-    def _getData(self):
-        """
-        Returns a javascript array that describes the data. It is used by Google
-        Visualizations to populate the DataTable.
-        """
-        js_rows = []
-        for row in self.rows:
-            js_row = []
-            for value in row:
-                js_row.append(getJSValue(value))
-            js_rows.append('[%s]' % (', '.join(js_row)))
-        return '[\n%s\n]' % (',\n'.join(js_rows))
 
     @memoize
     def _getColumns(self):
@@ -95,13 +81,12 @@ class AnalyticsReportVisualization(object):
         """
         Returns a javascript object containing the options for the visualization.
         """
-        js_options = []
-        for option, value in self.options.items():
-            js_options.append('%s: %s' % (option, getJSValue(value)))
+        
+        options = self.options.copy()
         # Set the width of the visualization to the container width if it
         # if not already set.
         if not 'width' in self.options.keys():
-            js_options.append('width: container_width')
-        if js_options:
-            return '{%s}' % (', '.join(js_options))
+            options['width'] = js_literal('container_width')
+        if options:
+            return json_serialize(options)
         return 'null'

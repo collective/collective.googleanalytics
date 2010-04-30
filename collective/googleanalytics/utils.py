@@ -48,11 +48,37 @@ def makeDate(date_stamp):
     month = int(date_string[4:6])
     day = int(date_string[6:8])
     return datetime.date(year, month, day)
-    
-def getJSValue(value):
+
+def json_serialize(parent):
+    """
+    Given a Python list, tuple or dictionary, return the corresponding
+    json object.
+    """
+    json_parts = []
+    if type(parent) in [list, tuple]:
+        for child in parent:
+            json_parts.append(json_serialize(child))
+        return '[%s]' % ', '.join(json_parts)
+    if type(parent) is dict:
+        for (key, value) in parent.items():
+            json_parts.append('%s: %s' % (json_serialize(key), json_serialize(value)))
+        return '{%s}' % ', '.join(json_parts)
+    return js_value(parent)
+
+class js_literal(str):
+    """
+    Marks a Python string object as a literal so that it is not enclosed
+    in quotes when it is passed through js_value.
+    """
+
+def js_value(value):
     """
     Given a python value, return the corresponding javascript value.
     """
+    
+    # A javascript literal
+    if isinstance(value, js_literal):
+        return str(value)
     # A date
     if isinstance(value, datetime.date):
         return 'new Date(%i, %i, %i)' % (value.year, value.month, value.day)
