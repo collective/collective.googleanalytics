@@ -4,7 +4,6 @@ except ImportError:
     from Globals import InitializeClass
 from AccessControl import ClassSecurityInfo
 from zope.interface import implements
-from zope.component import getMultiAdapter
 from zope.app.pagetemplate.viewpagetemplatefile import ViewPageTemplateFile
 from Products.CMFCore.Expression import getEngine
 from Products.CMFCore.utils import getToolByName
@@ -12,10 +11,10 @@ from Products.PageTemplates.ZopePageTemplate import ZopePageTemplate
 from plone.memoize.volatile import cache, ATTR, CONTAINER_FACTORY
 from plone.memoize.instance import memoize
 
-from collective.googleanalytics.interfaces.adapters import IAnalyticsExpressionVars
 from collective.googleanalytics.interfaces.report import IAnalyticsReportRenderer
 from collective.googleanalytics.visualization import AnalyticsReportVisualization
-from collective.googleanalytics.utils import evaluateTALES, extract_value, unique_list
+from collective.googleanalytics.utils import evaluateTALES, extract_value, \
+    unique_list, getDate, getTimeDelta
 
 import datetime
 import math
@@ -309,9 +308,15 @@ class AnalyticsReportRenderer(object):
         an expression context object is returned.
         """
         
-        vars_provider = getMultiAdapter((self.context, self.request, self.report),interface=IAnalyticsExpressionVars)
-
-        context_vars = vars_provider.getExpressionVars()
+        context_vars = {
+            'context': self.context,
+            'request': self.request,
+            'today': datetime.date.today(),
+            'date': getDate,
+            'timedelta': getTimeDelta,
+            'unique_list': unique_list,
+        }
+        
         context_vars.update(extra)
 
         for plugin in self.report.getPlugins(self.context, self.request):

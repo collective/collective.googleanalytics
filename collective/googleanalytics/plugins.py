@@ -2,6 +2,7 @@ from zope.interface import implements
 from zope.component import getMultiAdapter
 from collective.googleanalytics.interfaces.adapters import IAnalyticsDateRangeChoices
 from collective.googleanalytics.interfaces.plugins import IAnalyticsPlugin
+from DateTime import DateTime
 import datetime
 
 class AnalyticsBasePlugin(object):
@@ -153,7 +154,49 @@ class AnalyticsVariableDateRange(AnalyticsBasePlugin):
             'date_range_dimension': dimension,
             'date_range_sort_dimension': sort_dimension,
         }
-        
+
+class AnalyticsDefaultDateRangeChoices(object):
+    """
+    An adapter to list the possible date ranges for this report, request
+    and content.
+    """
+
+    implements(IAnalyticsDateRangeChoices)
+    
+    def __init__(self, context, request, report):
+        self.context = context
+        self.request = request
+        self.report = report
+
+    def getChoices(self):
+        """
+        Returns the appropriate date range choices.
+        """
+
+        today = datetime.date.today()
+        timedelta = datetime.timedelta
+
+        mtd_days = today.day - 1
+        ytd_days = today.replace(year=1).toordinal() - 1
+
+        date_ranges = {
+            'week': [today - timedelta(days=6), today],
+            'month': [today - timedelta(days=29), today],
+            'quarter': [today - timedelta(days=89), today],
+            'year': [today - timedelta(days=364), today],
+            'mdt': [today - timedelta(days=mtd_days), today],
+            'ytd': [today - timedelta(days=ytd_days), today],
+        }
+
+        if hasattr(self.context, 'Date') and self.context.Date() is not 'None':
+            pub_dt = DateTime(self.context.Date())
+            published_date = datetime.date(pub_dt.year(), pub_dt.month(), pub_dt.day())
+            date_ranges.update({
+                'published': [published_date, today],
+            })
+
+        return date_ranges
+
 class AnalyticsContextualResults(AnalyticsBasePlugin):
     """
     A plugin that allows results of an Analytics report to be specific to the
