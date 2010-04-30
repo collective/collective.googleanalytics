@@ -82,5 +82,6 @@ def upgrade_10a4_to_10b1(setup_tool):
             del report.column_labels
             del report.column_exps
 
-    name = 'profile-collective.googleanalytics:default'
-    # setup_tool.runAllImportStepsFromProfile(name)
+    profile_id = 'profile-collective.googleanalytics:default'
+    step_id = 'analytics'
+    setup_tool.runImportStepFromProfile(profile_id, step_id)
