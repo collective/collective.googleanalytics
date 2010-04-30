@@ -18,6 +18,11 @@ class IAnalyticsPlugin(Interface):
         """
         Process the metrics choices.
         """
+        
+    def processVisualizationChoices(choices):
+        """
+        Process the visualization choices.
+        """
     
     def processCacheArguments(cache_args):
         """

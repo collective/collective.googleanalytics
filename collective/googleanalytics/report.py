@@ -139,7 +139,11 @@ class AnalyticsReport(PropertyManager, SimpleItem):
         """
         Return the list of visualization types.
         """
-        return VISUALIZATION_CHOICES
+        
+        choices = list(VISUALIZATION_CHOICES)
+        for plugin in self.getPlugins(self, self.REQUEST):
+            plugin.processVisualizationChoices(choices)
+        return choices
         
     security.declarePrivate('getPlugins')
     def getPlugins(self, context, request):

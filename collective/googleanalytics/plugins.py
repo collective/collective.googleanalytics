@@ -32,6 +32,13 @@ class AnalyticsBasePlugin(object):
         """
 
         pass
+        
+    def processVisualizationChoices(self, choices):
+        """
+        Process the visualization choices.
+        """
+        
+        pass
     
     def processCacheArguments(self, cache_args):
         """
