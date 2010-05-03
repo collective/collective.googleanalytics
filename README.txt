@@ -91,7 +91,21 @@ query Google and the options needed to display the query result as a Google
 Visualization. They store this information as properties on themselves. These
 properties can be set using GenericSetup XML or through the web in the ZMI.
 
-These are the properties that the report object defines:
+It may be helpful to think of Analytics reports as having four logical
+sections, each of which has its own properties:
+
+* Report settings
+* Query criteria
+* Table builder
+* Visualization settings
+* Report body
+
+Report settings
+---------------
+
+The report settings section consists of five properties that control the
+display and behavior of the report. None of these properties accept
+TAL or TALES.
 
 Title
 	The title of the report in the management interface. This is the title that
@@ -113,6 +127,21 @@ Plugins
     that extend the default functionality of the report. Two plugins ship
     with collective.googleanalytics. See the sections on `Contextual Results
     Plugin`_ and `Variable Date Range Plugin`_ for more details.
+    
+    Note that some plugins add additional dimension, metric and visualization
+    choices, which are not available until the report is saved. As a result,
+    it is generally a good idea to save the report immediately after adding
+    or removing any plugin.
+	
+Query criteria
+--------------
+	
+The query criteria section of the report is made up of all the properties
+that begin with the word query. These properties determine the query that is
+sent to Google to retrieve Analytics data. All of these properties accept
+TALES expressions. They have access to the TALES variables defined in the
+section on `Using TAL and TALES in Reports`_ as well as any TALES objects
+provided by the selected plugins.
 	
 Query Metrics
 	A list of Google Analytics metrics to use in the query.
@@ -149,7 +178,57 @@ Query End Date
 Query Maximum Results
 	The maximum number of results that the query can return. It must be a TALES
 	expression that evaluates to a positive integer.
-	
+
+Table builder
+-------------
+
+The table builder section of the report includes three properties. Together
+these properties are responsible for taking the query results returned by
+Google and transforming them into a results table that can be used in as the
+data source for a visualization or otherwise displayed in the report body.
+
+In order to perform this transformation, these three properties use TALES
+expressions that return Python lists. The TALES expressions have access to
+three special functions that allow them to extract data from the data feed
+returned by Google:
+
+dimension(dimension, specified={}, aggregate=unique_list, default=[])
+    Returns the value of the given dimension across the specified
+    dimensions and metrics using the specified aggregation method
+    (unique_list by default). If no values are found, the default value,
+    an empty list by default, is returned.
+
+    For example, the following TALES expression would return a list of all
+    the browsers returned by the query::
+
+        python:dimension('ga:browser')
+            
+metric(metric, specified={}, aggregate=sum, default=0)
+    Returns the value of the given metric across the specified
+    dimensions and metrics using the specified aggregation method (sum by
+    default). If no values are found, the default value, 0 by default, is
+    returned.
+
+    To get the sum of the values of 'ga:visits' in records where
+    'ga:browser' equals 'Mozilla,' we could use this expression::
+
+        python:metric('ga:visits', {'ga:browser': 'Mozilla'})
+    
+    In reports that use the `Variable Date Range Plugin`_, the value
+    of the specified argument is often set to an element in the list
+    returned by the possible_dates method.
+
+possible_dates(dimensions=[], aggregate=unique_list)
+    Returns a list of dictionaries containing all possible values for
+    the given date dimension in the current date range. If no dimensions
+    are specified, all of the date dimensions in the query are used.
+
+    This method is commonly used in place of the dimension method in
+    reports that include date dimensions to ensure that the table contains
+    one row for each date unit in the date range.
+    
+These three properties make up the table builder section of the report:
+
 Table Columns Expression
 	The titles for the table columns. It must be a TALES expression that evaluates
 	to a Python list of strings. If and where these titles appear depends on
@@ -222,7 +301,15 @@ Table Rows Expression
     In complex, multi-column tables, it may be necessary to iterate over the
     columns variable using a Python list comprehension::
     
-        python:[row] + [metric('ga:visits', {'ga:browser': r}) for r in columns[1:]]
+        python:[row] + [metric('ga:visits', {'ga:browser': row, 'ga:operatingSystem': c}) for c in columns[1:]]
+
+Visualization settings
+----------------------
+
+The visualizaiton settings section of the report consists of the
+visualization type and visualization options properties. These properties
+are used to create javascript that uses the Google Visualizations API
+to render the data table produced by the table builder section above.
 
 Visualization Type
 	The type of Google Visualization to use to display the report results.
@@ -240,93 +327,52 @@ Visualization Options
 
 		height python:300
 
-Report Body
-	The block of TAL code that is evaluated when the report is rendered.
-	TALES expressions within this code have access to the normal objects
-	described in the section on `Using TAL and TALES in Reports`_. They also
-	can access all of the public methods provided by the report renderer::
+Report body
+-----------
 
-    profile_ids()
-        Returns a list of Google Analytics profiles for which the report
-        is being evaluated.
+The report body consists of a single property that contains the TAL template
+for the report. This block of TAL code is evaluated when the report is
+rendered. TALES expressions within this code have access to the normal objects
+described in the section on `Using TAL and TALES in Reports`_. They also
+can access all of the public methods provided by the report renderer. In the
+report body, these methods must be accessed using view/method_name or
+python:view.method_name():
 
-    query_criteria()
-        Returns the evaluated query criteria.
+profile_ids()
+    Returns a list of Google Analytics profiles for which the report
+    is being evaluated.
 
-    data()
-        Returns a list of dictionaries containing the values of the
-        dimensions and metrics for each entry in the data feed returned
-        by Google.
+query_criteria()
+    Returns the evaluated query criteria.
 
-    columns()
-        Returns the evaluated table column headings.
+data()
+    Returns a list of dictionaries containing the values of the
+    dimensions and metrics for each entry in the data feed returned
+    by Google.
 
-    rows()
-        Returns the evaluated table rows.
-        
-    visualization()
-        Returns the rendered visualization.
+columns()
+    Returns the evaluated table column headings.
 
-    dimension(dimension, specified={}, aggregate=unique_list, default=[])
-        Returns the value of the given dimension across the specified
-        dimensions and metrics using the specified aggregation method
-        (unique_list by default). If no values are found, the default value,
-        an empty list by default, is returned.
-        
-        For example, the following TALES expression would return a list of all
-        the browsers returned by the query::
-        
-            python:dimension('ga:browser')
-                    
-    metric(metric, specified={}, aggregate=sum, default=0)
-        Returns the value of the given metric across the specified
-        dimensions and metrics using the specified aggregation method (sum by
-        default). If no values are found, the default value, 0 by default, is
-        returned.
-        
-        To get the sum of the values of 'ga:visits' in records where
-        'ga:browser' equals 'Mozilla,' we could use this expression::
-        
-            python:metric('ga:visits', {'ga:browser': 'Mozilla'})
-        
-    possible_dates(dimensions=[], aggregate=unique_list)
-        Returns a list of dictionaries containing all possible values for the given
-        date dimension in the current date range.
+rows()
+    Returns the evaluated table rows.
+    
+visualization()
+    Returns the rendered visualization.
 
-It may be helpful to think of Analytics reports as having four logical
-sections:
-
-* Metadata about the report
-* Query criteria
-* Report definition
-* Visulization settings
-
-The first four properties--title, description, i18n domain and page
-specific--make up the metadata section of the report. These properties
-do not affect the results of the report or its presentation. Instead, they
-determine how it is listed and cached.
-
-The query criteria section of the report is made up of all the properties
-that begin with the word query. These properties determine the query that is
-sent to Google to retrieve Analytics data. As a result, TALES expressions in
-this section of the report do not have access to the variables and objects
-that store the returned Analytics data.
-
-The report definition is composed on the four properties that begin with the
-word report. This section of the report takes the data returned by Google and
-does the necessary processing and calculations. In other words, it takes the
-columns of data that Google provides, which correspond to dimensions and
-metrics, and maps them to the columns of data that the report defines. As a
-result, the report column expressions property has access to the metric and
-dimension variables, like ga_day or ga_visits, that represent the results of
-the query. The report introduction and conclusion have access to the data
-produces by evaluating the report column expressions in the form of data_rows
-and data_columns.
-
-Finally the visualizaiton settings section of the report consists of the
-visualization type and visualization options properties. These properties
-are used to produce javascript that uses the Google Visualizations API
-to render the report data.
+dimension(dimension, specified={}, aggregate=unique_list, default=[])
+    Returns the value of the given metric across the specified
+    dimensions and metrics using the specified aggregation method. See
+    the description in the `Table builder`_ section above.
+                
+metric(metric, specified={}, aggregate=sum, default=0)
+    Returns the value of the given metric across the specified
+    dimensions and metrics using the specified aggregation method. See
+    the description in the `Table builder`_ section above.
+    
+possible_dates(dimensions=[], aggregate=unique_list)
+    Returns a list of dictionaries containing all possible values for
+    the given date dimension in the current date range. See the description
+    in the `Table builder`_ section above.
     
 Using TAL and TALES in Reports
 ==============================
@@ -350,46 +396,29 @@ date
 timedelta
 	An alias for the datetime.timedelta function.
 	
+unique_list
+    A helper function that takes a Python list and returns a corresponding
+    list where all duplicated elements in the original list have been removed.
+    It differs from the Python set type in that it preserves the order of the
+    original list.
+
+Contextual Results Plugin
+=========================
+
+This plugin provides tools to make reports page specific. It modifies the
+default caching policy to cache report results on a per-page basis instead
+of for the entire site. It also provides several helper TALES variables that
+simplify the process of creating page-specific reports:
+
 page_url
 	The relative URL of the current request. This is most commonly used in
 	the query filters property for creating page-specific reports.
-		
-date_range_dimension
-    The temporal dimension used to segment the results. In report column
-    expressions, this variable evaluates to the value of the dimension for
-    the selected row. In all other fields, it evaluates to the name of the
-    dimension. See the section on `Dates and Reports`_ for more information
-    about how this dimension is selected.
-    
-date_range_sort_dimension
-    The name of the dimension used to sort the results chronologically (along
-    with date_range_dimension). See the section on `Dates and Reports`_ for
-    more information.
-    
-date_range_unit
-    A string containing the human-readable name of the dimension specified
-    by date_range_dimension (e.g. 'Day', 'Month', etc.)
-    
-date_range_unit_plural
-    A convenience variable that contains date_range_unit with the letter
-    's' appended.
-
-In addition to these objects, some properties have access to special objects
-and variables that represent the data returned by the query:
-
-Report Column Expressions
-	These TALES expressions have access to variables that represent the values
-	of each dimension and metric used in the query. The names of these
-	variables are found by taking the name of the dimension or metric and
-	replacing the colon with an underscore. For example, ga:exitPagePath
-	becomes ga_exitPagePath. For more information about using these variables,
-	see the section on `Report Properties`_ above.
 	
-Report Introduction and Report Conclusion
-	These TAL blocks have access to two special data structures--data_rows
-	and data_columns--that contain the results of the evaluated report
-	column expressions. For more information about using these data structures
-	to perform calculations, see the section on `Report Properties`_ above.
+page_filter
+
+nextpage_filter
+
+previouspage_filter
 
 Variable Date Range Plugin
 ==========================
@@ -450,6 +479,26 @@ date_range_sort_dimension
     date_range_sort_dimension (along with date_range_dimension) when sorting
     prevents a situation in which week 52 of 2009 gets sorted before week 1
     of 2010.
+    
+date_range_dimension
+    The temporal dimension used to segment the results. In report column
+    expressions, this variable evaluates to the value of the dimension for
+    the selected row. In all other fields, it evaluates to the name of the
+    dimension. See the section on `Dates and Reports`_ for more information
+    about how this dimension is selected.
+
+date_range_sort_dimension
+    The name of the dimension used to sort the results chronologically (along
+    with date_range_dimension). See the section on `Dates and Reports`_ for
+    more information.
+
+date_range_unit
+    A string containing the human-readable name of the dimension specified
+    by date_range_dimension (e.g. 'Day', 'Month', etc.)
+
+date_range_unit_plural
+    A convenience variable that contains date_range_unit with the letter
+    's' appended.
 
 For more information about using these dimensions in reports, see the section
 on `Using TAL and TALES in Reports`_.
