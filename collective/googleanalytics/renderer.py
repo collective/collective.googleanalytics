@@ -60,6 +60,7 @@ class AnalyticsReportRenderer(object):
         self.report = report
         self._data_feed = None
     
+    security.declarePrivate('__call__')
     @cache(renderer_cache_key, renderer_cache_storage)
     def __call__(self):
         """
@@ -83,24 +84,6 @@ class AnalyticsReportRenderer(object):
             error_log = getToolByName(self.context, 'error_log')
             error_log.raising(sys.exc_info())
             return self.error()
-        
-    security.declarePublic('data_feed')
-    @memoize
-    def data_feed(self):
-        """
-        Returns a Google Analytics data feed.
-        """
-        
-        if self._data_feed:
-            return self._data_feed
-        
-        analytics_tool = getToolByName(self.context, 'portal_analytics')
-        query_args = self.query_arguments()
-        data_feed = analytics_tool.makeClientRequest('data', 'GetData', **query_args)
-        logger.info("Querying Google for report '%s' on context '%s'." % 
-            (self.report.id, self.context.id))
-
-        return data_feed
         
     security.declarePublic('profile_ids')
     @memoize
@@ -140,26 +123,6 @@ class AnalyticsReportRenderer(object):
         
         return criteria
         
-    security.declarePublic('query_arguments')
-    @memoize
-    def query_arguments(self):
-        """
-        Returns the query arguments in the format that Google expects.
-        """
-
-        criteria = self.query_criteria()
-        query_args = {
-            'ids': ','.join(criteria['ids']),
-            'dimensions': ','.join(criteria['dimensions']),
-            'metrics': ','.join(criteria['metrics']),
-            'filters': ','.join(criteria['filters']),
-            'sort': ','.join(criteria['sort']),
-            'start_date': criteria['start_date'],
-            'end_date': criteria['end_date'],
-            'max_results': criteria['max_results'],
-        }
-        return query_args
-        
     security.declarePublic('data')
     @memoize
     def data(self):
@@ -169,7 +132,7 @@ class AnalyticsReportRenderer(object):
         """
 
         results = []
-        for entry in self.data_feed().entry:
+        for entry in self._getDataFeed().entry:
             results.append(dict([extract_value(row) for row in entry.dimension + entry.metric]))
         return results
         
@@ -182,7 +145,6 @@ class AnalyticsReportRenderer(object):
         """
         
         values_context = {
-            'value': self.value,
             'dimension': self.dimension,
             'metric': self.metric,
             'possible_dates': self.possible_dates,
@@ -200,7 +162,6 @@ class AnalyticsReportRenderer(object):
         """
         
         values_vars = {
-            'value': self.value,
             'dimension': self.dimension,
             'metric': self.metric,
             'possible_dates': self.possible_dates,
@@ -236,7 +197,7 @@ class AnalyticsReportRenderer(object):
         metrics using the specified aggregation method.
         """
         
-        return self.value(dimension, specified, aggregate, default)
+        return self._getValue(dimension, specified, aggregate, default)
                     
     security.declarePublic('metric')
     def metric(self, metric, specified={}, aggregate=sum, default=0):
@@ -244,19 +205,7 @@ class AnalyticsReportRenderer(object):
         Returns the value of the given metic across the specified
         dimensions using the specified aggregation method.
         """
-        return self.value(metric, specified, aggregate, default)
-        
-    security.declarePublic('value')
-    def value(self, name, specified={}, aggregate=sum, default=0):
-        """
-        Returns the value of a dimension or metric from the data feed accross
-        other specified dimensions or metrics.
-        """
-        
-        values = [e[name] for e in self.data() if set(specified.items()) <= set(e.items())]
-        if not values:
-            return default
-        return aggregate(values)
+        return self._getValue(metric, specified, aggregate, default)
         
     security.declarePublic('possible_dates')
     def possible_dates(self, dimensions=[], aggregate=list):
@@ -305,6 +254,44 @@ class AnalyticsReportRenderer(object):
             
         return aggregate(results)
         
+    security.declarePrivate('_getQueryArguments')
+    @memoize
+    def _getQueryArguments(self):
+        """
+        Returns the query arguments in the format that Google expects.
+        """
+
+        criteria = self.query_criteria()
+        query_args = {
+            'ids': ','.join(criteria['ids']),
+            'dimensions': ','.join(criteria['dimensions']),
+            'metrics': ','.join(criteria['metrics']),
+            'filters': ','.join(criteria['filters']),
+            'sort': ','.join(criteria['sort']),
+            'start_date': criteria['start_date'],
+            'end_date': criteria['end_date'],
+            'max_results': criteria['max_results'],
+        }
+        return query_args    
+    
+    security.declarePrivate('_getDataFeed')
+    @memoize
+    def _getDataFeed(self):
+        """
+        Returns a Google Analytics data feed.
+        """
+
+        if self._data_feed:
+            return self._data_feed
+
+        analytics_tool = getToolByName(self.context, 'portal_analytics')
+        query_args = self._getQueryArguments()
+        data_feed = analytics_tool.makeClientRequest('data', 'GetData', **query_args)
+        logger.info("Querying Google for report '%s' on context '%s'." % 
+            (self.report.id, self.context.id))
+
+        return data_feed
+        
     security.declarePrivate('_getVisualization')
     @memoize
     def _getVisualization(self):
@@ -343,5 +330,17 @@ class AnalyticsReportRenderer(object):
         if tal:
             return context_vars
         return getEngine().getContext(context_vars)
+        
+    security.declarePrivate('_getValue')
+    def _getValue(self, name, specified={}, aggregate=sum, default=0):
+        """
+        Returns the value of a dimension or metric from the data feed accross
+        other specified dimensions or metrics.
+        """
+
+        values = [e[name] for e in self.data() if set(specified.items()) <= set(e.items())]
+        if not values:
+            return default
+        return aggregate(values)
         
 InitializeClass(AnalyticsReportRenderer)
