@@ -84,6 +84,46 @@ the list using the up, down, top and bottom buttons. The order of reports
 in portal_analytics controls the order that they will appear in portlets
 throughout the site.
 
+The Report Rendering Process
+============================
+
+By default, Analytics reports are rendered asynchronously using jQuery. This 
+improves site performance by allowing the body of page to render without
+waiting for a response from Google Analytics. The basic flow of a request
+that renders an Analytics report might go as follows:
+
+1. A user requests the content item front-page, which has a Google Analytics
+   portlet assigned in the right column.
+   
+2. Plone renders front-page as usual. When it renders the Google Analytics
+   portlet, it looks up a loader component.
+   
+3. Instead of requesting the actual results, the loader produces javascript
+   that will load the results after the page has finished loading. It also
+   produces javascript to load the visualization modules that the reports
+   will require.
+   
+4. The javascript from the loader is included with front-page when it is
+   rendered. As soon as the page has finished loading, the javascript produced
+   by the loader is activated. It sends another request to the server that
+   includes the requested reports and any options for evaluating them.
+   
+5. A browser view associated with the loader is called as part of the
+   asynchronous request. (The context for this browser view is still
+   front-page.) This browser view loads the specified reports.
+   
+6. For each report in the request, the browser view looks up a renderer,
+   which is a multi-adapter on the current context (front-page), request 
+   (the asynchronous request) and the report.
+   
+7. The renderer renders the report or returns a cached result if one exists.
+   The browser view combines the results from all of the requested reports and
+   returns them.
+   
+8. The results returned by the renderer are injected into the portlet. In the
+   process, jQuery evaluates any javascript in the results, including the
+   javascript that produces the visualization.
+
 Report Properties
 =================
 Analytics reports are persistent Zope objects that store the arguments used to
@@ -388,7 +428,10 @@ context
 	is the content object next to which the report will be displayed.
 	
 request
-	The current request object.
+	The current request object. Since Analytics reports are rendered
+	asynchronously, this request object is the asynchronous report request,
+	not the user's original request. The URL of the original request can be
+	obtained by using request/request_url.
 
 date
 	An alias for the datetime.date function.
@@ -415,22 +458,34 @@ page_url
 	the query filters property for creating page-specific reports.
 	
 page_filter
+    A Google Analytics filter expression that matches records where the
+    ga:pagePath record matches the current relative URL. It uses regular
+    expression matching to match both URLs with and without the trailing
+    slash.
 
 nextpage_filter
+    A Google Analytics filter expression that matches records where the
+    ga:nextPagePath record matches the current relative URL. It uses regular
+    expression matching to match both URLs with and without the trailing
+    slash.
 
 previouspage_filter
+    A Google Analytics filter expression that matches records where the
+    ga:previousPagePath record matches the current relative URL. It uses regular
+    expression matching to match both URLs with and without the trailing
+    slash.
 
 Variable Date Range Plugin
 ==========================
 
-Analytics reports do not specify start and end dates for their queries.
-Instead, they accecpt date range arguments when they are evaluated. (This
-dynamic selection of date ranges is not currently exposed in the user
-interface.) These date range arguments are passed to the report's getResults
-method. getResults can accept these date-related keyword arguments:
+Analytics reports can specify fixed start and end dates for their queries.
+It is generally more useful, however, to allow the date range to be set when
+the report is evaluated. The Variable Date Range Plugin provides this
+functionality. In order to set the date range, it looks in the request for
+one of these special keys:
 
 start_date and end_date
-    Python start and end dates.
+    Dates in the form of YYYYMMDD.
 
 date_range
     An integer specifying the number of days prior to the current date use
@@ -460,7 +515,10 @@ date_range
     published
         Since the item was published.
 
-Since dates for reports are dynamic, Analytics reports implement two special
+Since Analytics reports are rendered asynchronously, these keys must be set
+in the request sent by the asynchronous loader, not in the original request.
+
+Since dates for reports are dynamic, the plugin also provides two special
 dimensions that are date sensitive. This allows the granularity of the report
 results to be set based on the date range selected. (For example, if you specify
 a date range of a year, you probably don't want to segment your results by day.
@@ -479,18 +537,14 @@ date_range_sort_dimension
     date_range_sort_dimension (along with date_range_dimension) when sorting
     prevents a situation in which week 52 of 2009 gets sorted before week 1
     of 2010.
-    
-date_range_dimension
-    The temporal dimension used to segment the results. In report column
-    expressions, this variable evaluates to the value of the dimension for
-    the selected row. In all other fields, it evaluates to the name of the
-    dimension. See the section on `Dates and Reports`_ for more information
-    about how this dimension is selected.
 
-date_range_sort_dimension
-    The name of the dimension used to sort the results chronologically (along
-    with date_range_dimension). See the section on `Dates and Reports`_ for
-    more information.
+Note that that these two dimensions must be selected from the list of query
+dimensions to be included in the query. If they are not available in the list
+of possible dimensions, be sure to save the report after selecting the Variable
+Date Range Plugin from the list of plugins.
+
+The plugin also provides two helper variables that are useful in report
+templates:
 
 date_range_unit
     A string containing the human-readable name of the dimension specified
@@ -500,141 +554,172 @@ date_range_unit_plural
     A convenience variable that contains date_range_unit with the letter
     's' appended.
 
-For more information about using these dimensions in reports, see the section
-on `Using TAL and TALES in Reports`_.
-
 Creating a New Report
 =====================
 
 Now that you are familiar with the properties that make up an Analytics report,
 it's time to try creating a new report from scratch. In this example, we will
-first create a report that calculates and displays the site-wide bounce rate
-segmented by browser. After we get that working, we'll create a second report
-that displays the same information for any given page on the site. Let's get 
-started!
+create a report that calculates and displays the site-wide bounce rate
+over a period of time segmented by browser.
+
+This example presents a fairly complex report. For examples of simpler reports,
+consult the default reports in portal_analytics. In many cases, you can
+probably modify one of these reports to suit your needs by substituting
+dimensions and metrics. If, however, you find that you need to create a more
+complicated multi-dimensional report, read on:
 
 1. Navigate to the root of the site in the ZMI and click on the
    portal_analytics tool.
 
 2. Click the Add Google Analytics Report button.
 
-3. We'll give our new report the ID site-bounce-rate-browser-column,
+3. We'll give our new report the ID site-bounce-rate-browser-line,
    following the naming convention of the default reports. This naming 
    convention is optional, but it helps to keep things organized. Then 
    click the add button.
 
 4. Click on the new report to edit it. Give it a title of Site Bounce Rate
-   By Browser: Column Chart and this description:
+   By Browser: Line Chart and this description:
 
    This report displays the site-wide bounce rate segmented by the user's 
    browser. It is useful for gauging how effective our site's new multimedia
    features are in each browser.
 
-5. Leave the i18n domain as analytics, the default value. If we were going
-   to translate this report, we might use the domain defined in our site's
-   theme product.
+5. Leave the i18n domain as collective.googleanalytics, the default value. If we
+   were going to translate this report, we might use the domain defined in our
+   site's theme product.
 
-6. Leave the page specific box unchecked. This report is site-wide, so
-   we don't need to calculate the result for each individual page.
+6. From the list of categories, select Site Wide.
 
-7. Now the difficult part: determining the arguments for our query. If we
+7. From the list of plugins, select Variable Date Range. After making your
+   selection, click the Save button to populate the list of dimensions with
+   the new options.
+
+8. Now the difficult part: determining the arguments for our query. If we
    consult the common calculations page in the Google's Dimensions and Metrics
    Reference (see the section on `Where to Learn More`_ for the link), we see
    that bounce rate is calculated as follows::
 
 		ga:bounces/ga:entrances
 		
-   So, set the query metrics to ga:bounces and ga:entrances. 
+   So, set the query metrics to ga:bounces and ga:entrances.
 
-8. We also know that we want to segment our results by browser, so we'll se
-   our query dimension to ga:browser.
+9. We also know that we want to segment our results by browser, so we'll set
+   our query dimension to ga:browser. Be sure to also select
+   date_range_dimension and date_range_sort_dimension from the bottom
+   of the dimensions list.
 
-9. Leave query filters blank. We don't need to filter the query results.
+10. In the query filters enter::
 
-10. In the query sort box, type -ga:entrances. We want to sort by entrances
-    so that we'll be guaranteed to be shown the most popular browsers. The
-    minus sign preceding the metric indicates that the sort should be in
-    descending order.
+        ga:entrances>10
 
-11. In query maximum results, enter 5. Since we set ga:entrances as the sort
-    value, this will show us results for the top five browsers based on
-    entrances. We could, of course, increase this number if we wanted to see
-    results for more browsers.
+    Strictly speaking, we wouldn't need this filter. But for a site with a lot
+    of traffic, we probably don't care about the results browsers for that
+    have fewer than 10 entrances in a given period of time. So, we use this
+    filter to eliminate them from the results.
 
-12. Now that our query arguments are complete, we can work on our report
-    definition. We want our report to show us two things: the name of the
-    browser and the bounce rate as a percentage. So, we'll define two report
-    columns. In the report column labels, enter these values on separate
-    lines::
+11. In the query sort box, enter the dimensions provided by the Variable Date
+    Range Plugin::
+    
+        date_range_dimension
+        date_range_sort_dimension
+    
+12. In query maximum results, leave the default value, python:1000.
 
-        string:Browser Name
-        string:Bounce Rate (%)
+13. Now that our query arguments are complete, we can work on our results
+    table. Let's begin by drawing out what our table should look like:
+    
+    +-------+-----------+---------------------+----------+----------+
+    | "Day" | "Firefox" | "Internet Explorer" | "Safari" | "Chrome" |
+    +=======+===========+=====================+==========+==========+
+    |   "5" |        60 |                  70 |       54 |       63 |
+    +-------+-----------+---------------------+----------+----------+
+    |   "6" |        64 |                  69 |       59 |       68 |
+    +-------+-----------+---------------------+----------+----------+
+    |   "7" |        63 |                  72 |       65 |       68 |
+    +-------+-----------+---------------------+----------+----------+
+    | Etc.                                                          |
+    +-------+-----------+---------------------+----------+----------+
+    
+    Note that the day column contains strings, not integers. This is necessary
+    so that the line chart visualization will treat these values as labels
+    instead of data.
 	
-13. In the report column expressions field, enter these TALES expressions on
-    separate lines::
+14. Great! Now we can write the expressions to generate the table. Enter this
+    expression in the Table Columns Expression field::
+    
+        python:[date_range_unit] + dimension('ga:browser')
+        
+    This expression combines the value of the date_range_unit, which is
+    provided by the Variable Date Range Plugin, with all of the possible
+    values of the ga:browser dimension.
+    
+15. For the Table Row Repeat Expression, enter::
 
-        python:str(ga_browser)
-        python:int(100*float(ga_bounces)/float(ga_entrances))
-		
-    The first expression is fairly self-explanatory; it returns then name of
-    the browser as a string. In the second expression, however, we have to
-    do some calculations. Since Google returns all values as strings, our first
-    task is converting the values to the appropriate format, in this case,
-    floats. (Even though these values are always integers, we want to convert
-    them to floating point numbers. Otherwise, Python will round down the
-    result of the division.) Once we have our values in the correct format, we
-    can divide them according to the formula provided by Google
+        possible_dates    
+    
+    This expression will populate the row keys with dictionaries that contain
+    the values of date_range_dimension and date_range_sort_dimension. We use
+    possible_dates instead of dimension(date_range_dimension) because we want
+    one entry for every period of time in the current date range, even if there
+    weren't any results for that particular period of time.
+    
+16: In the Table Rows Expression field, enter the following expression,
+    removing the line breaks::
+    
+        python:[str(row[date_range_dimension])] + 
+        [int(100*float(metric('ga:bounces', row))/(float(metric('ga:entrances', row)) + 0.0001))
+            for c in columns[1:] if not row.update({'ga:browser': c})]
+        
+    Whoa! That looks complicated! If we break down the expression into its
+    parts, however, it's easy to see what's going on::
+    
+        [str(row[date_range_dimension])]
+        
+    This part of the expression creates a list with a single element: the value
+    of date_range_dimension as a string. Recall that, in this expression, row
+    is a dictionary that contains key-value pairs for date_range_expression
+    and date_range_sort_expression.
+    
+    Now let's skip to the end of the expression::
+    
+        for c in columns[1:]
+        
+    This code serves as the repeat expression in a Python list comprehension
+    that generates the bounce rate for each browser for the specified date.
+    columns[1:] represents the list of browser names generated by
+    dimension('ga:browser')::
+    
+        if not row.update({'ga:browser': c})
+        
+    This tricky bit of code updates the row dictionary to include the value of
+    the current browser as it iterates over the list of browsers. That way we
+    can pass row to the metric() method to get value of the metric for the
+    date and browser we are currently evaluating. We use 'if not' because
+    the update method returns None, which evaluates to False.
+
+    Finally, the rest of the expression is just the math used to calculate
+    the bounce rate::
+    
+        int(100*float(metric('ga:bounces', row))/(float(metric('ga:entrances', row)) + 0.0001))
+        
+    We have to convert the values we get back from metric() into floating point
+    numbers so that the division operates as we expect. We also add a tiny
+    number to the denominator to avoid getting a divide by zero error if the
+    value of ga:entrances is zero. Finally, we multiply the result by 100 to
+    get a percentage and round the result to the nearest integer.
+
+17. We're almost done! From the visualization type drop down menu, choose
+    LineChart.
 	
-    This division will yield a number between 0 and 1. To make the result
-    easier to read, we'll multiply the decimal by 100 to get a percentage and
-    round it off to the nearest integer.
-	
-14. Leave the report introduction property blank. We're going to display the
-    title of the report as part of the visualization, so we don't have to do
-    it here.
-
-15. In the report conclusion, we want to list the browsers with the lowest and
-    highest bounce rates among the ones we are displaying. In the report
-    conclusion field enter this TAL code::
-
-        <div tal:define="browsers python:data_columns[0];
-                bounces python:data_columns[1];">
-            <p>
-                Highest bounce rate:
-                <strong tal:define="max_bounces python:max(bounces);
-                    max_bounces_index python:bounces.index(max_bounces);"
-                    tal:content="python:browsers[max_bounces_index]">
-                    Browser
-                </strong>
-            </p>
-            <p>
-                Lowest bounce rate:
-                <strong tal:define="min_bounces python:min(bounces);
-                        min_bounces_index python:bounces.index(min_bounces);"
-                    tal:content="python:browsers[min_bounces_index]">
-                    Browser
-                </strong>
-            </p>
-        </div>
-		
-    In the first tal:define, we extract the browsers and bounces columns
-    from the data_columns list. Then in the subsequent tal:defines, we
-    determine the highest or lowest value in the bounces column and find
-    the index of that value. Finally we set the value of the strong element
-    to the value in browsers column that corresponds with the index we have
-    determined.
-	
-16. Finally, we will set the visualization options for the report. In the
-    visualization type dropdown, select ColumnChart.
-
-17. In the visualization options field, enter these options in the format
-    of TAL defines, one per line::
-
+18. In the visualization options box, enter these option definitions, one
+    per line::
+    
+        title string:Bounce Rate By Browser
         height python:250
-        is3D python:True
-        legend string:top
-        legendFontSize python:10
-        title string:Site Bounce Rate
+        titleX python:date_range_unit
+        titleY string:Bounce Rate (%)
+        smoothLine python:True
 		
     These options are all aesthetic. Once you become familiar with Google
     visualizations, you can adjust them to fit your personal preferences. For
@@ -642,59 +727,13 @@ started!
     Google Visualization Gallery referenced in the section on `Where to Learn
     More`_.
 	
+19. In the report body field, enter this block of TAL code, which renders the
+    line chart visualization::
+
+        <div tal:replace="structure view/visualization"></div>
+	
 18. You're done! Click the save button in the ZMI. Then test out your new
     report on the site as described in the section about `Basic Use`_.
-
-Now that we've created a site-wide report for bounce rate, it's easy to create
-a related report that displays the same statistics for a particular page.
-
-1. To begin, navigate to the portal_analytics tool in the ZMI.
-
-2. Check the box next to the report you just created. Then press the copy
-   button at the bottom of the list.
-
-3. Press the paste button. A new copy of the report is created with the ID
-   copy_of_site-bounce-rate-browser-column.
-
-4. Check next to the newly pasted report and click the rename button.
-
-5. Change the ID of the new report to page-bounce-rate-browser-column and
-   press Ok.
-
-6. Click on the new report to edit it. In the title, replace the word Site with
-   Page, and edit the description accordingly.
-
-7. Check the box next to page specific. This will tell Plone to evaluate the
-   the report for each page instead of caching it for the entire site.
-
-8. In the query metrics list, deselect ga:entrances and select
-   ga:uniquePageviews. Also, leave ga:bounces selected. If you're not sure why
-   we need to use ga:uniquePageviews instead of ga:entrances, consult the
-   Google page about common calculations referenced above.
-
-9. In the list of query dimensions, select ga:pagePath, and leave ga:browser
-   selected. We'll use ga:pagePath to filter the results of the query to just
-   the current page.
-
-10. In the query sort field, replace -ga:entrances with -ga:uniquePageviews to
-    reflect the change in metrics.
-
-11. Similarly, in the report column expressions, replace ga_entrances with
-    ga_uniquePageviews.
-
-12. In the query filters field, enter this TALES expression::
-
-        string:ga:pagePath==${page_url}
-		
-    Recall that page_url is a convenience variable that is set to the relative
-    URL of the current request.
-	
-13. In the visualization options property, edit the title of the visualization
-    to read Page Bounce Rate.
-
-14. You're done! Save your changes and try out your new report on your site. If
-    you assign the report in a portlet at the root of the site and then navigate
-    to interior pages, you should see the results change.
 
 Defining Reports in a Filesystem Product
 ========================================
