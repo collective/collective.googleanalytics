@@ -94,7 +94,7 @@ class AnalyticsReport(PropertyManager, SimpleItem):
         self.id = id
         self.title = kwargs.get('title', '')
         self.description = kwargs.get('description', '')
-        self.i18n_domain = kwargs.get('i18n_domain', 'analytics')
+        self.i18n_domain = kwargs.get('i18n_domain', 'collective.googleanalytics')
         self.categories = kwargs.get('categories', [])
         self.plugin_names = kwargs.get('plugin_names', [])
         self.metrics = kwargs.get('metrics', [])
@@ -107,7 +107,7 @@ class AnalyticsReport(PropertyManager, SimpleItem):
         self.columns = kwargs.get('columns', '')
         self.row_repeat = kwargs.get('row_repeat', '')
         self.rows = kwargs.get('rows', '')
-        self.viz_type = kwargs.get('viz_type', 'Table')
+        self.viz_type = kwargs.get('viz_type', 'None')
         self.viz_options = kwargs.get('viz_options', [])
         self.body = kwargs.get('body', '')
 
