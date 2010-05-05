@@ -40,6 +40,19 @@ def upgrade_10a4_to_10b1(setup_tool):
     %s
     -->
     """
+    
+    def map_filter(old_filter):
+        """
+        Maps an old filter expression to a new one.
+        """
+                
+        if old_filter == 'string:ga:pagePath==${page_url}':
+            return 'page_filter'
+        if old_filter == 'string:ga:nextPagePath==${page_url}':
+            return 'nextpage_filter'
+        if old_filter == 'string:ga:previousPagePath==${page_url}':
+            return 'previouspage_filter'
+        return old_filter
 
     for report in reports:
         if not hasattr(report, 'plugin_names'):
@@ -52,6 +65,9 @@ def upgrade_10a4_to_10b1(setup_tool):
                 del report.is_page_specific
         
             report.plugin_names.append(u'Variable Date Range')
+            
+        if hasattr(report, 'filters'):
+            report.filters = [map_filter(f) for f in report.filters]
         
         if not hasattr(report, 'start_date'):
             report.start_date = u''
