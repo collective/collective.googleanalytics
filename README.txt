@@ -190,7 +190,7 @@ Query Dimensions
 	A list of Google Analytics dimensions to return in the query. This list can
 	include the special dimension variables date_range_dimension and
 	date_range_sort_dimension. For more information on using these dimension,
-	see the section on `Using TAL and TALES in Reports`_.
+	see the section on the `Variable Date Range Plugin`_.
 
 Query Filters
 	A list of filters to use in the query. Filters are defined as strings or
@@ -321,12 +321,12 @@ Table Rows Expression
     
     row
         The value of the row key for the row that is currently being evaluated.
-        These values come from the list produced by evaluating the Table Row
-        Repeat Expression.
+        These values come from the list produced by evaluating the table row
+        repeat expression.
         
     columns
-        The list of table column headings produced by evaluating the Table
-        Columns Expression.
+        The list of table column headings produced by evaluating the table
+        columns expression.
         
     In tables with only one column, the value of the rows expression is
     often the same as the value of the row key::
@@ -488,7 +488,7 @@ start_date and end_date
     Dates in the form of YYYYMMDD.
 
 date_range
-    An integer specifying the number of days prior to the current date use
+    An integer specifying the number of days prior to the current date to use
     as the report start date. The end date is assumed to be the current date.
     The date_range argument can also accept a string keyword that evaluates 
     to a particular date range depending on the current context. Current 
@@ -662,7 +662,7 @@ complicated multi-dimensional report, read on:
     the values of date_range_dimension and date_range_sort_dimension. We use
     possible_dates instead of dimension(date_range_dimension) because we want
     one entry for every period of time in the current date range, even if there
-    weren't any results for that particular period of time.
+    aren't any results for that particular period of time.
     
 16: In the table rows expression field, enter the following expression,
     removing the line breaks::
