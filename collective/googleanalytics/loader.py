@@ -57,6 +57,7 @@ class DefaultAnalyticsAsyncLoader(object):
             'report_ids': '[%s]' % ', '.join(["'%s'" % r for r in reports]), 
             'profile_ids': "['%s']" % profile_id,
             'portal_url': portal_url,
+            'context_url': self.context.absolute_url(),
             'request_url': self.context.request.ACTUAL_URL, 
             'date_range': date_range,
         }

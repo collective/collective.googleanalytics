@@ -6,7 +6,7 @@ jq(function () {
         'background-repeat': 'no-repeat',
         'height': '50px'
     });
-    jq('#${container_id}').load('@@analytics_async', {
+    jq('#${container_id}').load('${context_url}/@@analytics_async', {
        'report_ids': ${report_ids},
        'profile_ids': ${profile_ids},
        'request_url': '${request_url}',
