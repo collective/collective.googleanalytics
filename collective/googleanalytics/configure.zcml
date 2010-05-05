@@ -76,6 +76,14 @@
         description="Configuration changes for the upgrade from 1.0a2 to 1.0a3."
         provides="Products.GenericSetup.interfaces.EXTENSION"
         />
+        
+    <genericsetup:registerProfile
+         name="upgrade_10a4_10b1"
+         title="Upgrade profile for Google Analytics from 1.0a4 to 1.0b1"
+         directory="profiles/upgrade_10a4_10b1"
+         description="Configuration changes for the upgrade from 1.0a4 to 1.0b1."
+         provides="Products.GenericSetup.interfaces.EXTENSION"
+         />
 
     <genericsetup:importStep
         name="analytics"

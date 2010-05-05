@@ -85,6 +85,6 @@ def upgrade_10a4_to_10b1(setup_tool):
         if report.i18n_domain == 'analytics':
             report.i18n_domain = 'collective.googleanalytics'
 
-    profile_id = 'profile-collective.googleanalytics:default'
+    profile_id = 'profile-collective.googleanalytics:upgrade_10a4_10b1'
     step_id = 'analytics'
     setup_tool.runImportStepFromProfile(profile_id, step_id)

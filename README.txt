@@ -131,14 +131,14 @@ query Google and the options needed to display the query result as a Google
 Visualization. They store this information as properties on themselves. These
 properties can be set using GenericSetup XML or through the web in the ZMI.
 
-It may be helpful to think of Analytics reports as having four logical
+It may be helpful to think of Analytics reports as having five logical
 sections, each of which has its own properties:
 
-* Report settings
-* Query criteria
-* Table builder
-* Visualization settings
-* Report body
+* `Report settings`_
+* `Query criteria`_
+* `Table builder`_
+* `Visualization settings`_
+* `Report body`_
 
 Report settings
 ---------------
@@ -275,7 +275,7 @@ Table Columns Expression
 	the type of visualization. For the Table visualization, for example, they
 	appear as the table column headings.
 	
-	In most reports, the Table Columns Expression is a static Python list::
+	In most reports, the table columns expression is a static Python list::
 	    
 	    python:['Visits']
 	    
@@ -298,7 +298,7 @@ Table Row Repeat Expression
     
     When the report renderer is asked for the results table rows, it first
     evaluates the row repeat expression. It then iterates over each element
-    in the resulting list and evaluates the Table Rows Expression with
+    in the resulting list and evaluates the table rows expression with
     the current element assigned to the variable "row."
     
     Typically the values of the row repeat expression are generated using the
@@ -316,8 +316,8 @@ Table Row Repeat Expression
 Table Rows Expression
     The contents of each table row. It is must be a TALES expression that
     evaluates to a Python list containing the value of the "cells" for that
-    table row. The Table Rows Expression has access to two special TALES
-    varables::
+    table row. The table rows expression has access to two special TALES
+    varables:
     
     row
         The value of the row key for the row that is currently being evaluated.
@@ -646,7 +646,7 @@ complicated multi-dimensional report, read on:
     instead of data.
 	
 14. Great! Now we can write the expressions to generate the table. Enter this
-    expression in the Table Columns Expression field::
+    expression in the table columns expression field::
     
         python:[date_range_unit] + dimension('ga:browser')
         
@@ -654,7 +654,7 @@ complicated multi-dimensional report, read on:
     provided by the Variable Date Range Plugin, with all of the possible
     values of the ga:browser dimension.
     
-15. For the Table Row Repeat Expression, enter::
+15. For the table row repeat expression, enter::
 
         possible_dates    
     
@@ -664,7 +664,7 @@ complicated multi-dimensional report, read on:
     one entry for every period of time in the current date range, even if there
     weren't any results for that particular period of time.
     
-16: In the Table Rows Expression field, enter the following expression,
+16: In the table rows expression field, enter the following expression,
     removing the line breaks::
     
         python:[str(row[date_range_dimension])] + 
