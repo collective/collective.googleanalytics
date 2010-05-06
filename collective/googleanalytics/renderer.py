@@ -89,8 +89,8 @@ class AnalyticsReportRenderer(object):
     @memoize
     def profile_ids(self):
         """
-        Returns a list of Google Analytics profiles for which this report
-        should be evaluated.
+        Returns a list of Google Analytics profiles for which the report
+        is being evaluated.
         """
         
         profile_ids = self.request.get('profile_ids', [])
@@ -102,7 +102,7 @@ class AnalyticsReportRenderer(object):
     @memoize
     def query_criteria(self):
         """
-        Evaluates the query criteria provided by the report.
+        Returns the evaluated query criteria.
         """
         
         expressions = {
@@ -128,7 +128,8 @@ class AnalyticsReportRenderer(object):
     def data(self):
         """
         Returns a list of dictionaries containing the values of the
-        dimensions and metrics for each data feed entry.
+        dimensions and metrics for each entry in the data feed returned
+        by Google.
         """
 
         results = []
@@ -140,8 +141,7 @@ class AnalyticsReportRenderer(object):
     @memoize
     def columns(self):
         """
-        Iterate through the data returned by Google and calcualte the value of the
-        report columns.
+        Returns the evaluated table column headings.
         """
         
         values_context = {
@@ -157,8 +157,7 @@ class AnalyticsReportRenderer(object):
     @memoize
     def rows(self):
         """
-        Iterate through the data returned by Google and calcualte the value of the
-        report columns.
+        Returns the evaluated table rows.
         """
         
         values_vars = {
@@ -185,7 +184,7 @@ class AnalyticsReportRenderer(object):
     @memoize
     def visualization(self):
         """
-        Renders the visualization for this report.
+        Returns the rendered visualization.
         """
         
         return self._getVisualization().render()
@@ -193,8 +192,8 @@ class AnalyticsReportRenderer(object):
     security.declarePublic('dimension')
     def dimension(self, dimension, specified={}, aggregate=unique_list, default=[]):
         """
-        Returns the value of the given dimension across the specified
-        metrics using the specified aggregation method.
+        Returns the value of the given metric across the specified
+        dimensions and metrics using the specified aggregation method.
         """
         
         return self._getValue(dimension, specified, aggregate, default)
@@ -202,16 +201,16 @@ class AnalyticsReportRenderer(object):
     security.declarePublic('metric')
     def metric(self, metric, specified={}, aggregate=sum, default=0):
         """
-        Returns the value of the given metic across the specified
-        dimensions using the specified aggregation method.
+        Returns the value of the given metric across the specified
+        dimensions and metrics using the specified aggregation method.
         """
         return self._getValue(metric, specified, aggregate, default)
         
     security.declarePublic('possible_dates')
     def possible_dates(self, dimensions=[], aggregate=list):
         """
-        Returns a list of dictionaries containing all possible values for the given
-        date dimension in the current date range.
+        Returns a list of dictionaries containing all possible values for
+        the given date dimension in the current date range.
         """
         
         start = self.query_criteria()['start_date']

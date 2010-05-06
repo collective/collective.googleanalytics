@@ -37,11 +37,6 @@ class IAnalyticsReportRenderer(Interface):
         """
         Renders the report.
         """
-        
-    def data_feed(self):
-        """
-        Returns a Google Analytics data feed.
-        """
 
     def profile_ids():
         """
@@ -51,57 +46,45 @@ class IAnalyticsReportRenderer(Interface):
 
     def query_criteria():
         """
-        Evaluates the query criteria provided by the report.
-        """
-        
-    def query_arguments():
-        """
-        Returns the query arguments in the format that Google expects.
+        Returns the evaluated query criteria.
         """
 
     def data():
         """
         Returns a list of dictionaries containing the values of the
-        dimensions and metrics for each data feed entry.
+        dimensions and metrics for each entry in the data feed returned
+        by Google.
         """
 
     def columns():
         """
-        Iterate through the data returned by Google and calcualte the value of the
-        report columns.
+        Returns the evaluated table column headings.
         """
 
     def rows():
         """
-        Iterate through the data returned by Google and calcualte the value of the
-        report columns.
+        Returns the evaluated table rows.
         """
         
     def visualization():
         """
-        Returns an AnalyticsReportVisualization for this report.
+        Returns the rendered visualization.
         """
 
     def dimension(dimension, specified, aggregate, default):
         """
-        Returns the value of the given dimension across the specified
-        metrics using the specified aggregation method.
+        Returns the value of the given metric across the specified
+        dimensions and metrics using the specified aggregation method.
         """
                     
     def metric(metric, specified, aggregate, default):
         """
-        Returns the value of the given metic across the specified
-        dimensions using the specified aggregation method.
-        """
-        
-    def value(name, specified, aggregate, default):
-        """
-        Returns the value of a dimension or metric from the data feed accross
-        other specified dimensions or metrics.
+        Returns the value of the given metric across the specified
+        dimensions and metrics using the specified aggregation method.
         """
         
     def possible_dates(dimensions, aggregate):
         """
-        Returns a list of dictionaries containing all possible values for the given
-        date dimension in the current date range.
+        Returns a list of dictionaries containing all possible values for
+        the given date dimension in the current date range.
         """
