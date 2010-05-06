@@ -33,7 +33,7 @@ def renderer_cache_key(method, instance):
     report_id = instance.report.id
     cache_vars = [time_key, modification_time, report_id, tuple(instance.profile_ids())]
     
-    for plugin in instance.report.getPlugins(instance.context, instance.request):
+    for plugin in instance.plugins:
         plugin.processCacheArguments(cache_vars)
     
     return hash(tuple(cache_vars))
@@ -58,6 +58,7 @@ class AnalyticsReportRenderer(object):
         self.context = context
         self.request = request
         self.report = report
+        self.plugins = report.getPlugins(context, request)
         self._data_feed = None
     
     security.declarePrivate('__call__')
@@ -118,7 +119,7 @@ class AnalyticsReportRenderer(object):
         criteria = evaluateTALES(expressions, self._getExpressionContext())
         criteria['ids'] = self.profile_ids()
         
-        for plugin in self.report.getPlugins(self.context, self.request):
+        for plugin in self.plugins:
             plugin.processQueryCriteria(criteria)
         
         return criteria
@@ -323,7 +324,7 @@ class AnalyticsReportRenderer(object):
         
         context_vars.update(extra)
 
-        for plugin in self.report.getPlugins(self.context, self.request):
+        for plugin in self.plugins:
             plugin.processExpressionContext(context_vars)
 
         if tal:
