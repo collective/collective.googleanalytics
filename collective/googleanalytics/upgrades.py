@@ -14,9 +14,6 @@ def upgrade_10a2_to_10a3(setup_tool):
     
     name = 'profile-collective.googleanalytics:upgrade_10a2_10a3'
     setup_tool.runAllImportStepsFromProfile(name)
-<<<<<<< .working
-    
-=======
     
 def upgrade_10a4_to_10b1(setup_tool):
     """
@@ -106,4 +103,4 @@ def upgrade_10a4_to_10b1(setup_tool):
 
     profile_id = 'profile-collective.googleanalytics:upgrade_10a4_10b1'
     step_id = 'analytics'
-    setup_tool.runImportStepFromProfile(profile_id, step_id)>>>>>>> .merge-right.r117018
+    setup_tool.runImportStepFromProfile(profile_id, step_id)
