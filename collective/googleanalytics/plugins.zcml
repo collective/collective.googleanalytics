@@ -1,0 +1,22 @@
+<configure
+    xmlns="http://namespaces.zope.org/zope"
+    i18n_domain="collective.googleanalytics">
+
+  <adapter name="Variable Date Range"
+      factory=".plugins.AnalyticsVariableDateRange"
+      for="*
+           zope.publisher.interfaces.IRequest
+           collective.googleanalytics.interfaces.report.IAnalyticsReport" />
+           
+   <adapter factory=".plugins.AnalyticsDefaultDateRangeChoices"
+       for="*
+            zope.publisher.interfaces.IRequest
+            collective.googleanalytics.interfaces.report.IAnalyticsReport" />
+            
+    <adapter name="Contextual Results"
+        factory=".plugins.AnalyticsContextualResults"
+        for="*
+             zope.publisher.interfaces.IRequest
+             collective.googleanalytics.interfaces.report.IAnalyticsReport" />
+
+</configure>

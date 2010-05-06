@@ -105,9 +105,9 @@ class Analytics(PloneBaseTool, IFAwareObjectManager, OrderedFolder):
         try:
             return query_method(*args, **kwargs)
         except RequestError, e:
-            if e.reason == 'Token invalid':
+            if hasattr(e, 'reason') and e.reason == 'Token invalid':
                 # The auth token has expired, so the client needs to be reauthenticated.
-                client = getAuthenticatedClient(service, reauthenticate=True)
+                client = self._getAuthenticatedClient(service, reauthenticate=True)
                 return query_method(*args, **kwargs)
             else:
                 raise

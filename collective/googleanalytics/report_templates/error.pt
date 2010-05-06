@@ -1,0 +1,4 @@
+<p class="analytics-error">
+    An error occurred while rendering 
+    <strong tal:content="view/report/title">Report Title</strong>.
+</p>

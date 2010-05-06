@@ -1,0 +1,6 @@
+<p class="analytics-error">
+	The Google Analytics e-mail address and password you entered are incorrect. Please enter the
+	correct e-mail address and password in the 
+	<a tal:attributes="href string:${context/portal_url}/portal_analytics/@@analytics-controlpanel" 
+		href="">Google Analytics control panel</a>.
+</p>

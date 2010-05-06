@@ -1,0 +1,180 @@
+<?xml version="1.0"?>
+<object name="portal_analytics" meta_type="Google Analytics Tool"
+   xmlns:i18n="http://xml.zope.org/namespaces/i18n">
+ <object name="site-visits-line" meta_type="Google Analytics Report"
+    i18n:domain="collective.googleanalytics" purge="False">
+  <property name="columns">python:[date_range_unit, 'Visits']</property>
+  <property name="row_repeat">possible_dates</property>
+  <property
+     name="rows">python:[str(row[date_range_dimension]), metric('ga:visits', row)]</property>
+  <property
+     name="body">&lt;div tal:replace="structure view/visualization"&gt;&lt;/div&gt;
+   &lt;tal:block tal:define="visits python:view.metric('ga:visits');
+   units python:view.possible_dates(aggregate=len);"&gt;
+   &lt;p&gt;
+   &lt;strong tal:content="visits"&gt;1000&lt;/strong&gt; total visits in the last
+   &lt;span tal:replace="string:${units} ${date_range_unit_plural/lower}"&gt;
+   30 days
+   &lt;/span&gt;
+   &lt;/p&gt;
+   &lt;p&gt;
+   &lt;strong tal:content="python:int(float(visits)/float(units))"&gt;50&lt;/strong&gt;
+   average visits per &lt;span tal:replace="date_range_unit/lower"&gt;day&lt;/span&gt;
+   &lt;/p&gt;
+   &lt;/tal:block&gt;</property>
+ </object>
+ <object name="top-5-pageviews-table" meta_type="Google Analytics Report"
+    i18n:domain="collective.googleanalytics" purge="False">
+  <property name="columns">python:['URL', 'Views']</property>
+  <property name="row_repeat">python:dimension('ga:pagePath')</property>
+  <property
+     name="rows">python:[row, metric('ga:pageviews', {'ga:pagePath': row})]</property>
+  <property name="body">&lt;h3&gt;Top 5 Pages&lt;/h3&gt;
+   &lt;div tal:replace="structure view/visualization"&gt;&lt;/div&gt;</property>
+ </object>
+ <object name="top-5-sources-table" meta_type="Google Analytics Report"
+    i18n:domain="collective.googleanalytics" purge="False">
+  <property name="columns">python:['Domain', 'Visits']</property>
+  <property name="row_repeat">python:dimension('ga:source')</property>
+  <property
+     name="rows">python:[row, metric('ga:visits', {'ga:source': row})]</property>
+  <property name="body">&lt;h3&gt;Top 5 Sources&lt;/h3&gt;
+   &lt;div tal:replace="structure view/visualization"&gt;&lt;/div&gt;</property>
+ </object>
+ <object name="site-pageviews-line" meta_type="Google Analytics Report"
+    i18n:domain="collective.googleanalytics" purge="False">
+  <property name="columns">python:[date_range_unit, 'Page Views']</property>
+  <property name="row_repeat">possible_dates</property>
+  <property
+     name="rows">python:[str(row[date_range_dimension]), metric('ga:pageviews', row)]</property>
+  <property
+     name="body">&lt;div tal:replace="structure view/visualization"&gt;&lt;/div&gt;
+   &lt;tal:block tal:define="pageviews python:view.metric('ga:pageviews');
+   units python:view.possible_dates(aggregate=len);"&gt;
+   &lt;p&gt;
+   &lt;strong tal:content="pageviews"&gt;1000&lt;/strong&gt; total page views in the last
+   &lt;span tal:replace="string:${units} ${date_range_unit_plural/lower}"&gt;
+   30 days
+   &lt;/span&gt;
+   &lt;/p&gt;
+   &lt;p&gt;
+   &lt;strong tal:content="python:int(float(pageviews)/float(units))"&gt;50&lt;/strong&gt;
+   average page views per &lt;span tal:replace="date_range_unit/lower"&gt;day&lt;/span&gt;
+   &lt;/p&gt;
+   &lt;/tal:block&gt;</property>
+ </object>
+ <object name="site-timeonsite-line" meta_type="Google Analytics Report"
+    i18n:domain="collective.googleanalytics" purge="False">
+  <property
+     name="columns">python:[date_range_unit, 'Average Time on Site (Seconds)']</property>
+  <property name="row_repeat">possible_dates</property>
+  <property
+     name="rows">python:[str(row[date_range_dimension]), int(float(metric('ga:timeOnSite', row))/float(metric('ga:visits', row)))]</property>
+  <property
+     name="body">&lt;div tal:replace="structure view/visualization"&gt;&lt;/div&gt;
+   &lt;tal:block tal:define="timeonsite python:int(float(view.metric('ga:timeOnSite'))/float(view.metric('ga:visits')));
+   units python:view.possible_dates(aggregate=len);"&gt;
+   &lt;p&gt;
+   &lt;strong tal:content="timeonsite"&gt;1000&lt;/strong&gt;-second average visit over the last
+   &lt;span tal:replace="string:${units} ${date_range_unit_plural/lower}"&gt;
+   30 days
+   &lt;/span&gt;
+   &lt;/p&gt;
+   &lt;/tal:block&gt;</property>
+ </object>
+ <object name="site-uniquevisitors-line" meta_type="Google Analytics Report"
+    i18n:domain="collective.googleanalytics" purge="False">
+  <property
+     name="columns">python:[date_range_unit, 'Unique Visitors']</property>
+  <property name="row_repeat">possible_dates</property>
+  <property
+     name="rows">python:[str(row[date_range_dimension]), metric('ga:visitors', row)]</property>
+  <property
+     name="body">&lt;div tal:replace="structure view/visualization"&gt;&lt;/div&gt;
+   &lt;tal:block tal:define="visitors python:view.metric('ga:visitors');
+   units python:view.possible_dates(aggregate=len);"&gt;
+   &lt;p&gt;
+   &lt;strong tal:content="visitors"&gt;1000&lt;/strong&gt; total unique visitors in the last
+   &lt;span tal:replace="string:${units} ${date_range_unit_plural/lower}"&gt;
+   30 days
+   &lt;/span&gt;
+   &lt;/p&gt;
+   &lt;p&gt;
+   &lt;strong tal:content="python:int(float(visitors)/float(units))"&gt;50&lt;/strong&gt;
+   average unique visitors per &lt;span tal:replace="date_range_unit/lower"&gt;day&lt;/span&gt;
+   &lt;/p&gt;
+   &lt;/tal:block&gt;</property>
+ </object>
+ <object name="page-pageviews-sparkline" meta_type="Google Analytics Report"
+    i18n:domain="collective.googleanalytics" purge="False">
+  <property name="columns">python:['Page Views']</property>
+  <property name="row_repeat">possible_dates</property>
+  <property name="rows">python:[metric('ga:uniquePageviews', row)]</property>
+  <property name="body">&lt;h3&gt;Page Views&lt;/h3&gt;
+   &lt;div tal:replace="structure view/visualization"&gt;&lt;/div&gt;
+   &lt;tal:block tal:define="pageviews python:view.metric('ga:uniquePageviews');
+   units python:view.possible_dates(aggregate=len);"&gt;
+   &lt;p&gt;
+   &lt;strong tal:content="pageviews"&gt;1000&lt;/strong&gt; total views of this page during the last
+   &lt;span tal:replace="string:${units} ${date_range_unit_plural/lower}"&gt;
+   30 days
+   &lt;/span&gt;
+   &lt;/p&gt;
+   &lt;/tal:block&gt;</property>
+ </object>
+ <object name="page-timeonpage-sparkline" meta_type="Google Analytics Report"
+    i18n:domain="collective.googleanalytics" purge="False">
+  <property name="columns">python:['Average Time on Page']</property>
+  <property name="row_repeat">possible_dates</property>
+  <property
+     name="rows">python:[int(float(metric('ga:timeOnPage', row))/float(int(metric('ga:pageviews', row))-int(metric('ga:exits', row))+.0001))]</property>
+  <property name="body">&lt;h3&gt;Time on Page&lt;/h3&gt;
+   &lt;div tal:replace="structure view/visualization"&gt;&lt;/div&gt;
+   &lt;tal:block tal:define="units python:view.possible_dates(aggregate=len);
+       timeonpage python:int(float(sum([r[0] for r in view.rows()]))/float(units));"&gt;
+   &lt;p&gt;
+   &lt;strong tal:content="timeonpage"&gt;1000&lt;/strong&gt;-second average page view over the last 
+   &lt;span tal:replace="string:${units} ${date_range_unit_plural/lower}"&gt;
+   30 days
+   &lt;/span&gt;
+   &lt;/p&gt;
+   &lt;/tal:block&gt;</property>
+ </object>
+ <object name="page-top-sources-table" meta_type="Google Analytics Report"
+    i18n:domain="collective.googleanalytics" purge="False">
+  <property name="columns">python:['Page Views', 'Source Domains']</property>
+  <property name="row_repeat">python:dimension('ga:source')</property>
+  <property
+     name="rows">python:[metric('ga:pageviews', {'ga:source': row}), row]</property>
+  <property name="body">&lt;h3&gt;Top 10 Sources&lt;/h3&gt;
+   &lt;div tal:replace="structure view/visualization"&gt;&lt;/div&gt;</property>
+ </object>
+ <object name="page-top-keywords-table" meta_type="Google Analytics Report"
+    i18n:domain="collective.googleanalytics" purge="False">
+  <property name="columns">python:['Page Views', 'Keyword']</property>
+  <property name="row_repeat">python:dimension('ga:keyword')</property>
+  <property
+     name="rows">python:[metric('ga:pageviews', {'ga:keyword': row}), row]</property>
+  <property name="body">&lt;h3&gt;Top 10 Keywords&lt;/h3&gt;
+   &lt;div tal:replace="structure view/visualization"&gt;&lt;/div&gt;</property>
+ </object>
+ <object name="page-top-previouspages-table"
+    meta_type="Google Analytics Report" i18n:domain="collective.googleanalytics" purge="False">
+  <property name="columns">python:['Page Views', 'Previous Path']</property>
+  <property
+     name="row_repeat">python:dimension('ga:previousPagePath')</property>
+  <property
+     name="rows">python:[metric('ga:pageviews', {'ga:previousPagePath': row}), row]</property>
+  <property name="body">&lt;h3&gt;Top 5 Previous Pages&lt;/h3&gt;
+   &lt;div tal:replace="structure view/visualization"&gt;&lt;/div&gt;</property>
+ </object>
+ <object name="page-top-nextpages-table" meta_type="Google Analytics Report"
+    i18n:domain="collective.googleanalytics" purge="False">
+  <property name="columns">python:['Page Views', 'Next Path']</property>
+  <property name="row_repeat">python:dimension('ga:nextPagePath')</property>
+  <property
+     name="rows">python:[metric('ga:pageviews', {'ga:nextPagePath': row}), row]</property>
+  <property name="body">&lt;h3&gt;Top 5 Next Pages&lt;/h3&gt;
+   &lt;div tal:replace="structure view/visualization"&gt;&lt;/div&gt;</property>
+ </object>
+</object>

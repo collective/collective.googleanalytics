@@ -1,0 +1,18 @@
+<configure 
+    xmlns="http://namespaces.zope.org/zope"
+    xmlns:browser="http://namespaces.zope.org/browser"
+    i18n_domain="collective.googleanalytics">
+
+    <adapter for="*"
+        factory=".loader.DefaultAnalyticsAsyncLoader" />
+  
+  	<browser:page
+  	    for="*"
+  	    name="analytics_async"
+  	    class=".loader.AsyncAnalyticsResults"
+  	    permission="collective.googleanalytics.ViewAnalyticsResults"
+  	    layer=".interfaces.browserlayer.IAnalyticsLayer"
+  	    />
+
+</configure>
+

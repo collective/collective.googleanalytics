@@ -1,9 +1,11 @@
 from zope.interface import implements
+from zope.component import getMultiAdapter
 from zope.publisher.browser import BrowserPage
+from zope.app.pagetemplate.viewpagetemplatefile import ViewPageTemplateFile
 from plone.memoize.instance import memoize
-from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
 from Products.CMFCore.utils import getToolByName
-from collective.googleanalytics.interfaces.async import IAnalyticsAsyncLoader
+from collective.googleanalytics.interfaces.loader import IAnalyticsAsyncLoader
+from collective.googleanalytics.interfaces.report import IAnalyticsReportRenderer
 from collective.googleanalytics import error
 from string import Template
 import md5
@@ -38,7 +40,7 @@ class DefaultAnalyticsAsyncLoader(object):
                 report = analytics_tool[report_id]
                 reports.append(report_id)
                 package = report.viz_type.lower()
-                if not package in packages:
+                if not package in packages and not package == 'none':
                     packages.append(package)
             except KeyError:
                 continue
@@ -46,15 +48,16 @@ class DefaultAnalyticsAsyncLoader(object):
         url_tool = getToolByName(self.context, 'portal_url')
         portal_url = url_tool.getPortalObject().absolute_url()
         
-        template_file = os.path.join(os.path.dirname(__file__), 'analytics_async_loader.js.tpl')
+        template_file = os.path.join(os.path.dirname(__file__), 'loader.tpl')
         template = Template(open(template_file).read())
         
         template_vars = {
             'visualization_packages': '[%s]' % ', '.join(["'%s'" % p for p in packages]), 
             'container_id': container_id, 
             'report_ids': '[%s]' % ', '.join(["'%s'" % r for r in reports]), 
-            'profile_id': profile_id,
+            'profile_ids': "['%s']" % profile_id,
             'portal_url': portal_url,
+            'context_url': self.context.absolute_url(),
             'request_url': self.context.request.ACTUAL_URL, 
             'date_range': date_range,
         }
@@ -67,22 +70,20 @@ class AsyncAnalyticsResults(BrowserPage):
     in the page.
     """
     
-    __call__ = ViewPageTemplateFile('analytics_async.pt')
+    bad_auth = ViewPageTemplateFile('loader_templates/badauth.pt')
+    missing_cred = ViewPageTemplateFile('loader_templates/missingcred.pt')
     
-    def getResults(self):
+    def __call__(self):
         """
         Returns a list of AnalyticsReportResults objects for the selected reports.
         """        
         report_ids = self.request.get('report_ids', [])
-        profile_id = self.request.get('profile_id', '')
         if type(report_ids) is str:
               report_ids = [report_ids]
         
-        if not report_ids and profile_id:
+        if not report_ids:
             return []
             
-        date_range = self.request.get('date_range', 'month')
-        
         analytics_tool = getToolByName(self.context, 'portal_analytics')
         
         results = []
@@ -93,10 +94,17 @@ class AsyncAnalyticsResults(BrowserPage):
                 continue
                 
             try:
-                results.append(report.getResults(self.context, profile_id, date_range=date_range))
+                renderer = getMultiAdapter(
+                    (self.context, self.request, report),
+                    interface=IAnalyticsReportRenderer
+                )
+                results.append(renderer())
             except error.BadAuthenticationError:
-                return 'BadAuthenticationError'
+                return self.bad_auth()
             except error.MissingCredentialsError:
-                return 'MissingCredentialsError'
+                return self.missing_cred()
                 
-        return results
+        # Once we expose the date range optoin in the UI, we'll need to find a
+        # way to generate this label dynamically, probably by using the variable
+        # date range plugin from one of the report renderers.
+        return '<h2>Last 30 Days</h2>' + '\n'.join(results)

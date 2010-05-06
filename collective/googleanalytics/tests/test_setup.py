@@ -28,15 +28,15 @@ class TestInstall(FunctionalTestCase):
         # Test the 'Top 5 Page Views: Table' report.
         report = analytics_tool.get('top-5-pageviews-table', None)
         self.assertNotEqual(report, None)
-        self.assertEqual(report.column_labels, ('string:URL', 'string:Views'))
-        self.assertEqual(report.column_exps, ('ga_pagePath', 'ga_pageviews'))
+        self.assertEqual(report.columns, "python:['URL', 'Views']")
+        self.assertEqual(report.row_repeat, "python:dimension('ga:pagePath')")
+        self.assertEqual(report.rows, "python:[row, metric('ga:pageviews', {'ga:pagePath': row})]")
         
         # Test the 'Top 5 Sources: Table' report.
         report = analytics_tool.get('top-5-sources-table', None)
         self.assertNotEqual(report, None)
         self.assertEqual(report.viz_type, 'Table')
-        self.assertNotEqual(report.introduction, '')
-        self.assertEqual(report.conclusion, '')
+        self.assertNotEqual(report.body, '')
 
 class TestReinstall(FunctionalTestCase):
 

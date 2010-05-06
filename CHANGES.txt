@@ -1,11 +1,45 @@
 Changelog
 =========
 
-1.0a5 - 2010-04-XX
+1.0b1 - 2010-05-05
 ------------------
 
-* make it Plone4 compatible
+Note: 1.0b1 changes the syntax for the table-building section of the report
+(previously the report column labels and expressions) and the report body. The
+upgrade step overwrites these properties for the default reports that ship with
+the product. If you have customized these properties on the default reports, be
+sure to rename the customized reports in portal_analytics before running the
+upgrade step to avoid losing your changes.
+
+* Changed loader to call @@analytics_async on the current context.
+  [2010-05-05 - yomatters]
+
+* Added a link to Google Analytics in the control panel.
+  [2010-05-04 - yomatters]
+
+* Standardized i18n domain to collective.googleanalytics.
+  [2010-04-30 - yomatters]
+
+* Added possible_dates helper function to solve the problem where date-based
+  reports do not have results for every date in the range.
+  [2010-04-28 - yomatters]
+
+* Make it Plone4 compatible.
   [2010-04-26 - garbas]
+
+* Changed table building interface so that rows are not directly tied to
+  results returned by Google. Added dimension and metric value-getter
+  functions.
+  [2010-04-22 - yomatters]
+
+* Improved reporting when there is no data.
+  [2010-04-09 - yomatters]
+
+* Refactored monolithic report into pluggable components.
+  [2010-04-09 - yomatters]
+
+* Moved utility functions off of report class.
+  [2010-04-01 - yomatters]
 
 1.0a4 - 2010-03-24
 ------------------
