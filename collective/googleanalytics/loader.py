@@ -58,7 +58,7 @@ class DefaultAnalyticsAsyncLoader(object):
             'profile_ids': "['%s']" % profile_id,
             'portal_url': portal_url,
             'context_url': self.context.absolute_url(),
-            'request_url': self.context.request.ACTUAL_URL, 
+            'request_url': self.context.REQUEST.ACTUAL_URL, 
             'date_range': date_range,
         }
             

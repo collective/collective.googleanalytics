@@ -1,6 +1,15 @@
 Changelog
 =========
 
+1.0b2 - 2010-05-XX
+------------------
+
+* @@analytics-controlpanel failing to display under Plone 4 because of trying to
+  access self.context.request which for some reason is not availiable. Accesing
+  self.context.REQUEST works for for Plone 3.3.5 and Plone 4b2. Didn't have time
+  to investigate this further, but I made it work.
+  [2010-05-07 garbas]
+
 1.0b1 - 2010-05-05
 ------------------
 
