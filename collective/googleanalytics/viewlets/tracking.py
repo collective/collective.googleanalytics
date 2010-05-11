@@ -1,8 +1,9 @@
+from zope.component import queryMultiAdapter
 from Products.CMFCore.utils import getToolByName
 from Products.CMFPlone.utils import safe_unicode
 from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
-
 from plone.app.layout.analytics.view import AnalyticsViewlet
+from collective.googleanalytics.interfaces.tracking import IAnalyticsTrackingPlugin
 
 class AnalyticsTrackingViewlet(AnalyticsViewlet):
     """
@@ -40,44 +41,23 @@ class AnalyticsTrackingViewlet(AnalyticsViewlet):
 
         return self.analytics_tool.tracking_web_property or None
         
-    def getExternalTrackingPrefix(self):
+    def renderPlugins(self):
         """
-        Returns the prefix to use for tracking external links or False if external
-        link tracking is disabled.
+        Render each of the selected tracking plugins for the current context
+        and request.
         """
         
-        if self.analytics_tool.tracking_external_prefix:
-            return self.analytics_tool.tracking_external_prefix
-        return False
-        
-    def getMailtoTrackingPrefix(self):
-        """
-        Returns the prefix to use for tracking e-mail addresses or False if
-        e-mail address tracking is disabled.
-        """
-
-        if self.analytics_tool.tracking_mailto_prefix:
-            return self.analytics_tool.tracking_mailto_prefix
-        return False
-        
-    def getFileTrackingPrefix(self):
-        """
-        Returns the prefix to use for tracking file downloads or False if
-        e-mail address tracking is disabled.
-        """
-
-        if self.analytics_tool.tracking_file_prefix:
-            return self.analytics_tool.tracking_file_prefix
-        return False
-        
-    def getFileExtensions(self):
-        """
-        Returns a list of the selected file extensions for tracking.
-        """
-
-        if self.analytics_tool.tracking_file_extensions:
-            return self.analytics_tool.tracking_file_extensions
-        return []
+        results = []
+        for plugin_name in self.analytics_tool.tracking_plugin_names:
+            plugin = queryMultiAdapter(
+                (self.context, self.request),
+                interface=IAnalyticsTrackingPlugin,
+                name=plugin_name,
+                default=None,
+            )
+            if plugin:
+                results.append(plugin())
+        return '\n'.join(results)
     
     def getExtraTrackingJS(self):
         """

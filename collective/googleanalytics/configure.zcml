@@ -19,6 +19,7 @@
 
   <include package=".browser" />
   <include package=".portlets" />
+  <include package=".tracking" />
   <include package=".viewlets" />
   <include file="loader.zcml" />
   <include file="renderer.zcml" />
@@ -68,8 +69,8 @@
     />
     
   <utility
-    component=".vocabularies.getFileExtensions"
-    name="collective.googleanalytics.FileExtensions"
+    component=".vocabularies.getTrackingPluginNames"
+    name="collective.googleanalytics.TrackingPluginNames"
     provides="zope.schema.interfaces.IVocabularyFactory"
     />
 

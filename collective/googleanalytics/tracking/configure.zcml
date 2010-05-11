@@ -1,0 +1,23 @@
+<configure
+    xmlns="http://namespaces.zope.org/zope"
+    i18n_domain="collective.googleanalytics">
+
+    <adapter
+        for="* zope.publisher.interfaces.IRequest"
+        name="External links"
+        factory=".plugins.AnalyticsExternalLinkPlugin"
+        />
+        
+    <adapter
+        for="* zope.publisher.interfaces.IRequest"
+        name="E-mail links"
+        factory=".plugins.AnalyticsEmailLinkPlugin"
+        />
+        
+    <adapter
+        for="* zope.publisher.interfaces.IRequest"
+        name="File downloads"
+        factory=".plugins.AnalyticsDownloadPlugin"
+        />
+
+</configure>

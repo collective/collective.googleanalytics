@@ -1,8 +1,9 @@
 from zope.app.component.hooks import getSite
+from zope.component import getGlobalSiteManager
 from zope.schema.vocabulary import SimpleVocabulary
 from Products.CMFCore.utils import getToolByName
+from collective.googleanalytics.interfaces.tracking import IAnalyticsTrackingPlugin
 from collective.googleanalytics import error
-from collective.googleanalytics.config import FILE_EXTENSION_CHOICES
 
 def getProfiles(context):
     """
@@ -95,9 +96,18 @@ def getRoles(context):
     roles = [role for role in pmemb.getPortalRoles() if role != 'Owner']
     return SimpleVocabulary.fromValues(roles)
     
-def getFileExtensions(context):
+def getTrackingPluginNames(context):
     """
-    Return a list of file extensions that we can track.
+    Return a list of the names of the available tracking plugins.
     """
 
-    return SimpleVocabulary.fromValues(FILE_EXTENSION_CHOICES)
+    gsm = getGlobalSiteManager()
+    global_plugins = set([p.name for p in gsm.registeredAdapters() \
+        if p.provided == IAnalyticsTrackingPlugin])
+    
+    lsm = getSite().getSiteManager()
+    local_plugins = set([p.name for p in lsm.registeredAdapters() \
+        if p.provided == IAnalyticsTrackingPlugin])
+    
+    values = sorted(list(global_plugins | local_plugins))
+    return SimpleVocabulary.fromValues(values)

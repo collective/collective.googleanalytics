@@ -2,63 +2,20 @@
     <tal:webproperty define="web_property view/getTrackingWebProperty;"
         condition="web_property">
         <script type="text/javascript">
-        var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
-        document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+        (function() {
+            var ga = document.createElement('script');
+            ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+            ga.setAttribute('async', 'true');    document.documentElement.firstChild.appendChild(ga);
+        })();
         </script>
         <script type="text/javascript"
             tal:content="string:
-            var pageTracker = _gat._getTracker('${web_property}');
-            pageTracker._trackPageview();
+            var _gaq = _gaq || [];
+            _gaq.push(['_setAccount', '${web_property}']); 
+            _gaq.push(['_trackPageview']);
             ">
         </script>
-        <tal:trackeditems define="ext_prefix view/getExternalTrackingPrefix;
-            mailto_prefix view/getMailtoTrackingPrefix;
-            file_prefix view/getFileTrackingPrefix;
-            file_extensions view/getFileExtensions;
-            file_extensions_list python:'|'.join(file_extensions);">
-            <script type="text/javascript"
-                tal:content="string:
-                    var analytics_info = {
-                        'ext_prefix': '${ext_prefix}',
-                        'mailto_prefix': '${mailto_prefix}',
-                        'file_prefix': '${file_prefix}',
-                        'file_extensions': '${file_extensions_list}',
-                        'site_prefix': location.protocol + '//' + location.host
-                    };
-                ">
-            </script>
-            <script type="text/javascript"
-                tal:condition="ext_prefix">
-                jq(function() {
-                    jq('a[href^="http"]').not('a[href^="' + analytics_info['site_prefix'] + '"]').click(function () {
-                        var ext_url = '/' + analytics_info['ext_prefix'] + '/' + jq(this).attr('href').replace('http://', '').replace('https://', '');
-                        pageTracker._trackPageview(ext_url);
-                    });
-                });
-            </script>
-            <script type="text/javascript"
-                tal:condition="mailto_prefix">
-                jq(function() {
-                    jq('a[href^="mailto"]').click(function () {
-                        var email_url = '/' + analytics_info['mailto_prefix'] + '/' + jq(this).attr('href').replace('mailto:', '');
-                        pageTracker._trackPageview(email_url);
-                    });
-                });
-            </script>
-            <script type="text/javascript"
-                tal:condition="file_prefix">
-                jq(function() {
-                    var extensions = analytics_info['file_extensions'].split('|');
-                    for (file_ext in extensions) {
-                        jq('a[href$=".' + extensions[file_ext] + '"]').click(function () {
-                            var file_url_parts = jq(this).attr('href').split('/');
-                            var file_url = '/' + analytics_info['file_prefix'] + '/' + file_url_parts[file_url_parts.length - 1];
-                            pageTracker._trackPageview(file_url);
-                        });
-                    }
-                });
-            </script>
-        </tal:trackeditems>
+        <tal:block content="structure view/renderPlugins"></tal:block>
     </tal:webproperty>
 </tal:tracking>
 <tal:extra content="view/getExtraTrackingJS">

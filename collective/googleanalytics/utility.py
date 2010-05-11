@@ -42,17 +42,8 @@ class Analytics(PloneBaseTool, IFAwareObjectManager, OrderedFolder):
     security.declarePrivate('tracking_web_property')
     tracking_web_property = FieldProperty(IAnalytics['tracking_web_property'])
     
-    security.declarePrivate('tracking_external_prefix')
-    tracking_external_prefix = FieldProperty(IAnalytics['tracking_external_prefix'])
-    
-    security.declarePrivate('tracking_mailto_prefix')
-    tracking_mailto_prefix = FieldProperty(IAnalytics['tracking_mailto_prefix'])
-    
-    security.declarePrivate('tracking_file_prefix')
-    tracking_file_prefix = FieldProperty(IAnalytics['tracking_file_prefix'])
-    
-    security.declarePrivate('tracking_file_extensions')
-    tracking_file_extensions = FieldProperty(IAnalytics['tracking_file_extensions'])
+    security.declarePrivate('tracking_plugin_names')
+    tracking_plugin_names = FieldProperty(IAnalytics['tracking_plugin_names'])
     
     security.declarePrivate('tracking_excluded_roles')
     tracking_excluded_roles = FieldProperty(IAnalytics['tracking_excluded_roles'])

@@ -63,7 +63,7 @@ class AnalyticsControlPanelForm(ControlPanelForm):
     analytics_tracking.label = _(u'analytics_tracking', default=u'Tracking')
     analytics_tracking.description = _(u'analytics_tracking_description', 
         default=u'Configure the way Google Analytics tracks statistics about this site.')
-    analytics_tracking['tracking_file_extensions'].custom_widget = MultiCheckBoxVocabularyWidget
+    analytics_tracking['tracking_plugin_names'].custom_widget = MultiCheckBoxVocabularyWidget
     analytics_tracking['tracking_excluded_roles'].custom_widget = MultiCheckBoxVocabularyWidget
     
     analytics_settings = FormFieldsets(IAnalyticsSettings)

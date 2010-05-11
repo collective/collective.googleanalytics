@@ -1,0 +1,10 @@
+<script type="text/javascript">
+    jq(function() {
+        var extensions = analytics_info['file_extensions'].split('|');
+        for (file_ext in extensions) {
+            jq('a[href$=".' + extensions[file_ext] + '"]').click(function () {
+                _gaq.push(['_trackEvent', 'File', 'Download', jq(this).attr('href')]);
+            });
+        }
+    });
+</script>
