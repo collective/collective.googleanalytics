@@ -4,6 +4,7 @@ from zope.formlib import form
 
 from plone.portlets.interfaces import IPortletDataProvider
 from plone.app.portlets.portlets import base
+from plone.app.controlpanel.widgets import MultiCheckBoxVocabularyWidget
 
 from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
 from Products.CMFCore.utils import getToolByName
@@ -11,8 +12,7 @@ from Products.CMFCore.utils import getToolByName
 from zope.i18nmessageid import MessageFactory
 _ = MessageFactory('analytics')
 
-from collective.googleanalytics.browser.controlpanel import MultiCheckBoxWidget
-from collective.googleanalytics import error
+from collective.googleanalytics.interfaces.loader import IAnalyticsAsyncLoader
 
 class IAnalyticsPortlet(IPortletDataProvider):
     """A portlet
@@ -34,7 +34,7 @@ class IAnalyticsPortlet(IPortletDataProvider):
         required=True)
 
     reports = schema.List(title=_(u"Reports"),
-        value_type=schema.Choice(vocabulary='collective.googleanalytics.Reports'),
+        value_type=schema.Choice(vocabulary='collective.googleanalytics.PortletReports'),
         min_length=1,
         description=_(u"Choose the reports to display."),
         required=True)
@@ -68,6 +68,10 @@ class Renderer(base.Renderer):
     of this class. Other methods can be added and referenced in the template.
     """
     
+    def __init__(self, context, request, view, manager, data):
+        self.async_loader = IAnalyticsAsyncLoader(context)
+        super(Renderer, self).__init__(context, request, view, manager, data)
+    
     @property
     def available(self):
         """
@@ -75,35 +79,29 @@ class Renderer(base.Renderer):
         """
         
         mtool = getToolByName(self.context, 'portal_membership')
-        return mtool.checkPermission('collective.googleanalytics.ViewAnalyticsResults', self.context)
+        allowed = mtool.checkPermission('collective.googleanalytics.ViewAnalyticsResults', self.context)
+        context_state = self.context.restrictedTraverse('@@plone_context_state')
+        return allowed and context_state.is_view_template()
     
     def getTitle(self):
         """
         Return the title of the portlet.
         """
         return self.data.portlet_title
-    
-    def getResults(self):
+            
+    def getContainerId(self):
+        """
+        Returns the element ID for the results container.
+        """
+        
+        return self.async_loader.getContainerId()
+            
+    def getJavascript(self):
         """
         Returns a list of AnalyticsReportResults objects for the selected reports.
         """
-        analytics_tool = getToolByName(self.context, 'portal_analytics')
         
-        results = []
-        for report_id in self.data.reports:
-            try:
-                report = analytics_tool[report_id]
-            except KeyError:
-                continue
-                
-            try:
-                results.append(report.getResults(self.context, self.data.profile))
-            except error.BadAuthenticationError:
-                return 'BadAuthenticationError'
-            except error.MissingCredentialsError:
-                return 'MissingCredentialsError'
-                
-        return results
+        return self.async_loader.getJavascript(self.data.reports, self.data.profile)
     
     render = ViewPageTemplateFile('analyticsportlet.pt')
             
@@ -115,7 +113,7 @@ class AddForm(base.AddForm):
     constructs the assignment that is being added.
     """
     form_fields = form.Fields(IAnalyticsPortlet)
-    form_fields['reports'].custom_widget = MultiCheckBoxWidget
+    form_fields['reports'].custom_widget = MultiCheckBoxVocabularyWidget
 
     def create(self, data):
         return Assignment(**data)
@@ -127,4 +125,4 @@ class EditForm(base.EditForm):
     zope.formlib which fields to display.
     """
     form_fields = form.Fields(IAnalyticsPortlet)
-    form_fields['reports'].custom_widget = MultiCheckBoxWidget
+    form_fields['reports'].custom_widget = MultiCheckBoxVocabularyWidget

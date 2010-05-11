@@ -1,13 +1,14 @@
 <configure 
     xmlns="http://namespaces.zope.org/zope"
     xmlns:browser="http://namespaces.zope.org/browser"
-    i18n_domain="analytics">
+    i18n_domain="collective.googleanalytics">
         
     <browser:page
         for="collective.googleanalytics.interfaces.utility.IAnalytics"
         name="analytics-controlpanel"
         class=".controlpanel.AnalyticsControlPanelForm"
         permission="cmf.ManagePortal"
+        layer="..interfaces.browserlayer.IAnalyticsLayer"
         />
 
 	<browser:resourceDirectory
@@ -15,6 +16,12 @@
 		directory="images"
 		/>
 		
+    <browser:resource
+        name="analytics_config.js"
+        file="analytics_config.js"
+        layer="..interfaces.browserlayer.IAnalyticsLayer"
+        />
+    
 	<configure package="Products.GenericSetup.browser">
 	
 		<browser:page

@@ -1,9 +1,120 @@
 Changelog
 =========
 
+1.0b2 - 2010-05-XX
+------------------
+
 * Add tracking functionality, including external links, e-mail addresses,
   file downloads.
-  [2010-01-13 - yomatters]
+  [2010-05-11 - yomatters]
+
+* @@analytics-controlpanel failing to display under Plone 4 because of trying to
+  access self.context.request which for some reason is not availiable. Accesing
+  self.context.REQUEST works for for Plone 3.3.5 and Plone 4b2. Didn't have time
+  to investigate this further, but I made it work.
+  [2010-05-07 garbas]
+
+1.0b1 - 2010-05-05
+------------------
+
+Note: 1.0b1 changes the syntax for the table-building section of the report
+(previously the report column labels and expressions) and the report body. The
+upgrade step overwrites these properties for the default reports that ship with
+the product. If you have customized these properties on the default reports, be
+sure to rename the customized reports in portal_analytics before running the
+upgrade step to avoid losing your changes.
+
+* Changed loader to call @@analytics_async on the current context.
+  [2010-05-05 - yomatters]
+
+* Added a link to Google Analytics in the control panel.
+  [2010-05-04 - yomatters]
+
+* Standardized i18n domain to collective.googleanalytics.
+  [2010-04-30 - yomatters]
+
+* Added possible_dates helper function to solve the problem where date-based
+  reports do not have results for every date in the range.
+  [2010-04-28 - yomatters]
+
+* Make it Plone4 compatible.
+  [2010-04-26 - garbas]
+
+* Changed table building interface so that rows are not directly tied to
+  results returned by Google. Added dimension and metric value-getter
+  functions.
+  [2010-04-22 - yomatters]
+
+* Improved reporting when there is no data.
+  [2010-04-09 - yomatters]
+
+* Refactored monolithic report into pluggable components.
+  [2010-04-09 - yomatters]
+
+* Moved utility functions off of report class.
+  [2010-04-01 - yomatters]
+
+1.0a4 - 2010-03-24
+------------------
+
+* Only show the portlet on the context's view template.
+  [2010-03-24 - yomatters]
+
+* Add an upgrade step from 1.0a3 to 1.0a4.
+  [2010-03-24 - yomatters]
+
+* Modify tests to match asynchronous javascript.
+  [2010-03-24 - yomatters]
+
+* Use asynchronous view for the site-wide analytics viewlet.
+  [2010-03-24 - yomatters]
+
+* Add a view for asynchronous results, and modify the portlet to use it.
+  [2010-03-19 - yomatters]
+
+1.0a3 - 2010-03-05
+------------------
+
+* Add upgrade step from 1.0a2 to 1.0a3.
+  [2010-03-05 - yomatters]
+
+* Modify javascript registration and configuration javascript to be compatible
+  with Plone 3.1.
+  [2010-03-05 - yomatters]
+
+* Add more default reports.
+  [2010-03-05 - yomatters]
+
+* Load external javascript through a viewlet instead of through the
+  registry to add support for Plone < 3.3.
+  [2010-03-05 - yomatters]
+
+1.0a2 - 2010-02-10
+------------------
+
+* Add security assertions for report categories.
+  [2010-02-10 - yomatters]
+
+* Update documentation to reflect date range changes.
+  [2010-02-10 - yomatters]
+
+* Make date range independent of report and update tests and default reports 
+  to reflect the new reality; add javascript to set the width of the 
+  visualization based on the width of the container; add categories to reports
+  and adjust vocabularies to be category-specific; handle auth token expiration
+  error.
+  [2010-02-03 - yomatters]
+
+* Make report IDs unique so that the same page can contain multiple copies
+  of the same report.
+  [2010-01-19 - yomatters]
+
+* Fix a bug that caused an error if the query returned no results.
+  [2010-01-19 - yomatters]
+
+* Fix bug in older Zopes that required the user to reenter the password every
+  time the configlet form was saved.
+  [2010-01-14 - yomatters]
 
 * Add fallback for importing InitializeClass in Zopes prior to 2.12.
   [2010-01-05 - yomatters]

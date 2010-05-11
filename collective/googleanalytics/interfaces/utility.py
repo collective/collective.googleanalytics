@@ -73,7 +73,7 @@ class IAnalyticsReportsAssignment(Interface):
         required=False)
         
     reports = schema.List(title=_(u"Reports"),
-        value_type=schema.Choice(vocabulary='collective.googleanalytics.Reports'),
+        value_type=schema.Choice(vocabulary='collective.googleanalytics.SiteWideReports'),
         default=[],
         description=_(u"Choose the reports to display."),
         required=False)
@@ -96,4 +96,8 @@ class IAnalytics(
     """
     Analytics utility
     """
+    
+    report_categories = schema.List(title=_(u"Report Categories"),
+        default=['Site Wide', 'Portlet'],
+        required=False)
         

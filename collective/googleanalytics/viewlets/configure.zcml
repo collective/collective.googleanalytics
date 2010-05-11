@@ -1,7 +1,7 @@
 <configure 
     xmlns="http://namespaces.zope.org/zope"
     xmlns:browser="http://namespaces.zope.org/browser"
-    i18n_domain="analytics">
+    i18n_domain="collective.googleanalytics">
     
     <browser:viewletManager
         name="collective.googleanalytics.controlpanel"
@@ -11,9 +11,9 @@
         />
 		
     <browser:viewlet
-        name="collective.googleanalytics.analyticsviewlet"
+        name="collective.googleanalytics.sitewide"
         manager="collective.googleanalytics.interfaces.viewlets.IAnalyticsControlPanelViewletManager"
-        class=".analyticsviewlet.AnalyticsViewlet"
+        class=".sitewide.SiteWideAnalyticsViewlet"
         layer="..interfaces.browserlayer.IAnalyticsLayer"
         permission="collective.googleanalytics.ViewAnalyticsResults"
         />
@@ -24,6 +24,14 @@
         class=".tracking.AnalyticsTrackingViewlet"
         layer="..interfaces.browserlayer.IAnalyticsLayer"
         permission="zope2.View" 
+        />
+
+    <browser:viewlet
+        name="collective.googleanalytics.externaljs"
+        manager="plone.app.layout.viewlets.interfaces.IHtmlHead"
+        template="externaljs.pt"
+        layer="..interfaces.browserlayer.IAnalyticsLayer"
+        permission="collective.googleanalytics.ViewAnalyticsResults"
         />
 
 </configure>

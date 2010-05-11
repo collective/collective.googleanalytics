@@ -113,11 +113,10 @@ DIMENSIONS_CHOICES = (
     "ga:visitsToTransaction",
     "ga:week",
     "ga:year",
-    "range_dimension",
-    "range_sort_dimension",
 )
 
 VISUALIZATION_CHOICES = (
+    'None',
     'AnnotatedTimeLine',
     'AreaChart',
     'BarChart',

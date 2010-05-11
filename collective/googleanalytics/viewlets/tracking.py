@@ -37,7 +37,7 @@ class AnalyticsTrackingViewlet(AnalyticsViewlet):
         Returns the Google web property ID for the selected tracking profile,
         or an empty string if no tracking profile is selected.
         """
-        
+
         return self.analytics_tool.tracking_web_property or None
         
     def getExternalTrackingPrefix(self):

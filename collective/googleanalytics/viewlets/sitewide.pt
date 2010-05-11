@@ -1,0 +1,8 @@
+<div tal:attributes="id view/getContainerId;" 
+    class="analytics-async-container"></div>
+<script type="text/javascript" tal:content="view/getJavascript"></script>
+<p class="analytics-visit-google-link">
+    <a href="http://www.google.com/analytics/" target="_blank">
+        Visit Google Analytics
+    </a>
+</p>
