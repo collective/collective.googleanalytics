@@ -3,6 +3,7 @@ from zope.interface import implements
 from zope.i18nmessageid import MessageFactory
 from zope.app.form.browser import PasswordWidget as _PasswordWidget
 
+from Products.CMFCore.utils import getToolByName
 from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
 
 from plone.app.controlpanel.form import ControlPanelForm
@@ -77,3 +78,21 @@ class AnalyticsControlPanelForm(ControlPanelForm):
     label = _(u"Google Analytics")
     description = _(u"Settings for Google Analytics.")
     form_name = _("Google Analytics Settings")
+    
+    def _on_save(self, data={}):
+        """
+        Checks to make sure that tracking code is not duplicated in the site
+        configlet.
+        """
+        
+        tracking_web_property = data.get('tracking_web_property', None)
+        properties_tool = getToolByName(self.context, "portal_properties")
+        snippet = properties_tool.site_properties.webstats_js
+        snippet_analytics =  '_gat' in snippet or '_gaq' in snippet
+        if tracking_web_property and snippet_analytics:
+            plone_utils = getToolByName(self.context, 'plone_utils')
+            plone_utils.addPortalMessage(_(u'You have enabled the tracking \
+            feature of this product, but it looks like you still have tracking \
+            code in the Site control panel. Please remove any Google Analytics \
+            tracking code from the Site control panel to avoid conflicts.'),
+            'warning')

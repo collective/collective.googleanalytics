@@ -5,7 +5,8 @@
         (function() {
             var ga = document.createElement('script');
             ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-            ga.setAttribute('async', 'true');    document.documentElement.firstChild.appendChild(ga);
+            ga.setAttribute('async', 'true');
+            document.documentElement.firstChild.appendChild(ga);
         })();
         </script>
         <script type="text/javascript"
@@ -18,5 +19,5 @@
         <tal:block content="structure view/renderPlugins"></tal:block>
     </tal:webproperty>
 </tal:tracking>
-<tal:extra content="view/getExtraTrackingJS">
+<tal:extra content="structure view/getExtraTrackingJS">
 </tal:extra>
