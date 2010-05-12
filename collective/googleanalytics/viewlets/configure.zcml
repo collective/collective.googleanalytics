@@ -19,8 +19,8 @@
         />
         
     <browser:viewlet  
-        name="plone.analytics"
-        manager="plone.app.layout.viewlets.interfaces.IPortalFooter"
+        name="collective.googleanalytics.tracking"
+        manager="plone.app.layout.viewlets.interfaces.IHtmlHeadLinks"
         class=".tracking.AnalyticsTrackingViewlet"
         layer="..interfaces.browserlayer.IAnalyticsLayer"
         permission="zope2.View" 

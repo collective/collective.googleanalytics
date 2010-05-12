@@ -1,6 +1,5 @@
 from zope.component import queryMultiAdapter
 from Products.CMFCore.utils import getToolByName
-from Products.CMFPlone.utils import safe_unicode
 from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
 from plone.app.layout.analytics.view import AnalyticsViewlet
 from collective.googleanalytics.interfaces.tracking import IAnalyticsTrackingPlugin
@@ -17,7 +16,6 @@ class AnalyticsTrackingViewlet(AnalyticsViewlet):
     def __init__(self, context, request, view, manager):
         super(AnalyticsViewlet, self).__init__(context, request)
         self.analytics_tool = getToolByName(context, "portal_analytics")
-        self.properties_tool = getToolByName(context, "portal_properties")
         self.membership_tool = getToolByName(context, "portal_membership")
 
     def available(self):
@@ -58,13 +56,4 @@ class AnalyticsTrackingViewlet(AnalyticsViewlet):
             if plugin:
                 results.append(plugin())
         return '\n'.join(results)
-    
-    def getExtraTrackingJS(self):
-        """
-        Gets the extra tracking javascript (i.e. the content of the web stats
-        javascript field in the site configlet).
-        """
-        
-        snippet = safe_unicode(self.properties_tool.site_properties.webstats_js)
-        return snippet
 
