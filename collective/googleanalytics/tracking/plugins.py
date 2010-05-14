@@ -16,16 +16,15 @@ class AnalyticsBaseTrackingPlugin(object):
         self.context = context
         self.request = request
         
-    def render_file(self, file_name, template_vars={}):
+    def render_file(self, file_path, template_vars={}):
         """
         Renders a Python string template.
         """
         
-        template_file = os.path.join(os.path.dirname(__file__), file_name)
         if not template_vars:
-            return open(template_file).read()
+            return open(file_path).read()
         
-        template = Template(open(template_file).read())
+        template = Template(open(file_path).read())
         return template.substitute(template_vars)
 
 class AnalyticsExternalLinkPlugin(AnalyticsBaseTrackingPlugin):
@@ -38,7 +37,8 @@ class AnalyticsExternalLinkPlugin(AnalyticsBaseTrackingPlugin):
         Renders the tracking plugin.
         """
         
-        return self.render_file('external.tpl')
+        template_file = os.path.join(os.path.dirname(__file__), 'external.tpl')
+        return self.render_file(template_file)
     
 class AnalyticsEmailLinkPlugin(AnalyticsBaseTrackingPlugin):
     """
@@ -50,7 +50,8 @@ class AnalyticsEmailLinkPlugin(AnalyticsBaseTrackingPlugin):
         Renders the tracking plugin.
         """
         
-        return self.render_file('email.tpl')
+        template_file = os.path.join(os.path.dirname(__file__), 'email.tpl')
+        return self.render_file(template_file)
     
 class AnalyticsDownloadPlugin(AnalyticsBaseTrackingPlugin):
     """
@@ -62,14 +63,7 @@ class AnalyticsDownloadPlugin(AnalyticsBaseTrackingPlugin):
         Renders the tracking plugin.
         """
         
-        return self.render_file('download.tpl', {
-            'file_extensions': self.getFileExtensions(),
+        template_file = os.path.join(os.path.dirname(__file__), 'download.tpl')
+        return self.render_file(template_file, {
+            'file_extensions': json_serialize(FILE_EXTENSION_CHOICES),
         })
-    
-    def getFileExtensions(self):
-        """
-        Returns a string containing a javascript list of the file extensions
-        to be tracked.
-        """
-        
-        return json_serialize(FILE_EXTENSION_CHOICES)

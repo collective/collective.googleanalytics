@@ -1,0 +1,1 @@
+from collective.googleanalytics.tracking.plugins import AnalyticsBaseTrackingPlugin
