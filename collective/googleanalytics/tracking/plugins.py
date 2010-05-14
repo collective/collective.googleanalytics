@@ -21,7 +21,10 @@ class AnalyticsBaseTrackingPlugin(object):
         Returns the relative URL of the request.
         """
         
-        return self.request.ACTUAL_URL.replace(self.request.SERVER_URL, '').strip()
+        relative_url = self.request.ACTUAL_URL.replace(self.request.SERVER_URL, '').strip()
+        if relative_url.endswith('/') and len(relative_url) > 1:
+            return relative_url[:-1]
+        return relative_url
         
     def render_file(self, file_path, template_vars={}):
         """
@@ -45,7 +48,9 @@ class AnalyticsExternalLinkPlugin(AnalyticsBaseTrackingPlugin):
         """
         
         template_file = os.path.join(os.path.dirname(__file__), 'external.tpl')
-        return self.render_file(template_file)
+        return self.render_file(template_file, {
+            'relative_url': self.relative_url(),
+        })
     
 class AnalyticsEmailLinkPlugin(AnalyticsBaseTrackingPlugin):
     """
@@ -58,7 +63,9 @@ class AnalyticsEmailLinkPlugin(AnalyticsBaseTrackingPlugin):
         """
         
         template_file = os.path.join(os.path.dirname(__file__), 'email.tpl')
-        return self.render_file(template_file)
+        return self.render_file(template_file, {
+            'relative_url': self.relative_url(),
+        })
     
 class AnalyticsDownloadPlugin(AnalyticsBaseTrackingPlugin):
     """
@@ -73,4 +80,5 @@ class AnalyticsDownloadPlugin(AnalyticsBaseTrackingPlugin):
         template_file = os.path.join(os.path.dirname(__file__), 'download.tpl')
         return self.render_file(template_file, {
             'file_extensions': json_serialize(FILE_EXTENSION_CHOICES),
+            'relative_url': self.relative_url(),
         })

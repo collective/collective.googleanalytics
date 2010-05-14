@@ -4,7 +4,7 @@
     };
     jq(function() {
         jq('a:external').click(function(){
-          _gaq.push(['_trackEvent', 'External', 'Link', jq(this).attr('href')]);
+          _gaq.push(['_trackEvent', 'External', 'Link', jq(this).attr('href'), '${relative_url}']);
         });
     });
 </script>
