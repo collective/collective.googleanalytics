@@ -16,6 +16,13 @@ class AnalyticsBaseTrackingPlugin(object):
         self.context = context
         self.request = request
         
+    def relative_url(self):
+        """
+        Returns the relative URL of the request.
+        """
+        
+        return self.request.ACTUAL_URL.replace(self.request.SERVER_URL, '').strip()
+        
     def render_file(self, file_path, template_vars={}):
         """
         Renders a Python string template.
