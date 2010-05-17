@@ -1,0 +1,9 @@
+<script type="text/javascript" tal:content="structure string:
+    jq(function() {
+        jq('form[action$$=&quot;discussion_reply_form&quot;]').find('input:submit').click(function () {
+            var content_url = '${view/relative_url}'.replace('/discussion_reply_form', '');
+            _gaq.push(['_trackEvent', 'Form', 'Comment', content_url]);
+        });
+    });
+">
+</script>

@@ -4,7 +4,7 @@
     };
     jq(function() {
         jq('a:external').click(function(){
-          _gaq.push(['_trackEvent', 'External', 'Link', jq(this).attr('href'), '${view/relative_url}']);
+          _gaq.push(['_trackEvent', 'External', 'Link', jq(this).attr('href')]);
         });
     });
 ">

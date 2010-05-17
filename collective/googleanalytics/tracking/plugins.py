@@ -47,3 +47,10 @@ class AnalyticsDownloadPlugin(AnalyticsBaseTrackingPlugin):
     __call__ = ViewPageTemplateFile('download.pt')
     
     file_extensions = json_serialize(FILE_EXTENSION_CHOICES)
+    
+class AnalyticsCommentPlugin(AnalyticsBaseTrackingPlugin):
+    """
+    A tracking plugin to track posting of comments.
+    """
+
+    __call__ = ViewPageTemplateFile('comment.pt')

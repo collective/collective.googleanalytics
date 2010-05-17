@@ -3,7 +3,7 @@
         var extensions = ${view/file_extensions};
         for (var i=0;i&lt;extensions.length;i++) {
             jq('a[href$$=&quot;.' + extensions[i] + '&quot;]').click(function () {
-                _gaq.push(['_trackEvent', 'File', 'Download', jq(this).attr('href'), '${view/relative_url}']);
+                _gaq.push(['_trackEvent', 'File', 'Download', jq(this).attr('href')]);
             });
         }
     });
