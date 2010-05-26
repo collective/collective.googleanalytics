@@ -4,6 +4,9 @@ Changelog
 1.0b2 - 2010-05-XX
 ------------------
 
+* Added a fallback for the password field for older versions of zope.schema.
+  [2010-05-26 - yomatters]
+
 * @@analytics-controlpanel failing to display under Plone 4 because of trying to
   access self.context.request which for some reason is not availiable. Accesing
   self.context.REQUEST works for for Plone 3.3.5 and Plone 4b2. Didn't have time
