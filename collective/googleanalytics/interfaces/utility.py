@@ -16,7 +16,7 @@ class IAnalyticsTracking(Interface):
     Tracking settings for Google Analytics.
     """
 
-    tracking_web_property = schema.Choice(title=_(u"Profile"),
+    tracking_web_property = schema.Choice(title=_(u"Tracking Profile"),
         vocabulary='collective.googleanalytics.WebProperties',
         description=_(u"Choose the Web property profile from Google Analytics."),
         required=False)
@@ -38,7 +38,7 @@ class IAnalyticsReportsAssignment(Interface):
     An assignment that specifies a profile and one or more reports.
     """
     
-    reports_profile = schema.Choice(title=_(u"Profile"),
+    reports_profile = schema.Choice(title=_(u"Reports Profile"),
         vocabulary='collective.googleanalytics.Profiles',
         description=_(u"Choose the Web property profile from Google Analytics."),
         required=False)
@@ -55,7 +55,8 @@ class IAnalyticsSettings(Interface):
     """
     
     cache_interval = schema.Int(title=_(u"Cache interval"),
-        description=_(u"Enter the number of minutes for which report results should be cached."),
+        description=_(u"Enter the number of minutes for which account \
+            information and report results should be cached."),
         default=60,
         required=True)
 

@@ -8,7 +8,7 @@ reports that are used to query Google and display the results using Google
 Visualizations. Reports are Zope objects that can be imported and exported
 using GenericSetup XML and modified on a site-by-site basis. The product 
 currently provides a portlet that can display results of reports as well
-as a control panel for setting credentials and configuring settings.
+as a control panel for authorizing your site and configuring settings.
 
 Installation
 ============
@@ -20,38 +20,58 @@ Configuration
 =============
 When you install the product from the Plone Add-ons control panel, a new
 control panel called Google Analytics will be added to your Plone site.
-In this control panel, you can set the e-mail address and password that
-Plone will use to access Google Analytics.
+In this control panel, you can authorize the site to access your Google
+Analytics data.
 
-After setting your credentials, you can select the profile where you want to
+After authorizing your site, you can select the profile where you want to
 track analytics for this site. Choose a profile from the dropdown menu. If you
-do not see any profiles listed, make sure that your e-mail address and password
-are entered correctly and that your Google Analytics account has access to at
-least one web property. Once you have selected a profile for tracking, you can
-choose the prefixes where Analytics will record information about clicks on
-external links, e-mail addresses and file downloads. If you leave any of these
-prefixes blank, links of that type will not be tracked.
+do not see any profiles listed, make sure that your Google Analytics account 
+has access to at least one profile. Also, be sure to remove any Google
+Analytics tracking code that you may have pasted in the Site control panel.
 
-For file downloads, you can further refine the statistics you collect by
-checking or unchecking file types in the Download File Types field. Note
-that, for Google Analytics to track these files, the URL used to access
-the file must end in the given extension. In Plone, that means that the
-short name of the File or Image object must end with a period followed
-by the file extension.
+Once you have selected a profile for tracking, you can choose which tracking
+plugins to enable. Tracking plugins allow you to track events on your site
+in Google Analytics in addition to the normal data on page views and visits.
+Which plugins you have available to you depends on which products you have
+installed. For information on the default tracking plugins, see the
+section on `Tracking Plugins`_ below.
 
-Finally, you can choose roles to exclude from tracking. Page visits, 
-external links, file downloads and e-mail address clicks from users with the
-selected roles will not be recorded in Google Analytics. Note that this
+Finally, you can choose roles to exclude from tracking. Google Analytics
+data will not be recorded for users with the selected roles. Note that this
 setting does not affect the inclusion of scripts specified in the Site
 control panel.
 
 On the settings tab, you can also configure the amount of time, in minutes, 
-that report results will be cached, reducing the need to query Google. Sixty 
-minutes is the default caching interval.
+that account information and report results will be cached, reducing the need
+to query Google. Sixty minutes is the default caching interval.
 
-Basic Use
-=========
-After you have set your credentials in the control panel, you can begin using
+Tracking Plugins
+================
+
+collective.googleanalytics ships with four tracking plugins:
+
+Comments
+    This plugin records a tracking event in Google Analytics for each comment
+    created on your site.
+    
+Email links
+    This plugin records a tracking event in Google Analytics each time a
+    visitor clicks on a "mailto:" link.
+    
+External links
+    This plugin records a tracking event in Google Analytics each at time a
+    visitor clicks on a link with a domain name different from the domain
+    name of your site.
+    
+File downloads
+    This plugin records a tracking event in Google Analytics each time a
+    visitor clicks on a link to a file with one of these extensions: avi, css,
+    doc, eps, exe, jpg, js, mov, mp3, pdf, png, ppt, rar, svg, txt, vsd, vxd,
+    wma, wmv, xls, zip.
+
+Using Reports
+=============
+After you have authorized your site in the control panel, you can begin using
 Analytics reports. First navigate to the page where you would like to display
 the report results. Where you place the portlet depends on your goals and the
 type of reports you are displaying. Even if you place a portlet on a public 
@@ -67,8 +87,7 @@ The profile is the Google property where the statistics that you want to access
 live. Which profiles you can select within the portlet depends on which
 profiles the Analytics account you provide to Plone can access. If you do not
 see any profiles in the dropdown menu, check to be sure that you have
-correctly set your Analytics e-mail address and password in the Google
-Analytics control panel.
+authorized your site in the Google Analytics control panel.
 
 You can select more than one report to display within a single portlet. Each
 report performs its own query to Google, however, so including many reports
@@ -759,7 +778,7 @@ complicated multi-dimensional report, read on:
         <div tal:replace="structure view/visualization"></div>
 	
 18. You're done! Click the save button in the ZMI. Then test out your new
-    report on the site as described in the section about `Basic Use`_.
+    report on the site as described in the section about `Using Reports`_.
 
 Defining Reports in a Filesystem Product
 ========================================
@@ -892,6 +911,11 @@ Code Review
 -----------
 
 * `David Glick <davidglick@groundwire.org>`_
+
+User Documentation
+------------------
+
+* `Jon Stahl <jon@groundwire.org>`_
 
 Other
 -----

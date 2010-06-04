@@ -59,5 +59,5 @@ class AnalyticsAuth(BrowserPage):
         # Redirect back to the control panel.
         portal_url = getToolByName(self.context, 'portal_url')
         next_url = '%s/portal_analytics/@@analytics-controlpanel' % portal_url()
-        self.request.response.redirect(next_url)        
+        self.request.response.redirect(next_url)
         
