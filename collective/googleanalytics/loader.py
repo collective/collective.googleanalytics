@@ -71,7 +71,6 @@ class AsyncAnalyticsResults(BrowserPage):
     """
     
     bad_auth = ViewPageTemplateFile('loader_templates/badauth.pt')
-    missing_cred = ViewPageTemplateFile('loader_templates/missingcred.pt')
     
     def __call__(self):
         """
@@ -101,8 +100,6 @@ class AsyncAnalyticsResults(BrowserPage):
                 results.append(renderer())
             except error.BadAuthenticationError:
                 return self.bad_auth()
-            except error.MissingCredentialsError:
-                return self.missing_cred()
                 
         # Once we expose the date range optoin in the UI, we'll need to find a
         # way to generate this label dynamically, probably by using the variable

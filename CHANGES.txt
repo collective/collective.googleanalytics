@@ -4,6 +4,9 @@ Changelog
 1.0b2 - 2010-05-XX
 ------------------
 
+* Changed to AuthSub authentication.
+  [2010-06-04 - yomatters]
+
 * Add tracking functionality, including external links, e-mail addresses,
   file downloads.
   [2010-05-11 - yomatters]

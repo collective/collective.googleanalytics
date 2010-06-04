@@ -9,13 +9,7 @@ class IAnalyticsCredentials(Interface):
     This interface defines the configlet.
     """
 
-    email = schema.TextLine(title=_(u"E-mail address"),
-        description=_(u"Enter the e-mail address used to log in to Google Analytics."),
-        required=True)
-                                 
-    password = schema.Password(title=_(u"Password"),
-        description=_(u"Enter the Google Analytics password for the e-mail address above."),
-        required=True)
+    auth_token = schema.TextLine(required=False)
 
 class IAnalyticsTracking(Interface):
     """
@@ -29,6 +23,7 @@ class IAnalyticsTracking(Interface):
 
     tracking_plugin_names = schema.List(title=_(u"Plugins"),
         value_type=schema.Choice(vocabulary='collective.googleanalytics.TrackingPluginNames'),
+        default=[],
         description=_(u"Choose which tracking plugins to use."),
         required=False)
 

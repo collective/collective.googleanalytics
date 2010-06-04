@@ -37,7 +37,7 @@ class AnalyticsTrackingViewlet(AnalyticsViewlet):
         or an empty string if no tracking profile is selected.
         """
 
-        return self.analytics_tool.tracking_web_property or None
+        return getattr(self.analytics_tool, 'tracking_web_property', None)
         
     def renderPlugins(self):
         """

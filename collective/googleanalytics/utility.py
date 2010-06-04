@@ -11,13 +11,24 @@ from OFS.ObjectManager import IFAwareObjectManager
 from OFS.OrderedFolder import OrderedFolder
 
 from Products.CMFPlone.PloneBaseTool import PloneBaseTool
+from plone.memoize import ram
+from time import time
 
 from collective.googleanalytics.interfaces.utility import IAnalytics
 from collective.googleanalytics.interfaces.report import IAnalyticsReport
 from collective.googleanalytics import error
 
 import gdata.analytics.service
-from gdata.service import BadAuthentication, CaptchaRequired, RequestError
+from gdata.service import RequestError
+
+def account_feed_cachekey(func, instance):
+    """
+    Cache key for the account feed. We only refresh it every ten minutes.
+    """
+    
+    cache_interval = instance.cache_interval
+    cache_interval = (cache_interval > 0 and cache_interval * 60) or 1
+    return hash((time() // cache_interval, instance.auth_token))
 
 class Analytics(PloneBaseTool, IFAwareObjectManager, OrderedFolder):
     """
@@ -30,14 +41,12 @@ class Analytics(PloneBaseTool, IFAwareObjectManager, OrderedFolder):
     
     id = 'portal_analytics'
     meta_type = 'Google Analytics Tool'
+    Title = 'Google Analytics'
     
     _product_interfaces = (IAnalyticsReport,)
     
-    security.declarePrivate('email')
-    email = FieldProperty(IAnalytics['email'])
-    
-    security.declarePrivate('password')
-    password = FieldProperty(IAnalytics['password'])
+    security.declarePrivate('auth_token')
+    auth_token = FieldProperty(IAnalytics['auth_token'])
     
     security.declarePrivate('tracking_web_property')
     tracking_web_property = FieldProperty(IAnalytics['tracking_web_property'])
@@ -67,33 +76,23 @@ class Analytics(PloneBaseTool, IFAwareObjectManager, OrderedFolder):
     accounts_client = gdata.analytics.service.AccountsService()
     
     security.declarePrivate('_getAuthenticatedClient')
-    def _getAuthenticatedClient(self, service='data', reauthenticate=False):
+    def _getAuthenticatedClient(self, service='data'):
         """
         Get the client object and authenticate using our stored credentials.
         """
         
-        if self.email == None or self.password == None:
-            raise error.MissingCredentialsError, 'Enter e-mail and password in the control panel'
+        if not self.auth_token:
+            raise error.BadAuthenticationError, 'You need to authorize with Google'
         
         # Get the appropriate client class.
         if service == 'accounts':
             client = self.accounts_client
         else:
             client = self.data_client
+            
+        if not client.GetAuthSubToken():
+            client.SetAuthSubToken(self.auth_token)
         
-        # If we're already authenticated, return the client.
-        if client.email == self.email and client.password == self.password \
-            and not reauthenticate:
-            return client
-        
-        # Otherwise try to do the authentication, and raise an error if it doesn't work.
-        try:
-            client.ClientLogin(self.email, self.password, account_type='GOOGLE')
-        except (BadAuthentication, CaptchaRequired):
-            # Don't store credentials that didn't authenticate correctly.
-            client.email = None
-            client.password = None
-            raise error.BadAuthenticationError, 'Incorrect e-mail or password'
         return client
         
     security.declarePrivate('makeClientRequest')
@@ -111,10 +110,10 @@ class Analytics(PloneBaseTool, IFAwareObjectManager, OrderedFolder):
         try:
             return query_method(*args, **kwargs)
         except RequestError, e:
-            if hasattr(e, 'reason') and e.reason == 'Token invalid':
-                # The auth token has expired, so the client needs to be reauthenticated.
-                client = self._getAuthenticatedClient(service, reauthenticate=True)
-                return query_method(*args, **kwargs)
+            if 'Token invalid' in e[0]['reason']:
+                # Reset the stored auth token.
+                self.auth_token = None
+                raise error.BadAuthenticationError, 'You need to authorize with Google'
             else:
                 raise
     
@@ -138,5 +137,14 @@ class Analytics(PloneBaseTool, IFAwareObjectManager, OrderedFolder):
         """
         
         return self.report_categories
+        
+    security.declarePrivate('getAccountsFeed')
+    @ram.cache(account_feed_cachekey)
+    def getAccountsFeed(self):
+        """
+        Returns the list of accounts.
+        """
+
+        return self.makeClientRequest('accounts', 'GetAccountList')
         
 InitializeClass(Analytics)

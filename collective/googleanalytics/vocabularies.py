@@ -9,15 +9,13 @@ def getProfiles(context):
     """
     Return list of Google Analytics profiles and corresponding account IDs (e.g. ga:30481).
     """
+    
     analytics_tool = getToolByName(getSite(), 'portal_analytics')
     
     try:
-        accounts = analytics_tool.makeClientRequest('accounts', 'GetAccountList')
-    except error.MissingCredentialsError:
-        choices = [('Set Google Analytics e-mail and password in the control panel', None)]
-        return SimpleVocabulary.fromItems(choices)
+        accounts = analytics_tool.getAccountsFeed()
     except error.BadAuthenticationError:
-        choices = [('Incorrect Google Analytics e-mail or password', None)]
+        choices = [('Please authorize with Google in the Google Analytics control panel.', None)]
         return SimpleVocabulary.fromItems(choices)
     if accounts:
         unique_choices = {}
@@ -32,15 +30,13 @@ def getWebProperties(context):
     """
     Return list of Google Analytics profiles and web property IDs (e.g. UA-30481-22).
     """
+    
     analytics_tool = getToolByName(getSite(), 'portal_analytics')
 
     try:
-        accounts = analytics_tool.makeClientRequest('accounts', 'GetAccountList')
-    except error.MissingCredentialsError:
-        choices = [('Set Google Analytics e-mail and password in the control panel', None)]
-        return SimpleVocabulary.fromItems(choices)
+        accounts = analytics_tool.getAccountsFeed()
     except error.BadAuthenticationError:
-        choices = [('Incorrect Google Analytics e-mail or password', None)]
+        choices = [('Please authorize with Google in the Google Analytics control panel.', None)]
         return SimpleVocabulary.fromItems(choices)
     if accounts:
         unique_choices = {}
