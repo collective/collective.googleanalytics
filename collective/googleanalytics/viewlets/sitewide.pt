@@ -1,8 +1,16 @@
-<div tal:attributes="id view/getContainerId;" 
-    class="analytics-async-container"></div>
-<script type="text/javascript" tal:content="view/getJavascript"></script>
-<p class="analytics-visit-google-link">
-    <a href="http://www.google.com/analytics/" target="_blank">
-        Visit Google Analytics
-    </a>
-</p>
+<fieldset tal:condition="view/available"
+    id="fieldset-analytics_results">
+    <legend id="fieldsetlegend-analytics_results">Results</legend>
+    <div tal:attributes="id view/getContainerId;" 
+        class="analytics-async-container"></div>
+    <script type="text/javascript">
+        jq(function () {
+            // The results tab needs to be displayed initially so that the
+            // visualizations load correctly.
+            jq('a#fieldsetlegend-analytics_results').click();
+        });
+    </script>
+    <script type="text/javascript" tal:content="view/getJavascript"></script>
+
+</fieldset>
+

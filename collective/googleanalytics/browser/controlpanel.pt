@@ -32,6 +32,12 @@
                 </dl>
 
             </metal:block>
+            
+            <p style="float: right;">
+                <a href="http://www.google.com/analytics/" target="_blank">
+                    Visit Google Analytics
+                </a>
+            </p>
 
             <h1 class="documentFirstHeading"
                 i18n:translate=""
@@ -56,12 +62,6 @@
                i18n:translate="label_up_to_plone_setup">
                 Up to Site Setup
             </a>
-
-            <p i18n:translate=""
-               tal:condition="view/description"
-               tal:content="view/description">
-                Description
-            </p>
             
             <tal:notauthorized condition="not:view/authorized">
                 <h2>Authorization required</h2>
@@ -111,10 +111,6 @@
             </tal:notauthorized>
             
             <tal:authorized condition="view/authorized">          
-                <div class="analytics-report-results">
-                    <div tal:replace="structure provider:collective.googleanalytics.controlpanel"/>
-                </div>
-
                 <form action="."
                       metal:define-macro="master"
                       tal:define="is_fieldsets view/is_fieldsets"
@@ -132,6 +128,8 @@
 
                     <div metal:define-slot="extra_info" tal:replace="nothing">
                     </div>
+                    
+                    <tal:results replace="structure provider:collective.googleanalytics.controlpanel" />
 
                     <fieldset tal:condition="not: is_fieldsets">
                         <legend tal:define="form_name view/form_name|nothing"

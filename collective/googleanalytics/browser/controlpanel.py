@@ -53,7 +53,6 @@ class AnalyticsControlPanelForm(ControlPanelForm):
     form_fields = FormFieldsets(analytics_tracking, analytics_assignment, analytics_settings)
     
     label = _(u"Google Analytics")
-    description = _(u"Settings for Google Analytics.")
     form_name = _("Google Analytics Settings")
     
     def authorized(self):
