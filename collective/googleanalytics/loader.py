@@ -8,7 +8,6 @@ from collective.googleanalytics.interfaces.loader import IAnalyticsAsyncLoader
 from collective.googleanalytics.interfaces.report import IAnalyticsReportRenderer
 from collective.googleanalytics import error
 from string import Template
-import md5
 import time
 import os
 
@@ -21,9 +20,8 @@ class DefaultAnalyticsAsyncLoader(object):
     
     @memoize
     def getContainerId(self):
-        random_id = md5.new()
-        random_id.update(str(time.time()))
-        return 'analytics-%s' % random_id.hexdigest()
+
+        return 'analytics-%s' % str(hash(time.time()))
     
     def getJavascript(self, report_ids, profile_id, date_range='month', container_id=None):
         if not report_ids or not profile_id:

@@ -45,14 +45,8 @@ class AnalyticsReportVisualization(object):
         Creates a unique ID that we can use for the div that will hold the
         visualization.
         """
-        try:
-            import hashlib
-            viz_id = hashlib.md5(self.report.id + str(time.time())).hexdigest()
-        except ImportError:
-            import md5
-            viz_id = md5.new(self.report.id + str(time.time())).hexdigest()
 
-        return 'analytics-' + viz_id
+        return 'analytics-' + str(hash((self.report.id, time.time())))
 
     @memoize
     def _getColumns(self):
