@@ -52,7 +52,7 @@ class AnalyticsToolXMLAdapter(XMLAdapterBase, ObjectManagerHelpers):
 
     adapts(IAnalytics, ISetupEnviron)
 
-    _LOGGER_ID = 'analytics'
+    _LOGGER_ID = 'collective.googleanalytics'
 
     name = 'analytics'
     
@@ -96,7 +96,7 @@ def exportAnalyticsReports(context):
     site = context.getSite()
     tool = getToolByName(site, 'portal_analytics', None)
     if tool is None:
-        logger = context.getLogger('analytics')
+        logger = context.getLogger('collective.googleanalytics')
         logger.info('Nothing to export.')
         return
 

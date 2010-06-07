@@ -1,4 +1,4 @@
-from zope.interface import Interface, Attribute
+from zope.interface import Interface
 
 # General plugin interfaces
 
@@ -6,9 +6,7 @@ class IAnalyticsPlugin(Interface):
     """
     A plugin for Analytics reports.
     """
-    
-    name = Attribute('Plugin name')
-        
+            
     def processDimensionsChoices(choices):
         """
         Process the dimensions choices.

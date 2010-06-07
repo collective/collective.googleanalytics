@@ -20,6 +20,17 @@ class SiteWideAnalyticsViewlet(ViewletBase):
         self.analytics_tool = getToolByName(self.context, 'portal_analytics', None)
         self.async_loader = IAnalyticsAsyncLoader(self.context)
         
+    def available(self):
+        """
+        Returns True if there are site-wide reports selected.
+        """
+        
+        profile = getattr(self.analytics_tool, 'reports_profile', None)
+        reports = getattr(self.analytics_tool, 'reports', None)
+        if reports and profile:
+            return True
+        return False
+        
     def getContainerId(self):
         """
         Returns the element ID for the results container.
@@ -32,6 +43,6 @@ class SiteWideAnalyticsViewlet(ViewletBase):
         Returns a list of AnalyticsReportResults objects for the selected reports.
         """
         
-        profile = getattr(self.analytics_tool, 'profile', None)
+        profile = getattr(self.analytics_tool, 'reports_profile', None)
         reports = getattr(self.analytics_tool, 'reports', None)
         return self.async_loader.getJavascript(reports, profile)

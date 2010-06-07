@@ -4,8 +4,12 @@ Changelog
 1.0b2 - 2010-05-XX
 ------------------
 
-* Added a fallback for the password field for older versions of zope.schema.
-  [2010-05-26 - yomatters]
+* Changed to AuthSub authentication.
+  [2010-06-04 - yomatters]
+
+* Add tracking functionality, including external links, e-mail addresses,
+  comments and file downloads.
+  [2010-05-11 - yomatters]
 
 * @@analytics-controlpanel failing to display under Plone 4 because of trying to
   access self.context.request which for some reason is not availiable. Accesing

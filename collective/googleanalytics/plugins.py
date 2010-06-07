@@ -232,7 +232,7 @@ class AnalyticsContextualResults(AnalyticsBasePlugin):
         self.relative_url = absolute_url.replace(request.SERVER_URL, '').strip()
         
         # Remove the trailing slash from the relative URL.
-        if self.relative_url.endswith('/'):
+        if self.relative_url.endswith('/') and len(self.relative_url) > 1:
             self.relative_url = self.relative_url[:-1]
 
     

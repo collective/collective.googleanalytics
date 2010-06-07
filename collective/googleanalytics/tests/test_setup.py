@@ -47,8 +47,7 @@ class TestReinstall(FunctionalTestCase):
         """
         # Set some properties on the portal_analytics tool.
         analytics_tool = getToolByName(self.portal, 'portal_analytics')
-        analytics_tool.email = u'john@doe.com'
-        analytics_tool.password = u'J0hnD03'
+        analytics_tool.auth_token = u'abc123'
         analytics_tool.cache_interval = 100
 
         # Reinstall the product.
@@ -58,8 +57,7 @@ class TestReinstall(FunctionalTestCase):
 
         # Make sure the properties are still set.
         analytics_tool = getToolByName(self.portal, 'portal_analytics')
-        self.assertEqual(analytics_tool.email, u'john@doe.com')
-        self.assertEqual(analytics_tool.password, u'J0hnD03')
+        self.assertEqual(analytics_tool.auth_token, u'abc123')
         self.assertEqual(analytics_tool.cache_interval, 100)
         
     def test_reinstallation_preserves_reports(self):

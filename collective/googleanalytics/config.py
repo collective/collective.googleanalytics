@@ -139,3 +139,27 @@ VISUALIZATION_CHOICES = (
     'ScatterChart',
     'Table',
 )
+
+FILE_EXTENSION_CHOICES = (
+    'avi', 
+    'css', 
+    'doc', 
+    'eps', 
+    'exe', 
+    'jpg', 
+    'js', 
+    'mov', 
+    'mp3',
+    'pdf', 
+    'png', 
+    'ppt', 
+    'rar', 
+    'svg', 
+    'txt', 
+    'vsd', 
+    'vxd', 
+    'wma', 
+    'wmv', 
+    'xls', 
+    'zip', 
+)

@@ -19,6 +19,7 @@
 
   <include package=".browser" />
   <include package=".portlets" />
+  <include package=".tracking" />
   <include package=".viewlets" />
   <include file="loader.zcml" />
   <include file="renderer.zcml" />
@@ -42,7 +43,13 @@
     name="collective.googleanalytics.Profiles"
     provides="zope.schema.interfaces.IVocabularyFactory"
     />
-    
+  
+  <utility
+    component=".vocabularies.getWebProperties"
+    name="collective.googleanalytics.WebProperties"
+    provides="zope.schema.interfaces.IVocabularyFactory"
+    />
+  
   <utility
     component=".vocabularies.getSiteWideReports"
     name="collective.googleanalytics.SiteWideReports"
@@ -58,6 +65,12 @@
   <utility
     component=".vocabularies.getRoles"
     name="collective.googleanalytics.Roles"
+    provides="zope.schema.interfaces.IVocabularyFactory"
+    />
+    
+  <utility
+    component=".vocabularies.getTrackingPluginNames"
+    name="collective.googleanalytics.TrackingPluginNames"
     provides="zope.schema.interfaces.IVocabularyFactory"
     />
 

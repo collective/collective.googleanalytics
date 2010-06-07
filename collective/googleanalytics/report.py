@@ -23,7 +23,7 @@ class AnalyticsReport(PropertyManager, SimpleItem):
     
     implements(IAnalyticsReport)
 
-    i18n_domain = 'analytics'
+    i18n_domain = 'collective.googleanalytics'
     
     security = ClassSecurityInfo()
     

@@ -8,7 +8,6 @@ from collective.googleanalytics.interfaces.loader import IAnalyticsAsyncLoader
 from collective.googleanalytics.interfaces.report import IAnalyticsReportRenderer
 from collective.googleanalytics import error
 from string import Template
-import md5
 import time
 import os
 
@@ -21,9 +20,8 @@ class DefaultAnalyticsAsyncLoader(object):
     
     @memoize
     def getContainerId(self):
-        random_id = md5.new()
-        random_id.update(str(time.time()))
-        return 'analytics-%s' % random_id.hexdigest()
+
+        return 'analytics-%s' % str(hash(time.time()))
     
     def getJavascript(self, report_ids, profile_id, date_range='month', container_id=None):
         if not report_ids or not profile_id:
@@ -71,7 +69,6 @@ class AsyncAnalyticsResults(BrowserPage):
     """
     
     bad_auth = ViewPageTemplateFile('loader_templates/badauth.pt')
-    missing_cred = ViewPageTemplateFile('loader_templates/missingcred.pt')
     
     def __call__(self):
         """
@@ -101,8 +98,6 @@ class AsyncAnalyticsResults(BrowserPage):
                 results.append(renderer())
             except error.BadAuthenticationError:
                 return self.bad_auth()
-            except error.MissingCredentialsError:
-                return self.missing_cred()
                 
         # Once we expose the date range optoin in the UI, we'll need to find a
         # way to generate this label dynamically, probably by using the variable

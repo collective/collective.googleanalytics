@@ -32,6 +32,12 @@
                 </dl>
 
             </metal:block>
+            
+            <p style="float: right;">
+                <a href="http://www.google.com/analytics/" target="_blank">
+                    Visit Google Analytics
+                </a>
+            </p>
 
             <h1 class="documentFirstHeading"
                 i18n:translate=""
@@ -41,9 +47,14 @@
                 Do something
             </h1>
             
-            <div class="analytics-report-results">
-                <div tal:replace="structure provider:collective.googleanalytics.controlpanel"/>
-            </div>
+            <div tal:condition="view/authorized" 
+                class="analytics-status" style="float:right;">
+                 Authorized:
+                 <strong tal:content="view/account_name">me@example.com</strong>
+                 [<a 
+                    tal:attributes="href string:${context/portal_url}/analytics-auth?revoke_token=1;"
+                    href="">Revoke access</a>]
+             </div>
 
             <a href=""
                class="link-parent"
@@ -51,150 +62,196 @@
                i18n:translate="label_up_to_plone_setup">
                 Up to Site Setup
             </a>
-
-            <p i18n:translate=""
-               tal:condition="view/description"
-               tal:content="view/description">
-                Description
-            </p>
-
-            <form action="."
-                  metal:define-macro="master"
-                  tal:define="is_fieldsets view/is_fieldsets"
-                  tal:attributes="action request/URL;
-                                  class python: is_fieldsets and 'edit-form enableFormTabbing enableUnloadProtection' or default"
-                  method="post"
-                  class="edit-form enableUnloadProtection"
-                  enctype="multipart/form-data"
-                  id="zc.page.browser_form">
-
-                <input type="hidden"
-                       name="fieldset.current"
-                       value=""
-                       tal:attributes="value request/fieldset.current | string:" />
-
-                <div metal:define-slot="extra_info" tal:replace="nothing">
-                </div>
-
-                <fieldset tal:condition="not: is_fieldsets">
-                    <legend tal:define="form_name view/form_name|nothing"
-                            tal:condition="form_name"
-                            tal:content="form_name">Form name</legend>
-                    <tal:block tal:repeat="widget view/widgets">
-
-                        <div class="field"
-                             tal:define="description widget/hint;
-                                         error widget/error"
-                             tal:attributes="class python:'field'+(error and ' error' or '')">
-			  
-                            <label i18n:translate=""
-                                   tal:attributes="for widget/name"
-                                   tal:content="widget/label">
-                                label
-                            </label>
-
-                            <span class="fieldRequired"
-                                  title="Required"
-                                  i18n:attributes="title title_required;"
-                                  i18n:translate="label_required"
-                                  tal:condition="widget/required">
-                                (Required)
-                            </span>
-
-                            <div class="formHelp"
-                                 i18n:translate=""
-                                 tal:content="description"
-                                 tal:condition="description">
-                                field description
-                            </div>
-
-                            <div tal:condition="error"
-                                 tal:content="structure error">
-                                The Error
-                            </div>
-
-                            <div class="widget" tal:content="structure widget">
-                                <input type="text" />
-                            </div>
+            
+            <tal:notauthorized condition="not:view/authorized">
+                <h2>Authorization required</h2>
+                <p>
+                    Before you can use Google Analytics for Plone, you need to authorize
+                    this site to access your Google Analytics account. Follow the steps
+                    below to complete the authorization process.
+                </p>
+                <ol>
+                    <li>
+                        To begin, log into the Google account that you use to access Google
+                        Analytics if you have not done so already. To log in, you can
+                        <a href="http://www.google.com/analytics">visit Google Analytics</a>
+                        and sign in as usual.
+                    </li>
+                    <li>
+                        Once you have signed into your Google account, click this link
+                        to begin the authorization process:
+                        <div style="margin: 1em 0;">
+                            <a style="font-size:1.3em; font-weight: bold;"
+                                tal:attributes="href view/auth_url">Authorize with Google</a>
                         </div>
+                    </li>
+                    <li>
+                        Google will ask you if you want to allow this site to access your
+                        Google Analytics data. If the URL displayed matches the one below,
+                        click the Grant Access button.<br />
+                        <div style="margin: 1em 0;">
+                            <strong style="font-size:1.3em;"
+                                tal:content="string:${context/portal_url}/analytics-auth">
+                                Analytics authorization URL
+                            </strong>
+                        </div>
+                    </li>
+                    <li>
+                        After you click Grant Access, you will be returned to this page where
+                        you can configure Google Analytics for Plone.
+                    </li>
+                    <li>
+                        If you ever decide that you no longer want this site to have access
+                        to your Google Analytics data, you can remove its authorization by
+                        clicking the Revoke Access link in this control panel or by visiting
+                        the Change Authorized Websites link in your Google account preferences.
+                    </li>
+                </ol>
+                
+            </tal:notauthorized>
+            
+            <tal:authorized condition="view/authorized">          
+                <form action="."
+                      metal:define-macro="master"
+                      tal:define="is_fieldsets view/is_fieldsets"
+                      tal:attributes="action request/URL;
+                                      class python: is_fieldsets and 'edit-form enableFormTabbing enableUnloadProtection' or default"
+                      method="post"
+                      class="edit-form enableUnloadProtection"
+                      enctype="multipart/form-data"
+                      id="zc.page.browser_form">
 
-                    </tal:block>
+                    <input type="hidden"
+                           name="fieldset.current"
+                           value=""
+                           tal:attributes="value request/fieldset.current | string:" />
 
-                </fieldset>
-
-                <fieldset tal:attributes="id python:'fieldset-%s' % fieldset.id"
-                          tal:condition="is_fieldsets"
-                          tal:repeat="fieldset view/form_fields/fieldsets">
-                    <legend tal:define="form_name fieldset/label"
-                            tal:condition="form_name"
-                            tal:attributes="id python:'fieldsetlegend-%s' % fieldset.id"
-                            tal:content="form_name">Form name</legend>        
+                    <div metal:define-slot="extra_info" tal:replace="nothing">
+                    </div>
                     
-                    <p i18n:translate=""
-                       tal:condition="fieldset/description"
-                       tal:content="fieldset/description">
-                        Description
-                    </p>
+                    <tal:results replace="structure provider:collective.googleanalytics.controlpanel" />
 
-                    <tal:block tal:repeat="widget fieldset/widgets">
+                    <fieldset tal:condition="not: is_fieldsets">
+                        <legend tal:define="form_name view/form_name|nothing"
+                                tal:condition="form_name"
+                                tal:content="form_name">Form name</legend>
+                        <tal:block tal:repeat="widget view/widgets">
 
-                        <div class="field"
-                             tal:define="description widget/hint;
-                                         error widget/error"
-                             tal:attributes="class python:'field'+(error and ' error' or '')">
+                            <div class="field"
+                                 tal:define="description widget/hint;
+                                             error widget/error"
+                                 tal:attributes="class python:'field'+(error and ' error' or '')">
 
-                            <label i18n:translate=""
-				   tal:define="name widget/name"
-                                   tal:attributes="for widget/associateLabelWithInputControl|name"
-				   tal:content="widget/label">
-                                label
-                            </label>
+                                <label i18n:translate=""
+                                       tal:attributes="for widget/name"
+                                       tal:content="widget/label">
+                                    label
+                                </label>
 
-                            <span class="fieldRequired"
-                                  title="Required"
-                                  i18n:attributes="title title_required;"
-                                  i18n:translate="label_required"
-                                  tal:condition="widget/required">
-                                (Required)
-                            </span>
+                                <span class="fieldRequired"
+                                      title="Required"
+                                      i18n:attributes="title title_required;"
+                                      i18n:translate="label_required"
+                                      tal:condition="widget/required">
+                                    (Required)
+                                </span>
 
-                            <div class="formHelp"
-                                 i18n:translate=""
-                                 tal:content="description"
-                                 tal:condition="description">
-                                field description
+                                <div class="formHelp"
+                                     i18n:translate=""
+                                     tal:content="description"
+                                     tal:condition="description">
+                                    field description
+                                </div>
+
+                                <div tal:condition="error"
+                                     tal:content="structure error">
+                                    The Error
+                                </div>
+
+                                <div class="widget" tal:content="structure widget">
+                                    <input type="text" />
+                                </div>
                             </div>
 
-                            <div tal:condition="error"
-                                 tal:content="structure error">
-                                The Error
+                        </tal:block>
+
+                    </fieldset>
+
+                    <fieldset tal:attributes="id python:'fieldset-%s' % fieldset.id"
+                              tal:condition="is_fieldsets"
+                              tal:repeat="fieldset view/form_fields/fieldsets">
+                        <legend tal:define="form_name fieldset/label"
+                                tal:condition="form_name"
+                                tal:attributes="id python:'fieldsetlegend-%s' % fieldset.id"
+                                tal:content="form_name">Form name</legend>        
+
+                        <p i18n:translate=""
+                           tal:condition="fieldset/description"
+                           tal:content="fieldset/description">
+                            Description
+                        </p>
+
+                        <tal:block tal:repeat="widget fieldset/widgets">
+
+                            <div class="field"
+                                 tal:define="description widget/hint;
+                                             error widget/error"
+                                 tal:attributes="class python:'field'+(error and ' error' or '')">
+
+                                <label i18n:translate=""
+    				   tal:define="name widget/name"
+                                       tal:attributes="for widget/associateLabelWithInputControl|name"
+    				   tal:content="widget/label">
+                                    label
+                                </label>
+
+                                <span class="fieldRequired"
+                                      title="Required"
+                                      i18n:attributes="title title_required;"
+                                      i18n:translate="label_required"
+                                      tal:condition="widget/required">
+                                    (Required)
+                                </span>
+
+                                <div class="formHelp"
+                                     i18n:translate=""
+                                     tal:content="description"
+                                     tal:condition="description">
+                                    field description
+                                </div>
+
+                                <div tal:condition="error"
+                                     tal:content="structure error">
+                                    The Error
+                                </div>
+
+                                <div class="widget" tal:content="structure widget">
+                                    <input type="text" />
+                                </div>
                             </div>
 
-                            <div class="widget" tal:content="structure widget">
-                                <input type="text" />
-                            </div>
-                        </div>
+                        </tal:block>
 
-                    </tal:block>
+                    </fieldset>
 
-                </fieldset>
+                    <metal:block define-slot="above_buttons" />
 
-                <metal:block define-slot="above_buttons" />
+                    <div class="visualClear"><!-- --></div>
 
-                <div class="visualClear"><!-- --></div>
+                    <div id="actionsView" class="formControls">
+                        <span class="actionButtons"
+                              tal:condition="view/availableActions"
+                              metal:define-slot="bottom_buttons">
+                            <input tal:repeat="action view/actions"
+                                   tal:replace="structure action/render" />
+                        </span>
+                    </div>
 
-                <div id="actionsView" class="formControls">
-                    <span class="actionButtons"
-                          tal:condition="view/availableActions"
-                          metal:define-slot="bottom_buttons">
-                        <input tal:repeat="action view/actions"
-                               tal:replace="structure action/render" />
-                    </span>
-                </div>
+                    <input tal:replace="structure context/@@authenticator/authenticator" />
 
-                <input tal:replace="structure context/@@authenticator/authenticator" />
-
-            </form>
+                </form>
+            </tal:authorized>
+            
         </div>
 
         <script type="text/javascript"

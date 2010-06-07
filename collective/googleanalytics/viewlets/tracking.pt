@@ -1,0 +1,21 @@
+<tal:tracking condition="view/available">
+    <tal:webproperty define="web_property view/getTrackingWebProperty;"
+        condition="web_property">
+        <script type="text/javascript"
+            tal:content="string:
+            var _gaq = _gaq || [];
+            _gaq.push(['_setAccount', '${web_property}']); 
+            _gaq.push(['_trackPageview']);
+            ">
+        </script>
+        <script type="text/javascript">
+        (function() {
+            var ga = document.createElement('script');
+            ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+            ga.setAttribute('async', 'true');
+            document.documentElement.firstChild.appendChild(ga);
+        })();
+        </script>
+        <tal:block content="structure view/renderPlugins"></tal:block>
+    </tal:webproperty>
+</tal:tracking>

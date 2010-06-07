@@ -1,0 +1,11 @@
+<script type="text/javascript" tal:content="structure string:
+    jq(function() {
+        var extensions = ${view/file_extensions};
+        for (var i=0;i&lt;extensions.length;i++) {
+            jq('a[href$$=&quot;.' + extensions[i] + '&quot;]').click(function () {
+                _gaq.push(['_trackEvent', 'File', 'Download', jq(this).attr('href')]);
+            });
+        }
+    });
+">
+</script>

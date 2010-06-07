@@ -10,6 +10,14 @@
         permission="cmf.ManagePortal"
         layer="..interfaces.browserlayer.IAnalyticsLayer"
         />
+        
+    <browser:page
+        for="Products.CMFPlone.interfaces.IPloneSiteRoot"
+        name="analytics-auth"
+        class=".auth.AnalyticsAuth"
+        permission="cmf.ManagePortal"
+        layer="..interfaces.browserlayer.IAnalyticsLayer"
+        />
 
 	<browser:resourceDirectory
 		name="analytics_images"
