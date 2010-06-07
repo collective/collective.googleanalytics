@@ -250,6 +250,13 @@ class AnalyticsContextualResults(AnalyticsBasePlugin):
 
         exp_context['page_url'] = self.relative_url
         url_pattern = '=~^%s/?$' % self.relative_url
+        
+        # Make sure the regluar expression won't exceed Google's maximum length
+        # of 128 characters (130 with the =~ operator). If so, fall back to an 
+        # exact match.
+        if len(url_pattern) > 130:
+            url_pattern = '==%s' % self.relative_url
+            
         exp_context['page_filter'] = 'ga:pagePath%s' % url_pattern
         exp_context['nextpage_filter'] = 'ga:nextPagePath%s' % url_pattern
         exp_context['previouspage_filter'] = 'ga:previousPagePath%s' % url_pattern
