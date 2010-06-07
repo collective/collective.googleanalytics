@@ -41,7 +41,6 @@ class Analytics(PloneBaseTool, IFAwareObjectManager, OrderedFolder):
     
     id = 'portal_analytics'
     meta_type = 'Google Analytics Tool'
-    Title = 'Google Analytics'
     
     _product_interfaces = (IAnalyticsReport,)
     
