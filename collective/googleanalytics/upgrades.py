@@ -104,3 +104,31 @@ def upgrade_10a4_to_10b1(setup_tool):
     profile_id = 'profile-collective.googleanalytics:upgrade_10a4_10b1'
     step_id = 'analytics'
     setup_tool.runImportStepFromProfile(profile_id, step_id)
+    
+def upgrade_10b1_to_10b2(setup_tool):
+    """
+    Update Analytics tool to use new properties.
+    """
+
+    analytics_tool = getToolByName(setup_tool, 'portal_analytics')
+    
+    if hasattr(analytics_tool, 'email'):
+        del analytics_tool.email
+
+    if hasattr(analytics_tool, 'password'):
+        del analytics_tool.password
+    
+    if hasattr(analytics_tool, 'profile'):
+        del analytics_tool.profile
+        
+    if not hasattr(analytics_tool, 'auth_token'):
+        analytics_tool.auth_token = None
+    
+    if not hasattr(analytics_tool, 'tracking_web_property'):
+        analytics_tool.tracking_web_property = None
+        
+    if not hasattr(analytics_tool, 'tracking_plugin_names'):
+        analytics_tool.tracking_plugin_names = []
+        
+    if not hasattr(analytics_tool, 'reports_profile'):
+        analytics_tool.reports_profile = None

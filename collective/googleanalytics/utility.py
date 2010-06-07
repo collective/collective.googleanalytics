@@ -45,6 +45,9 @@ class Analytics(PloneBaseTool, IFAwareObjectManager, OrderedFolder):
     
     _product_interfaces = (IAnalyticsReport,)
     
+    security.declarePrivate('email')
+    security.declarePrivate('password')
+    
     security.declarePrivate('auth_token')
     auth_token = FieldProperty(IAnalytics['auth_token'])
     

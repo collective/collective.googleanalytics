@@ -4,6 +4,9 @@ Changelog
 1.0b2 - 2010-05-XX
 ------------------
 
+* Added upgrade step to 1.0b2.
+  [2010-06-07 - yomatters]
+
 * Changed to AuthSub authentication.
   [2010-06-04 - yomatters]
 
