@@ -84,6 +84,8 @@ class AnalyticsControlPanelForm(ControlPanelForm):
             accounts = analytics_tool.getAccountsFeed()
         except error.BadAuthenticationError:
             return None
+        except error.RequestTimedOutError:
+            return None
         return accounts.title.text.split(' ')[-1]
     
     def _on_save(self, data={}):

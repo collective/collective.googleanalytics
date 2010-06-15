@@ -3,3 +3,6 @@ class BadAuthenticationError(Exception):
     
 class InvalidRequestMethodError(Exception):
     pass
+    
+class RequestTimedOutError(Exception):
+    pass

@@ -69,6 +69,7 @@ class AsyncAnalyticsResults(BrowserPage):
     """
     
     bad_auth = ViewPageTemplateFile('loader_templates/badauth.pt')
+    timed_out = ViewPageTemplateFile('loader_templates/timedout.pt')
     
     def __call__(self):
         """
@@ -98,6 +99,8 @@ class AsyncAnalyticsResults(BrowserPage):
                 results.append(renderer())
             except error.BadAuthenticationError:
                 return self.bad_auth()
+            except error.RequestTimedOutError:
+                return self.timed_out()
                 
         # Once we expose the date range optoin in the UI, we'll need to find a
         # way to generate this label dynamically, probably by using the variable

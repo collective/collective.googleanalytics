@@ -22,7 +22,7 @@ import time
 import sys
 
 import logging
-logger = logging.getLogger("analytics")
+logger = logging.getLogger('collective.googleanalytics')
 
 def renderer_cache_key(method, instance):
     analytics_tool = getToolByName(instance.context, 'portal_analytics')

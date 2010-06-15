@@ -1,3 +1,5 @@
+GOOGLE_REQUEST_TIMEOUT = 15.07
+
 METRICS_CHOICES = (
     "ga:adClicks",
     "ga:adCost",

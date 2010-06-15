@@ -13,13 +13,20 @@ from OFS.OrderedFolder import OrderedFolder
 from Products.CMFPlone.PloneBaseTool import PloneBaseTool
 from plone.memoize import ram
 from time import time
+import socket
 
 from collective.googleanalytics.interfaces.utility import IAnalytics
 from collective.googleanalytics.interfaces.report import IAnalyticsReport
 from collective.googleanalytics import error
+from collective.googleanalytics.config import GOOGLE_REQUEST_TIMEOUT
 
 import gdata.analytics.service
 from gdata.service import RequestError
+
+import logging
+logger = logging.getLogger('collective.googleanalytics')
+
+DEFAULT_TIMEOUT = socket.getdefaulttimeout()
 
 def account_feed_cachekey(func, instance):
     """
@@ -109,15 +116,35 @@ class Analytics(PloneBaseTool, IFAwareObjectManager, OrderedFolder):
         if not query_method:
             raise error.InvalidRequestMethodError, \
                 '%s does not have a method %s' % (client.__class__.__name__, method)
+
+        # Workaround for the lack of timeout handling in gdata. This approach comes
+        # from collective.twitterportlet. See:
+        # https://svn.plone.org/svn/collective/collective.twitterportlet/
+        timeout = socket.getdefaulttimeout()
+        
+        # If the current timeout is set to GOOGLE_REQUEST_TIMEOUT, then another
+        # thread has called this method before we had a chance to reset the
+        # default timeout. In that case, we fall back to the system default
+        # timeout value.
+        if timeout == GOOGLE_REQUEST_TIMEOUT:
+            timeout = DEFAULT_TIMEOUT
+            logger.warning('Conflict while setting socket timeout.')
+
         try:
-            return query_method(*args, **kwargs)
-        except RequestError, e:
-            if 'Token invalid' in e[0]['reason']:
-                # Reset the stored auth token.
-                self.auth_token = None
-                raise error.BadAuthenticationError, 'You need to authorize with Google'
-            else:
-                raise
+            socket.setdefaulttimeout(GOOGLE_REQUEST_TIMEOUT)
+            try:
+                return query_method(*args, **kwargs)
+            except RequestError, e:
+                if 'Token invalid' in e[0]['reason']:
+                    # Reset the stored auth token.
+                    self.auth_token = None
+                    raise error.BadAuthenticationError, 'You need to authorize with Google'
+                else:
+                    raise
+            except (socket.sslerror, socket.timeout):
+                raise error.RequestTimedOutError, 'The request to Google timed out'
+        finally:
+            socket.setdefaulttimeout(timeout)
     
     security.declarePrivate('getReports')
     def getReports(self, category=None):

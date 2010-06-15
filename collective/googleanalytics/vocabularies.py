@@ -7,7 +7,8 @@ from collective.googleanalytics import error
 
 def getProfiles(context):
     """
-    Return list of Google Analytics profiles and corresponding account IDs (e.g. ga:30481).
+    Return list of Google Analytics profiles and corresponding
+    account IDs (e.g. ga:30481).
     """
     
     analytics_tool = getToolByName(getSite(), 'portal_analytics')
@@ -15,7 +16,12 @@ def getProfiles(context):
     try:
         accounts = analytics_tool.getAccountsFeed()
     except error.BadAuthenticationError:
-        choices = [('Please authorize with Google in the Google Analytics control panel.', None)]
+        choices = [('Please authorize with Google in the Google Analytics \
+            control panel.', None)]
+        return SimpleVocabulary.fromItems(choices)
+    except error.RequestTimedOutError:
+        choices = [('The request to Google Analytics timed out. Please try \
+            again later.', None)]
         return SimpleVocabulary.fromItems(choices)
     if accounts:
         unique_choices = {}
@@ -28,7 +34,8 @@ def getProfiles(context):
 
 def getWebProperties(context):
     """
-    Return list of Google Analytics profiles and web property IDs (e.g. UA-30481-22).
+    Return list of Google Analytics profiles and web property
+    IDs (e.g. UA-30481-22).
     """
     
     analytics_tool = getToolByName(getSite(), 'portal_analytics')
@@ -36,7 +43,12 @@ def getWebProperties(context):
     try:
         accounts = analytics_tool.getAccountsFeed()
     except error.BadAuthenticationError:
-        choices = [('Please authorize with Google in the Google Analytics control panel.', None)]
+        choices = [('Please authorize with Google in the Google Analytics \
+            control panel.', None)]
+        return SimpleVocabulary.fromItems(choices)
+    except error.RequestTimedOutError:
+        choices = [('The request to Google Analytics timed out. Please try \
+            again later.', None)]
         return SimpleVocabulary.fromItems(choices)
     if accounts:
         unique_choices = {}
