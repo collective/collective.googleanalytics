@@ -1,7 +1,7 @@
 Changelog
 =========
 
-1.0b2 - 2010-05-XX
+1.0b2 - 2010-06-18
 ------------------
 
 * Changed to comma-separated strings in asynchronous loader for Plone 4
