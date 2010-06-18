@@ -132,3 +132,11 @@ def upgrade_10b1_to_10b2(setup_tool):
         
     if not hasattr(analytics_tool, 'reports_profile'):
         analytics_tool.reports_profile = None
+        
+    OLD_ROWS = "python:[str(row[date_range_dimension]), int(float(metric('ga:timeOnSite', row))/float(metric('ga:visits', row)))]"
+    NEW_ROWS = "python:[str(row[date_range_dimension]), int(float(metric('ga:timeOnSite', row))/(float(metric('ga:visits', row)) + .0001))]"
+        
+    if 'site-timeonsite-line' in analytics_tool.objectIds():
+        report = analytics_tool['site-timeonsite-line']
+        if report.rows == OLD_ROWS:
+            report.rows = NEW_ROWS
