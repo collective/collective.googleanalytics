@@ -4,6 +4,9 @@ Changelog
 1.0b2 - 2010-05-XX
 ------------------
 
+* Fixed divide by zero error in Time on Site: Line Chart report.
+  [2010-06-18 - yomatters]
+
 * Added basic timeout handling so that a request to Google can't tie up a Zope
   thread indefinitely.
   [2010-06-15 - yomatters]

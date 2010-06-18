@@ -209,7 +209,7 @@
      name="columns">python:[date_range_unit, 'Average Time on Site (Seconds)']</property>
   <property name="row_repeat">possible_dates</property>
   <property
-     name="rows">python:[str(row[date_range_dimension]), int(float(metric('ga:timeOnSite', row))/float(metric('ga:visits', row)))]</property>
+     name="rows">python:[str(row[date_range_dimension]), int(float(metric('ga:timeOnSite', row))/(float(metric('ga:visits', row)) + .0001))]</property>
   <property name="viz_type">LineChart</property>
   <property name="viz_options">
    <element value="title string:Time on Site"/>
