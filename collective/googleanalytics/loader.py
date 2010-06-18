@@ -52,8 +52,8 @@ class DefaultAnalyticsAsyncLoader(object):
         template_vars = {
             'visualization_packages': '[%s]' % ', '.join(["'%s'" % p for p in packages]), 
             'container_id': container_id, 
-            'report_ids': '[%s]' % ', '.join(["'%s'" % r for r in reports]), 
-            'profile_ids': "['%s']" % profile_id,
+            'report_ids': ','.join(reports), 
+            'profile_ids': profile_id,
             'portal_url': portal_url,
             'context_url': self.context.absolute_url(),
             'request_url': self.context.REQUEST.ACTUAL_URL, 
@@ -74,10 +74,9 @@ class AsyncAnalyticsResults(BrowserPage):
     def __call__(self):
         """
         Returns a list of AnalyticsReportResults objects for the selected reports.
-        """        
-        report_ids = self.request.get('report_ids', [])
-        if type(report_ids) is str:
-              report_ids = [report_ids]
+        """
+                
+        report_ids = self.request.get('report_ids', '').split(',')
         
         if not report_ids:
             return []

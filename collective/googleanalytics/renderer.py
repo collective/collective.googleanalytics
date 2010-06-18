@@ -94,10 +94,7 @@ class AnalyticsReportRenderer(object):
         is being evaluated.
         """
         
-        profile_ids = self.request.get('profile_ids', [])
-        if type(profile_ids) is str:
-            profile_ids = [profile_ids]
-        return profile_ids
+        return self.request.get('profile_ids', '').split(',')
         
     security.declarePublic('query_criteria')
     @memoize
