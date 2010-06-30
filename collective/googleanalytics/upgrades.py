@@ -1,4 +1,5 @@
 from Products.CMFCore.utils import getToolByName
+import gdata.analytics.service
 
 def null_upgrade_step(setup_tool):
     """
@@ -140,3 +141,12 @@ def upgrade_10b1_to_10b2(setup_tool):
         report = analytics_tool['site-timeonsite-line']
         if report.rows == OLD_ROWS:
             report.rows = NEW_ROWS
+            
+def upgrade_10b2_to_10b3(setup_tool):
+    """
+    Set data and account client instances on the Analytics tool.
+    """
+    
+    analytics_tool = getToolByName(setup_tool, 'portal_analytics')
+    analytics_tool.data_client = gdata.analytics.service.AnalyticsDataService()
+    analytics_tool.accounts_client = gdata.analytics.service.AccountsService()

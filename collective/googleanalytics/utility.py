@@ -79,10 +79,12 @@ class Analytics(PloneBaseTool, IFAwareObjectManager, OrderedFolder):
     report_categories = FieldProperty(IAnalytics['report_categories'])
     
     security.declarePrivate('data_client')
-    data_client = gdata.analytics.service.AnalyticsDataService()
-    
     security.declarePrivate('accounts_client')
-    accounts_client = gdata.analytics.service.AccountsService()
+    
+    def __init__(self, *args, **kwargs):
+        super(Analytics, self).__init__(*args, **kwargs)
+        self.data_client = gdata.analytics.service.AnalyticsDataService()
+        self.accounts_client = gdata.analytics.service.AccountsService()
     
     security.declarePrivate('_getAuthenticatedClient')
     def _getAuthenticatedClient(self, service='data'):
@@ -91,7 +93,7 @@ class Analytics(PloneBaseTool, IFAwareObjectManager, OrderedFolder):
         """
         
         if not self.auth_token:
-            raise error.BadAuthenticationError, 'You need to authorize with Google'
+            raise error.BadAuthenticationError, 'You need to authorize with Google'            
         
         # Get the appropriate client class.
         if service == 'accounts':
