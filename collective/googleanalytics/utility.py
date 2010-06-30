@@ -28,6 +28,15 @@ logger = logging.getLogger('collective.googleanalytics')
 
 DEFAULT_TIMEOUT = socket.getdefaulttimeout()
 
+class AnalyticsClients(object):
+    """
+    An object for storing Google Analytics clients.
+    """
+    
+    def __init__(self):
+        self.data = gdata.analytics.service.AnalyticsDataService()
+        self.accounts = gdata.analytics.service.AccountsService()
+
 def account_feed_cachekey(func, instance):
     """
     Cache key for the account feed. We only refresh it every ten minutes.
@@ -78,13 +87,8 @@ class Analytics(PloneBaseTool, IFAwareObjectManager, OrderedFolder):
     security.declarePrivate('report_categories')
     report_categories = FieldProperty(IAnalytics['report_categories'])
     
-    security.declarePrivate('data_client')
-    security.declarePrivate('accounts_client')
-    
-    def __init__(self, *args, **kwargs):
-        super(Analytics, self).__init__(*args, **kwargs)
-        self.data_client = gdata.analytics.service.AnalyticsDataService()
-        self.accounts_client = gdata.analytics.service.AccountsService()
+    security.declarePrivate('_v_temp_clients')
+    _v_temp_clients = None
     
     security.declarePrivate('_getAuthenticatedClient')
     def _getAuthenticatedClient(self, service='data'):
@@ -93,18 +97,49 @@ class Analytics(PloneBaseTool, IFAwareObjectManager, OrderedFolder):
         """
         
         if not self.auth_token:
-            raise error.BadAuthenticationError, 'You need to authorize with Google'            
+            raise error.BadAuthenticationError, 'You need to authorize with Google'
+            
+        clients = self.getClients()
         
         # Get the appropriate client class.
         if service == 'accounts':
-            client = self.accounts_client
+            client = clients.accounts
         else:
-            client = self.data_client
+            client = clients.data
             
         if not client.GetAuthSubToken():
             client.SetAuthSubToken(self.auth_token)
         
         return client
+        
+    security.declarePrivate('getClients')
+    def getClients(self):
+        """
+        Returns an AnalyticsClients object.
+        """
+
+        # We store the clients object on the ZODB database connection. This approach
+        # comes from alm.solrindex. See the documentation for that product for a
+        # full explanation.
+        jar = self._p_jar
+        oid = self._p_oid
+
+        if jar is None or oid is None:
+            # This object is not yet stored in ZODB, so we use a
+            # volatile attribute.
+            clients = self._v_temp_clients
+            if clients is None:
+                self._v_temp_clients = clients = AnalyticsClients() 
+        else:
+            foreign_connections = getattr(jar, 'foreign_connections', None)
+            if foreign_connections is None:
+                jar.foreign_connections = foreign_connections = {}
+
+            clients = foreign_connections.get(oid)
+            if clients is None:
+                foreign_connections[oid] = clients = AnalyticsClients()
+
+        return clients
         
     security.declarePrivate('makeClientRequest')
     def makeClientRequest(self, service, method, *args, **kwargs):

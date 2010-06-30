@@ -18,12 +18,13 @@ class AnalyticsAuth(BrowserPage):
         
         analytics_tool = getToolByName(self.context, 'portal_analytics')
         plone_utils = getToolByName(self.context, 'plone_utils')
+        clients = analytics_tool.getClients()
         
         # Check if we are revoking the token.
         if self.request.get('revoke_token', 0):
             analytics_tool.auth_token = None
             try:
-                analytics_tool.data_client.RevokeAuthSubToken()
+                clients.data.RevokeAuthSubToken()
             except NonAuthSubToken:
                 # Authorization already revoked
                 pass
@@ -38,14 +39,14 @@ class AnalyticsAuth(BrowserPage):
             single_token = gdata.auth.extract_auth_sub_token_from_url(current_url)
             
             try:
-                session_token = analytics_tool.data_client.upgrade_to_session_token(single_token)
+                session_token = clients.data.upgrade_to_session_token(single_token)
 
                 # Save a string representation of the token.
                 analytics_tool.auth_token = unicode(session_token.get_token_string())
 
                 # Set the token on the two servcies using SetAuthSubToken.
-                analytics_tool.data_client.SetAuthSubToken(session_token)
-                analytics_tool.accounts_client.SetAuthSubToken(session_token)
+                clients.data.SetAuthSubToken(session_token)
+                clients.accounts.SetAuthSubToken(session_token)
             
                 message = _(u'Authorization succeeded. You may now configure \
                 Google Analytics for Plone.')

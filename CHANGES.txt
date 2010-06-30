@@ -4,6 +4,10 @@ Changelog
 1.0b3 - 2010-06-30
 ------------------
 
+* Stored connections to Google Analytics on the ZODB connection instead
+  of the Analytics tool.
+  [2010-06-30 - yomatters]
+
 * Resolved conflict between Analytics tools on multiple Plone sites on the
   same Zope instance.
   [2010-06-30 - yomatters]
