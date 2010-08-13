@@ -1,0 +1,17 @@
+*.pyo
+*.pyc
+*.swp
+*.mo
+.installed.cfg
+Paste-1.7.4-py2.6.egg/
+PasteDeploy-1.3.3-py2.6.egg/
+PasteScript-1.7.3-py2.6.egg/
+bin/
+collective.googleanalytics.egg-info/
+develop-eggs/
+eggs/
+include/
+lib/
+parts/
+var/
+

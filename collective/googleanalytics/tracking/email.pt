@@ -1,9 +1,11 @@
 <script type="text/javascript" tal:content="structure string:
+    /*<![CDATA[*/
     jq(function() {
         jq('a[href^=&quot;mailto&quot;]').click(function () {
             var email = jq(this).attr('href').replace('mailto:', '');
             _gaq.push(['_trackEvent', 'External', 'E-mail', email]);
         });
     });
+    /*]]>*/
 ">
 </script>

@@ -1,4 +1,5 @@
 <script type="text/javascript" tal:content="structure string:
+    /*<![CDATA[*/
     jq.expr[':'].external  = function(obj) {
       return !obj.href.match(/^mailto:/) && !obj.href.match(/^javascript:/) && (obj.hostname != document.location.hostname);
     };
@@ -7,5 +8,6 @@
           _gaq.push(['_trackEvent', 'External', 'Link', jq(this).attr('href')]);
         });
     });
+    /*]]>*/
 ">
 </script>
