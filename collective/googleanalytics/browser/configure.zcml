@@ -19,10 +19,10 @@
         layer="..interfaces.browserlayer.IAnalyticsLayer"
         />
 
-	<browser:resourceDirectory
+	<!--browser:resourceDirectory
 		name="analytics_images"
 		directory="images"
-		/>
+		/-->
 		
     <browser:resource
         name="analytics_config.js"
