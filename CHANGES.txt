@@ -4,6 +4,9 @@ Changelog
 1.0b4 - 2010-XX-XX
 ------------------
 
+* Reduced logging level for query messages.
+  [2010-08-13 - yomatters]
+
 * wrap inline javascript in CDATA, making it easier to use with Deliverance.
   [2010-08-13 - garbas]
 
