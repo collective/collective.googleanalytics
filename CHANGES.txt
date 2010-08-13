@@ -4,8 +4,6 @@ Changelog
 1.0b4 - 2010-XX-XX
 ------------------
 
-* commented out images resource definition in zcml since its not being used.
-  [2010-08-13 - garbas]
 * wrap inline javascript in CDATA, making it easier to use with Deliverance.
   [2010-08-13 - garbas]
 
