@@ -4,6 +4,10 @@ Changelog
 1.0b4 - 2010-XX-XX
 ------------------
 
+* Allowed requesting Google API javascript over HTTPS if the current page is
+  being served securely.
+  [2010-11-04 - yomatters]
+
 * Reduced logging level for query messages.
   [2010-08-13 - yomatters]
 

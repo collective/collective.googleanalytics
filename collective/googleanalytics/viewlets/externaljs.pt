@@ -1,1 +1,6 @@
-<script type="text/javascript" src="http://www.google.com/jsapi"></script>
+<tal:block tal:define="use_https python:context.absolute_url().startswith('https://');">
+    <script tal:condition="use_https"
+        type="text/javascript" src="https://www.google.com/jsapi"></script>
+    <script tal:condition="not:use_https"
+        type="text/javascript" src="http://www.google.com/jsapi"></script>
+</tal:block>
