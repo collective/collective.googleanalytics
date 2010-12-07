@@ -4,6 +4,7 @@
 		action_id="Analytics" appId="Analytics"
 		category="Products"
 		condition_expr=""
+		icon_expr="string:${portal_url}/++resource++analytics_images/chart_curve.gif"
 		url_expr="string:${portal_url}/portal_analytics/@@analytics-controlpanel"
 		visible="True">
 		<permission>Manage portal</permission>
