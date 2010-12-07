@@ -1,6 +1,6 @@
 from setuptools import setup, find_packages
 
-version = '1.0b4'
+version = '1.0'
 
 setup(name='collective.googleanalytics',
       version=version,
@@ -18,7 +18,7 @@ setup(name='collective.googleanalytics',
         ],
       keywords='Google Analytics Plone statistics portlet integration',
       author='Matt Yoder',
-      author_email='mattyoder@onenw.org',
+      author_email='mattyoder@groundwire.org',
       url='http://svn.plone.org/svn/collective/collective.googleanalytics/trunk',
       license='GPL',
       packages=find_packages(exclude=['ez_setup']),

@@ -140,3 +140,11 @@ def upgrade_10b1_to_10b2(setup_tool):
         report = analytics_tool['site-timeonsite-line']
         if report.rows == OLD_ROWS:
             report.rows = NEW_ROWS
+            
+def upgrade_10b3_to_10(setup_tool):
+    """
+    Add icon expression in Plone 4.
+    """
+    
+    name = 'profile-collective.googleanalytics:upgrade_10b3_10'
+    setup_tool.runAllImportStepsFromProfile(name)
