@@ -79,7 +79,7 @@ class Renderer(base.Renderer):
         """
         
         mtool = getToolByName(self.context, 'portal_membership')
-        allowed = mtool.checkPermission('collective.googleanalytics.ViewAnalyticsResults', self.context)
+        allowed = mtool.checkPermission('Google Analytics: View Analytics Results', self.context)
         context_state = self.context.restrictedTraverse('@@plone_context_state')
         return allowed and context_state.is_view_template()
     
