@@ -1,6 +1,6 @@
 from zope.app.component.hooks import getSite
 from zope.component import getGlobalSiteManager
-from zope.schema.vocabulary import SimpleVocabulary
+from zope.schema.vocabulary import SimpleVocabulary, SimpleTerm
 from Products.CMFCore.utils import getToolByName
 from collective.googleanalytics.interfaces.tracking import IAnalyticsTrackingPlugin
 from collective.googleanalytics import error
@@ -26,11 +26,12 @@ def getProfiles(context):
     if accounts:
         unique_choices = {}
         for entry in accounts.entry:
-            unique_choices.update({entry.title.text : entry.tableId[0].text})
+            title = unicode(entry.title.text, 'utf-8')
+            unique_choices.update({title: entry.tableId[0].text})
         choices = unique_choices.items()
     else:
         choices = [('No profiles available', None)]
-    return SimpleVocabulary.fromItems(choices)
+    return SimpleVocabulary([SimpleTerm(c[1], c[1], c[0]) for c in choices])
 
 def getWebProperties(context):
     """
@@ -57,17 +58,18 @@ def getWebProperties(context):
         # of all the profiles for each property. (Ideally we would use the URL for the
         # web property, but Google doesn't expose it through the Analytics API.)
         for entry in accounts.entry:
+            title = unicode(entry.title.text, 'utf-8')
             if not entry.webPropertyId.value in unique_choices.keys():
-                unique_choices.update({entry.webPropertyId.value : entry.title.text})
+                unique_choices.update({entry.webPropertyId.value : title})
             else:
-                unique_choices[entry.webPropertyId.value] += ', ' + entry.title.text
+                unique_choices[entry.webPropertyId.value] += ', ' + title
         # After we reverse the terms so that the profile name(s) is now the key, we need
         # to ensure that these keys are unique. So, we pass the resulting list through
         # dict() and then output a list of items.
         choices = dict([(title, property_id) for (property_id, title) in unique_choices.items()]).items()
     else:
         choices = [('No profiles available', None)]
-    return SimpleVocabulary.fromItems(choices)
+    return SimpleVocabulary([SimpleTerm(c[1], c[1], c[0]) for c in choices])
 
 def getReports(context, category=None):
     """
