@@ -1,8 +1,11 @@
 Changelog
 =========
 
-1.1 - unreleased
+1.1 - 2011-03-24
 ----------------
+
+* Documented the domain registration process.
+  [2011-03-24 - yomatters]
 
 * Made vocabularies safe for profiles containing non-ASCII characters.
   [2010-12-23 - yomatters]

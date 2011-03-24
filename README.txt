@@ -21,7 +21,8 @@ Configuration
 When you install the product from the Plone Add-ons control panel, a new
 control panel called Google Analytics will be added to your Plone site.
 In this control panel, you can authorize the site to access your Google
-Analytics data.
+Analytics data. If you receive an error when you attempt to authorize, see
+the section on `Registering a Domain`_ below.
 
 After authorizing your site, you can select the profile where you want to
 track analytics for this site. Choose a profile from the dropdown menu. If you
@@ -44,6 +45,21 @@ control panel.
 On the settings tab, you can also configure the amount of time, in minutes, 
 that account information and report results will be cached, reducing the need
 to query Google. Sixty minutes is the default caching interval.
+
+Registering a Domain
+====================
+When you authorize your site to access your Google Analytics data, you may
+receive an error::
+
+    The site "http://example.com" has not been registered.
+    
+When this happens, you need to register your domain with Google before you
+can authorize your site. Follow steps 1-3 of Google's `directions for 
+registering a new domain`__. In step two, you can upload the file provided
+by Google to your Plone site root. Be sure to use the File content type, and
+make sure that the short name matches the filename specified by Google.
+
+__ http://code.google.com/apis/accounts/docs/RegistrationForWebAppsAuto.html#new
 
 Tracking Plugins
 ================
