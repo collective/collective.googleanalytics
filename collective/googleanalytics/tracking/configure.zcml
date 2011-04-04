@@ -25,5 +25,11 @@
         name="Comments"
         factory=".plugins.AnalyticsCommentPlugin"
         />
+        
+    <adapter
+        for="* zope.publisher.interfaces.IRequest"
+        name="User type"
+        factory=".plugins.AnalyticsUserTypePlugin"
+        />
 
 </configure>

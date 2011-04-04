@@ -1,0 +1,6 @@
+<script type="text/javascript" tal:content="structure string:
+    /*<![CDATA[*/
+    _gaq.push(['_setCustomVar', 1, 'User Type', '${view/user_type}', 2]);
+    /*]]>*/
+">
+</script>

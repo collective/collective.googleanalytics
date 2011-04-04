@@ -1,5 +1,6 @@
 from zope.interface import implements
 from zope.app.pagetemplate.viewpagetemplatefile import ViewPageTemplateFile
+from Products.CMFCore.utils import getToolByName
 from collective.googleanalytics.interfaces.tracking import IAnalyticsTrackingPlugin
 from collective.googleanalytics.config import FILE_EXTENSION_CHOICES
 from collective.googleanalytics.utils import json_serialize
@@ -54,3 +55,20 @@ class AnalyticsCommentPlugin(AnalyticsBaseTrackingPlugin):
     """
 
     __call__ = ViewPageTemplateFile('comment.pt')
+    
+class AnalyticsUserTypePlugin(AnalyticsBaseTrackingPlugin):
+    """
+    A tracking plugin to track user type as a custom variable.
+    """
+
+    __call__ = ViewPageTemplateFile('usertype.pt')
+    
+    def user_type(self):
+        """
+        Returns Member if the user is logged or Visitor otherwise.
+        """
+        
+        membership = getToolByName(self.context, 'portal_membership')
+        if membership.isAnonymousUser():
+            return 'Visitor'
+        return 'Member'
