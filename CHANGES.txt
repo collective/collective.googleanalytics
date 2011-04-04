@@ -4,6 +4,10 @@ Changelog
 1.2 - unreleased
 ----------------
 
+* Moved page view tracking after plugins so that custom variables get sent
+  along with the page view.
+  [2011-04-04 - yomatters]
+
 * Added a plugin for tracking user type in a custom variable.
   [2011-04-04 - yomatters]
 

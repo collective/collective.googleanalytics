@@ -5,7 +5,6 @@
             tal:content="string:
             var _gaq = _gaq || [];
             _gaq.push(['_setAccount', '${web_property}']); 
-            _gaq.push(['_trackPageview']);
             ">
         </script>
         <script type="text/javascript">
@@ -17,5 +16,10 @@
         })();
         </script>
         <tal:block content="structure view/renderPlugins"></tal:block>
+        <script type="text/javascript"
+            tal:content="string:
+            _gaq.push(['_trackPageview']);
+            ">
+        </script>
     </tal:webproperty>
 </tal:tracking>
