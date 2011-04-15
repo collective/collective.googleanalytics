@@ -11,6 +11,9 @@ Changelog
 * Added a plugin for tracking user type in a custom variable.
   [2011-04-04 - yomatters]
 
+* Update tracking code
+  [2011-04-15 - garbas]
+
 1.1 - 2011-03-24
 ----------------
 
