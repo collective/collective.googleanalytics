@@ -4,6 +4,9 @@ Changelog
 1.2 - unreleased
 ----------------
 
+* Reject AuthSub tokens that generate a forbidden response.
+  [2011-04-27 - yomatters]
+
 * Moved page view tracking after plugins so that custom variables get sent
   along with the page view.
   [2011-04-04 - yomatters]

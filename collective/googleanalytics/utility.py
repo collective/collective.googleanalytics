@@ -172,7 +172,8 @@ class Analytics(PloneBaseTool, IFAwareObjectManager, OrderedFolder):
             try:
                 return query_method(*args, **kwargs)
             except RequestError, e:
-                if 'Token invalid' in e[0]['reason']:
+                reason = e[0]['reason']
+                if 'Token invalid' in reason or reason == 'Forbidden':
                     # Reset the stored auth token.
                     self.auth_token = None
                     raise error.BadAuthenticationError, 'You need to authorize with Google'
