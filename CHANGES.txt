@@ -17,6 +17,9 @@ Changelog
 * Update tracking code
   [2011-04-15 - garbas]
 
+* Added a plugin for tracking page load time.
+  [2011-05-05 - toutpt]
+
 1.1 - 2011-03-24
 ----------------
 

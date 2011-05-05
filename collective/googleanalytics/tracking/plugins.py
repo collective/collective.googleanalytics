@@ -72,3 +72,10 @@ class AnalyticsUserTypePlugin(AnalyticsBaseTrackingPlugin):
         if membership.isAnonymousUser():
             return 'Visitor'
         return 'Member'
+
+class AnalyticsPageLoadTimePlugin(AnalyticsBaseTrackingPlugin):
+    """
+    A tracking plugin to track page load time.
+    """
+
+    __call__ = ViewPageTemplateFile('pageloadtime.pt')

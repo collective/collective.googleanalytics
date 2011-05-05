@@ -1,0 +1,1 @@
+<script type="text/javascript" tal:content="structure string:_gaq.push(['_trackPageLoadTime']);"></script>

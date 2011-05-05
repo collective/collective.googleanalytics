@@ -31,5 +31,10 @@
         name="User type"
         factory=".plugins.AnalyticsUserTypePlugin"
         />
+    <adapter
+        for="* zope.publisher.interfaces.IRequest"
+        name="Page load time"
+        factory=".plugins.AnalyticsPageLoadTimePlugin"
+        />
 
 </configure>
