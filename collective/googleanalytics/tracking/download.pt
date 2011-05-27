@@ -1,5 +1,5 @@
 <script type="text/javascript" tal:content="structure string:
-    /*<![CDATA[*/
+    /*&lt;![CDATA[*/
     jq(function() {
         var extensions = ${view/file_extensions};
         for (var i=0;i&lt;extensions.length;i++) {
@@ -8,6 +8,6 @@
             });
         }
     });
-    /*]]>*/
+    /*]]&gt;*/
 ">
 </script>

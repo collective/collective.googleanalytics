@@ -4,6 +4,9 @@ Changelog
 1.2 - unreleased
 ----------------
 
+* Escaped CDATA tags to keep Chameleon happy.
+  [2011-05-27 - yomatters]
+
 * Reject AuthSub tokens that generate a forbidden response.
   [2011-04-27 - yomatters]
 
