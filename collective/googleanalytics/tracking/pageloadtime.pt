@@ -1,1 +1,6 @@
-<script type="text/javascript" tal:content="structure string:_gaq.push(['_trackPageLoadTime']);"></script>
+<script type="text/javascript" tal:content="structure string:
+    /*&lt;![CDATA[*/
+    _gaq.push(['_trackPageLoadTime']);
+    /*]]&gt;*/
+">
+</script>
