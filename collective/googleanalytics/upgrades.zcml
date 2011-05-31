@@ -66,5 +66,14 @@
         profile="collective.googleanalytics:default"
         handler="collective.googleanalytics.upgrades.null_upgrade_step"
         />
+        
+    <genericsetup:upgradeStep
+        source="1.1"
+        destination="10"
+        title="Upgrade 1.1 to 10"
+        description=""
+        profile="collective.googleanalytics:default"
+        handler="collective.googleanalytics.upgrades.null_upgrade_step"
+        />
 
 </configure>

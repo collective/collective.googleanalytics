@@ -2,14 +2,16 @@
 <object name="portal_analytics" meta_type="Google Analytics Tool"
    xmlns:i18n="http://xml.zope.org/namespaces/i18n">
  <object name="site-pageviews-line" meta_type="Google Analytics Report"
-    i18n:domain="analytics">
+    i18n:domain="collective.googleanalytics">
   <property name="title"
      i18n:translate="">Site Page Views: Line Chart</property>
   <property name="description"
      i18n:translate="">Displays the number of site page views as a line graph.</property>
-  <property name="is_page_specific">False</property>
   <property name="categories">
    <element value="Site Wide"/>
+  </property>
+  <property name="plugin_names">
+   <element value="Variable Date Range"/>
   </property>
   <property name="metrics">
    <element value="ga:pageviews"/>
@@ -23,20 +25,13 @@
    <element value="date_range_sort_dimension"/>
    <element value="date_range_dimension"/>
   </property>
-  <property name="max_results">1000</property>
-  <property name="column_labels">
-   <element value="python:date_range_unit"/>
-   <element value="string:Page Views"/>
-  </property>
-  <property name="column_exps">
-   <element value="python:str(date_range_dimension)"/>
-   <element value="python:int(ga_pageviews)"/>
-  </property>
-  <property name="introduction"></property>
+  <property name="start_date"></property>
+  <property name="end_date"></property>
+  <property name="max_results">python:1000</property>
+  <property name="columns">python:[date_range_unit, 'Page Views']</property>
+  <property name="row_repeat">possible_dates</property>
   <property
-     name="conclusion">&lt;p tal:condition="data_length"&gt;&lt;strong tal:content="python:sum(data_columns[1])"&gt;1000&lt;/strong&gt; page views in the last &lt;span tal:replace="string:${data_length} ${date_range_unit_plural/lower}"&gt;&lt;/span&gt;&lt;/p&gt;
-   &lt;p tal:condition="data_length"&gt;&lt;strong tal:content="python:int(sum(data_columns[1])/len(data_columns[1]))"&gt;1000&lt;/strong&gt; 
-   average page views per &lt;span tal:replace="string:${date_range_unit/lower}"&gt;&lt;/span&gt;&lt;/p&gt;</property>
+     name="rows">python:[str(row[date_range_dimension]), metric('ga:pageviews', row)]</property>
   <property name="viz_type">LineChart</property>
   <property name="viz_options">
    <element value="title string:Site Page Views"/>
@@ -46,15 +41,32 @@
    <element value="titleY string:Visits"/>
    <element value="axisFontSize python:10"/>
   </property>
+  <property
+     name="body">&lt;div tal:replace="structure view/visualization"&gt;&lt;/div&gt;
+   &lt;tal:block tal:define="pageviews python:view.metric('ga:pageviews');
+   units python:view.possible_dates(aggregate=len);"&gt;
+   &lt;p&gt;
+   &lt;strong tal:content="pageviews"&gt;1000&lt;/strong&gt; total page views in the last
+   &lt;span tal:replace="string:${units} ${date_range_unit_plural/lower}"&gt;
+   30 days
+   &lt;/span&gt;
+   &lt;/p&gt;
+   &lt;p&gt;
+   &lt;strong tal:content="python:int(float(pageviews)/float(units))"&gt;50&lt;/strong&gt;
+   average page views per &lt;span tal:replace="date_range_unit/lower"&gt;day&lt;/span&gt;
+   &lt;/p&gt;
+   &lt;/tal:block&gt;</property>
  </object>
  <object name="site-timeonsite-line" meta_type="Google Analytics Report"
-    i18n:domain="analytics">
+    i18n:domain="collective.googleanalytics">
   <property name="title" i18n:translate="">Time on Site: Line Chart</property>
   <property name="description"
      i18n:translate="">Displays the average time on site as a line graph.</property>
-  <property name="is_page_specific">False</property>
   <property name="categories">
    <element value="Site Wide"/>
+  </property>
+  <property name="plugin_names">
+   <element value="Variable Date Range"/>
   </property>
   <property name="metrics">
    <element value="ga:timeOnSite"/>
@@ -69,18 +81,14 @@
    <element value="date_range_sort_dimension"/>
    <element value="date_range_dimension"/>
   </property>
-  <property name="max_results">1000</property>
-  <property name="column_labels">
-   <element value="python:date_range_unit"/>
-   <element value="string:Average Time on Site (Seconds)"/>
-  </property>
-  <property name="column_exps">
-   <element value="python:str(date_range_dimension)"/>
-   <element value="python:int(float(ga_timeOnSite)/float(ga_visits))"/>
-  </property>
-  <property name="introduction"></property>
+  <property name="start_date"></property>
+  <property name="end_date"></property>
+  <property name="max_results">python:1000</property>
   <property
-     name="conclusion">&lt;p tal:condition="data_length"&gt;&lt;strong tal:content="python:int(sum(data_columns[1])/len(data_columns[1]))"&gt;1000&lt;/strong&gt;-second average visit over the last &lt;span tal:replace="string:${data_length} ${date_range_unit_plural/lower}"&gt;&lt;/span&gt;&lt;/p&gt;</property>
+     name="columns">python:[date_range_unit, 'Average Time on Site (Seconds)']</property>
+  <property name="row_repeat">possible_dates</property>
+  <property
+     name="rows">python:[str(row[date_range_dimension]), int(float(metric('ga:timeOnSite', row))/(float(metric('ga:visits', row)) + .0001))]</property>
   <property name="viz_type">LineChart</property>
   <property name="viz_options">
    <element value="title string:Time on Site"/>
@@ -90,16 +98,29 @@
    <element value="titleY string:Time on Site (Seconds)"/>
    <element value="axisFontSize python:10"/>
   </property>
+  <property
+     name="body">&lt;div tal:replace="structure view/visualization"&gt;&lt;/div&gt;
+   &lt;tal:block tal:define="timeonsite python:int(float(view.metric('ga:timeOnSite'))/float(view.metric('ga:visits')));
+   units python:view.possible_dates(aggregate=len);"&gt;
+   &lt;p&gt;
+   &lt;strong tal:content="timeonsite"&gt;1000&lt;/strong&gt;-second average visit over the last
+   &lt;span tal:replace="string:${units} ${date_range_unit_plural/lower}"&gt;
+   30 days
+   &lt;/span&gt;
+   &lt;/p&gt;
+   &lt;/tal:block&gt;</property>
  </object>
  <object name="site-uniquevisitors-line" meta_type="Google Analytics Report"
-    i18n:domain="analytics">
+    i18n:domain="collective.googleanalytics">
   <property name="title"
      i18n:translate="">Site Unique Visitors: Line Chart</property>
   <property name="description"
      i18n:translate="">Displays the number of site unique visitors as a line graph.</property>
-  <property name="is_page_specific">False</property>
   <property name="categories">
    <element value="Site Wide"/>
+  </property>
+  <property name="plugin_names">
+   <element value="Variable Date Range"/>
   </property>
   <property name="metrics">
    <element value="ga:visitors"/>
@@ -113,20 +134,14 @@
    <element value="date_range_sort_dimension"/>
    <element value="date_range_dimension"/>
   </property>
-  <property name="max_results">1000</property>
-  <property name="column_labels">
-   <element value="python:date_range_unit"/>
-   <element value="string:Unique Visitors"/>
-  </property>
-  <property name="column_exps">
-   <element value="python:str(date_range_dimension)"/>
-   <element value="python:int(ga_visitors)"/>
-  </property>
-  <property name="introduction"></property>
+  <property name="start_date"></property>
+  <property name="end_date"></property>
+  <property name="max_results">python:1000</property>
   <property
-     name="conclusion">&lt;p tal:condition="data_length"&gt;&lt;strong tal:content="python:sum(data_columns[1])"&gt;1000&lt;/strong&gt; unique visitors in the last &lt;span tal:replace="string:${data_length} ${date_range_unit_plural/lower}"&gt;&lt;/span&gt;&lt;/p&gt;
-   &lt;p tal:condition="data_length"&gt;&lt;strong tal:content="python:int(sum(data_columns[1])/len(data_columns[1]))"&gt;1000&lt;/strong&gt; 
-   average unique visitors per &lt;span tal:replace="string:${date_range_unit/lower}"&gt;&lt;/span&gt;&lt;/p&gt;</property>
+     name="columns">python:[date_range_unit, 'Unique Visitors']</property>
+  <property name="row_repeat">possible_dates</property>
+  <property
+     name="rows">python:[str(row[date_range_dimension]), metric('ga:visitors', row)]</property>
   <property name="viz_type">LineChart</property>
   <property name="viz_options">
    <element value="title string:Site Unique Visitors"/>
@@ -136,15 +151,33 @@
    <element value="titleY string:Unique Visitors"/>
    <element value="axisFontSize python:10"/>
   </property>
+  <property
+     name="body">&lt;div tal:replace="structure view/visualization"&gt;&lt;/div&gt;
+   &lt;tal:block tal:define="visitors python:view.metric('ga:visitors');
+   units python:view.possible_dates(aggregate=len);"&gt;
+   &lt;p&gt;
+   &lt;strong tal:content="visitors"&gt;1000&lt;/strong&gt; total unique visitors in the last
+   &lt;span tal:replace="string:${units} ${date_range_unit_plural/lower}"&gt;
+   30 days
+   &lt;/span&gt;
+   &lt;/p&gt;
+   &lt;p&gt;
+   &lt;strong tal:content="python:int(float(visitors)/float(units))"&gt;50&lt;/strong&gt;
+   average unique visitors per &lt;span tal:replace="date_range_unit/lower"&gt;day&lt;/span&gt;
+   &lt;/p&gt;
+   &lt;/tal:block&gt;</property>
  </object>
  <object name="page-pageviews-sparkline" meta_type="Google Analytics Report"
-    i18n:domain="analytics">
+    i18n:domain="collective.googleanalytics">
   <property name="title" i18n:translate="">Page Views: Sparkline</property>
   <property name="description"
      i18n:translate="">Displays the number of page views as a sparkline.</property>
-  <property name="is_page_specific">True</property>
   <property name="categories">
    <element value="Portlet"/>
+  </property>
+  <property name="plugin_names">
+   <element value="Contextual Results"/>
+   <element value="Variable Date Range"/>
   </property>
   <property name="metrics">
    <element value="ga:uniquePageviews"/>
@@ -155,36 +188,48 @@
    <element value="date_range_sort_dimension"/>
   </property>
   <property name="filters">
-   <element value="string:ga:pagePath==${page_url}"/>
+   <element value="page_filter"/>
   </property>
   <property name="sort">
    <element value="date_range_sort_dimension"/>
    <element value="date_range_dimension"/>
   </property>
-  <property name="max_results">1000</property>
-  <property name="column_labels">
-   <element value="string:Page Views"/>
-  </property>
-  <property name="column_exps">
-   <element value="python:int(ga_uniquePageviews)"/>
-  </property>
-  <property name="introduction">&lt;h3&gt;Page Views&lt;/h3&gt;</property>
-  <property
-     name="conclusion">&lt;p tal:condition="data_length"&gt;&lt;strong tal:content="python:sum(data_columns[0])"&gt;1000&lt;/strong&gt; total views of this page during the last &lt;span tal:content="python:str(len(data_rows)) + ' ' + date_range_unit_plural.lower()"&gt;&lt;/span&gt; &lt;/p&gt;</property>
+  <property name="start_date"></property>
+  <property name="end_date"></property>
+  <property name="max_results">python:1000</property>
+  <property name="columns">python:['Page Views']</property>
+  <property name="row_repeat">possible_dates</property>
+  <property name="rows">python:[metric('ga:uniquePageviews', row)]</property>
   <property name="viz_type">ImageSparkLine</property>
   <property name="viz_options">
    <element value="height python:40"/>
    <element value="showAxisLines python:False"/>
    <element value="showValueLabels python:False"/>
   </property>
+  <property name="body">&lt;h3&gt;Page Views&lt;/h3&gt;
+   &lt;div tal:replace="structure view/visualization"&gt;&lt;/div&gt;
+   &lt;tal:block tal:define="pageviews python:view.metric('ga:uniquePageviews');
+   units python:view.possible_dates(aggregate=len);"&gt;
+   &lt;p&gt;
+   &lt;strong tal:content="pageviews"&gt;1000&lt;/strong&gt; total views of this page during the last
+   &lt;span tal:replace="string:${units} ${date_range_unit_plural/lower}"&gt;
+   30 days
+   &lt;/span&gt;
+   &lt;/p&gt;
+   &lt;/tal:block&gt;</property>
  </object>
  <object name="page-timeonpage-sparkline" meta_type="Google Analytics Report"
-    i18n:domain="analytics">
+    i18n:domain="collective.googleanalytics">
   <property name="title" i18n:translate="">Time on Page: Sparkline</property>
   <property name="description"
      i18n:translate="">Displays the average time on page for the last 30 days as a sparkline.</property>
-  <property name="is_page_specific">True</property>
-  <property name="categories"/>
+  <property name="categories">
+   <element value="Portlet"/>
+  </property>
+  <property name="plugin_names">
+   <element value="Contextual Results"/>
+   <element value="Variable Date Range"/>
+  </property>
   <property name="metrics">
    <element value="ga:exits"/>
    <element value="ga:pageviews"/>
@@ -196,39 +241,49 @@
    <element value="date_range_sort_dimension"/>
   </property>
   <property name="filters">
-   <element value="string:ga:pagePath==${page_url}"/>
+   <element value="page_filter"/>
   </property>
   <property name="sort">
    <element value="date_range_sort_dimension"/>
    <element value="date_range_dimension"/>
   </property>
-  <property name="max_results">1000</property>
-  <property name="column_labels">
-   <element value="string:Average Time on Page"/>
-  </property>
-  <property name="column_exps">
-   <element
-      value="python:int(float(ga_timeOnPage)/float(int(ga_pageviews)-int(ga_exits)+.0001))"/>
-  </property>
-  <property name="introduction">&lt;h3&gt;Time on Page&lt;/h3&gt;</property>
+  <property name="start_date"></property>
+  <property name="end_date"></property>
+  <property name="max_results">python:1000</property>
+  <property name="columns">python:['Average Time on Page']</property>
+  <property name="row_repeat">possible_dates</property>
   <property
-     name="conclusion">&lt;p tal:condition="data_length"&gt;&lt;strong tal:content="python:int(sum(data_columns[0])/len(data_columns[0]))"&gt;1000&lt;/strong&gt;-second average page view over the last &lt;span tal:replace="string:${data_length} ${date_range_unit_plural/lower}"&gt;&lt;/span&gt;&lt;/p&gt;</property>
+     name="rows">python:[int(float(metric('ga:timeOnPage', row))/float(int(metric('ga:pageviews', row))-int(metric('ga:exits', row))+.0001))]</property>
   <property name="viz_type">ImageSparkLine</property>
   <property name="viz_options">
    <element value="height python:40"/>
    <element value="showAxisLines python:False"/>
    <element value="showValueLabels python:False"/>
   </property>
+  <property name="body">&lt;h3&gt;Time on Page&lt;/h3&gt;
+   &lt;div tal:replace="structure view/visualization"&gt;&lt;/div&gt;
+   &lt;tal:block tal:define="units python:view.possible_dates(aggregate=len);
+       timeonpage python:int(float(sum([r[0] for r in view.rows()]))/float(units));"&gt;
+   &lt;p&gt;
+   &lt;strong tal:content="timeonpage"&gt;1000&lt;/strong&gt;-second average page view over the last 
+   &lt;span tal:replace="string:${units} ${date_range_unit_plural/lower}"&gt;
+   30 days
+   &lt;/span&gt;
+   &lt;/p&gt;
+   &lt;/tal:block&gt;</property>
  </object>
  <object name="page-top-sources-table" meta_type="Google Analytics Report"
-    i18n:domain="analytics">
+    i18n:domain="collective.googleanalytics">
   <property name="title"
      i18n:translate="">Top 10 Page Sources: Table</property>
   <property name="description"
      i18n:translate="">Displays a table of the top source domains for this page.</property>
-  <property name="is_page_specific">True</property>
   <property name="categories">
    <element value="Portlet"/>
+  </property>
+  <property name="plugin_names">
+   <element value="Contextual Results"/>
+   <element value="Variable Date Range"/>
   </property>
   <property name="metrics">
    <element value="ga:pageviews"/>
@@ -238,33 +293,34 @@
    <element value="ga:source"/>
   </property>
   <property name="filters">
-   <element value="string:ga:pagePath==${page_url}"/>
+   <element value="page_filter"/>
   </property>
   <property name="sort">
    <element value="-ga:pageviews"/>
   </property>
-  <property name="max_results">10</property>
-  <property name="column_labels">
-   <element value="string:Page Views"/>
-   <element value="string:Source Domain"/>
-  </property>
-  <property name="column_exps">
-   <element value="ga_pageviews"/>
-   <element value="ga_source"/>
-  </property>
-  <property name="introduction">&lt;h3&gt;Top 10 Sources&lt;/h3&gt;</property>
-  <property name="conclusion"></property>
+  <property name="start_date"></property>
+  <property name="end_date"></property>
+  <property name="max_results">python:10</property>
+  <property name="columns">python:['Page Views', 'Source Domains']</property>
+  <property name="row_repeat">python:dimension('ga:source')</property>
+  <property
+     name="rows">python:[metric('ga:pageviews', {'ga:source': row}), row]</property>
   <property name="viz_type">Table</property>
   <property name="viz_options"/>
+  <property name="body">&lt;h3&gt;Top 10 Sources&lt;/h3&gt;
+   &lt;div tal:replace="structure view/visualization"&gt;&lt;/div&gt;</property>
  </object>
  <object name="page-top-keywords-table" meta_type="Google Analytics Report"
-    i18n:domain="analytics">
+    i18n:domain="collective.googleanalytics">
   <property name="title" i18n:translate="">Top 10 Keywords: Table</property>
   <property name="description"
      i18n:translate="">Displays a table of the top ten keywords.</property>
-  <property name="is_page_specific">True</property>
   <property name="categories">
    <element value="Portlet"/>
+  </property>
+  <property name="plugin_names">
+   <element value="Contextual Results"/>
+   <element value="Variable Date Range"/>
   </property>
   <property name="metrics">
    <element value="ga:pageviews"/>
@@ -274,35 +330,35 @@
    <element value="ga:pagePath"/>
   </property>
   <property name="filters">
-   <element value="string:ga:pagePath==${page_url}"/>
+   <element value="page_filter"/>
   </property>
   <property name="sort">
    <element value="-ga:pageviews"/>
   </property>
-  <property name="max_results">10</property>
-  <property name="column_labels">
-   <element value="string:Page Views"/>
-   <element value="string:Keyword"/>
-  </property>
-  <property name="column_exps">
-   <element value="python:int(ga_pageviews)"/>
-   <element value="python:str(ga_keyword)"/>
-  </property>
+  <property name="start_date"></property>
+  <property name="end_date"></property>
+  <property name="max_results">python:10</property>
+  <property name="columns">python:['Page Views', 'Keyword']</property>
+  <property name="row_repeat">python:dimension('ga:keyword')</property>
   <property
-     name="introduction">&lt;h3&gt;Top 10 Keywords&lt;/h3&gt;</property>
-  <property name="conclusion"></property>
+     name="rows">python:[metric('ga:pageviews', {'ga:keyword': row}), row]</property>
   <property name="viz_type">Table</property>
   <property name="viz_options"/>
+  <property name="body">&lt;h3&gt;Top 10 Keywords&lt;/h3&gt;
+   &lt;div tal:replace="structure view/visualization"&gt;&lt;/div&gt;</property>
  </object>
  <object name="page-top-previouspages-table"
-    meta_type="Google Analytics Report" i18n:domain="analytics">
+    meta_type="Google Analytics Report" i18n:domain="collective.googleanalytics">
   <property name="title"
      i18n:translate="">Top 5 Previous Pages: Table</property>
   <property name="description"
      i18n:translate="">Displays a table of the top five previous pages.</property>
-  <property name="is_page_specific">True</property>
   <property name="categories">
    <element value="Portlet"/>
+  </property>
+  <property name="plugin_names">
+   <element value="Contextual Results"/>
+   <element value="Variable Date Range"/>
   </property>
   <property name="metrics">
    <element value="ga:pageviews"/>
@@ -312,34 +368,35 @@
    <element value="ga:previousPagePath"/>
   </property>
   <property name="filters">
-   <element value="string:ga:nextPagePath==${page_url}"/>
+   <element value="nextpage_filter"/>
   </property>
   <property name="sort">
    <element value="-ga:pageviews"/>
   </property>
-  <property name="max_results">5</property>
-  <property name="column_labels">
-   <element value="string:Page Views"/>
-   <element value="string:Previous Path"/>
-  </property>
-  <property name="column_exps">
-   <element value="python:int(ga_pageviews)"/>
-   <element value="python:str(ga_previousPagePath)"/>
-  </property>
+  <property name="start_date"></property>
+  <property name="end_date"></property>
+  <property name="max_results">python:5</property>
+  <property name="columns">python:['Page Views', 'Previous Path']</property>
   <property
-     name="introduction">&lt;h3&gt;Top 5 Previous Pages&lt;/h3&gt;</property>
-  <property name="conclusion"></property>
+     name="row_repeat">python:dimension('ga:previousPagePath')</property>
+  <property
+     name="rows">python:[metric('ga:pageviews', {'ga:previousPagePath': row}), row]</property>
   <property name="viz_type">Table</property>
   <property name="viz_options"/>
+  <property name="body">&lt;h3&gt;Top 5 Previous Pages&lt;/h3&gt;
+   &lt;div tal:replace="structure view/visualization"&gt;&lt;/div&gt;</property>
  </object>
  <object name="page-top-nextpages-table" meta_type="Google Analytics Report"
-    i18n:domain="analytics">
+    i18n:domain="collective.googleanalytics">
   <property name="title" i18n:translate="">Top 5 Next Pages: Table</property>
   <property name="description"
      i18n:translate="">Displays a table of the top five next pages.</property>
-  <property name="is_page_specific">True</property>
   <property name="categories">
    <element value="Portlet"/>
+  </property>
+  <property name="plugin_names">
+   <element value="Contextual Results"/>
+   <element value="Variable Date Range"/>
   </property>
   <property name="metrics">
    <element value="ga:pageviews"/>
@@ -349,24 +406,21 @@
    <element value="ga:previousPagePath"/>
   </property>
   <property name="filters">
-   <element value="string:ga:previousPagePath==${page_url}"/>
+   <element value="previouspage_filter"/>
   </property>
   <property name="sort">
    <element value="-ga:pageviews"/>
   </property>
-  <property name="max_results">5</property>
-  <property name="column_labels">
-   <element value="string:Page Views"/>
-   <element value="string:Next Path"/>
-  </property>
-  <property name="column_exps">
-   <element value="python:int(ga_pageviews)"/>
-   <element value="python:str(ga_nextPagePath)"/>
-  </property>
+  <property name="start_date"></property>
+  <property name="end_date"></property>
+  <property name="max_results">python:5</property>
+  <property name="columns">python:['Page Views', 'Next Path']</property>
+  <property name="row_repeat">python:dimension('ga:nextPagePath')</property>
   <property
-     name="introduction">&lt;h3&gt;Top 5 Next Pages&lt;/h3&gt;</property>
-  <property name="conclusion"></property>
+     name="rows">python:[metric('ga:pageviews', {'ga:nextPagePath': row}), row]</property>
   <property name="viz_type">Table</property>
   <property name="viz_options"/>
+  <property name="body">&lt;h3&gt;Top 5 Next Pages&lt;/h3&gt;
+   &lt;div tal:replace="structure view/visualization"&gt;&lt;/div&gt;</property>
  </object>
 </object>
