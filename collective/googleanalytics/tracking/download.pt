@@ -2,11 +2,12 @@
     /*&lt;![CDATA[*/
     jq(function() {
         var extensions = ${view/file_extensions};
-        for (var i=0;i&lt;extensions.length;i++) {
-            jq('a[href$$=&quot;.' + extensions[i] + '&quot;]').click(function () {
-                _gaq.push(['_trackEvent', 'File', 'Download', jq(this).attr('href')]);
-            });
-        }
+        var extensionsPattern = new RegExp('\\.((' + extensions.join(')|(') + '))$$', 'g');
+        jq('a').filter(function () {
+            return this.href.match(extensionsPattern) || this.href.match(/\/at_download\//g);
+        }).click(function () {
+            _gaq.push(['_trackEvent', 'File', 'Download', jq(this).attr('href')]);
+        });
     });
     /*]]&gt;*/
 ">
