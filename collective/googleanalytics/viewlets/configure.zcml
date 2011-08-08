@@ -26,6 +26,15 @@
         permission="zope2.View" 
         />
 
+    <browser:viewlet  
+        name="collective.googleanalytics.tracking-secondary"
+        manager="plone.app.layout.viewlets.interfaces.IHtmlHeadLinks"
+        class=".tracking.AnalyticsSecondaryTrackingViewlet"
+        layer="..interfaces.browserlayer.IAnalyticsLayer"
+        permission="zope2.View" 
+        />
+
+
     <browser:viewlet
         name="collective.googleanalytics.externaljs"
         manager="plone.app.layout.viewlets.interfaces.IHtmlHead"
