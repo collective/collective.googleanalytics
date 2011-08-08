@@ -1,6 +1,6 @@
 from setuptools import setup, find_packages
 
-version = '1.3.valentine.1'
+version = '1.3-dev'
 
 setup(name='collective.googleanalytics',
       version=version,
