@@ -4,6 +4,9 @@ Changelog
 1.3 - Unreleased
 ----------------
 
+* Fixed leap day bug in date range calculation.
+  [2012-03-01 - yomatters]
+
 * Updated file download tracking plugin to track at_download links.
   [2011-07-26 - yomatters]
 

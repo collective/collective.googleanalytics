@@ -196,7 +196,7 @@ class AnalyticsDefaultDateRangeChoices(object):
         timedelta = datetime.timedelta
 
         mtd_days = today.day - 1
-        ytd_days = today.replace(year=1).toordinal() - 1
+        ytd_days = today.timetuple().tm_yday - 1
 
         date_ranges = {
             'week': [today - timedelta(days=6), today],
