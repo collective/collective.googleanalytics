@@ -7,6 +7,10 @@
 
   <five:registerPackage package="." initialize=".initialize" />
   
+  <include package="Products.CMFCore" file="permissions.zcml"
+           xmlns:zcml="http://namespaces.zope.org/zcml"
+           zcml:condition="have plone-41" />
+
   <permission
 	   id="collective.googleanalytics.ViewAnalyticsResults"
       title="Google Analytics: View Analytics Results"

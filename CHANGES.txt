@@ -4,6 +4,9 @@ Changelog
 1.3 - Unreleased
 ----------------
 
+* Add Plone 4.1 compatibility
+  [2012-03-28 - encolpe]
+
 * Fixed leap day bug in date range calculation.
   [2012-03-01 - yomatters]
 
