@@ -6,16 +6,15 @@
     i18n_domain="collective.googleanalytics">
 
   <five:registerPackage package="." initialize=".initialize" />
-  
+
   <include package="Products.CMFCore" file="permissions.zcml"
-           xmlns:zcml="http://namespaces.zope.org/zcml"
            zcml:condition="have plone-41" />
 
   <permission
 	   id="collective.googleanalytics.ViewAnalyticsResults"
       title="Google Analytics: View Analytics Results"
 	   />
-	
+
   <permission
 	   id="collective.googleanalytics.ManageAnalyticsReports"
       title="Google Analytics: Manage Analytics Reports"
@@ -47,31 +46,31 @@
     name="collective.googleanalytics.Profiles"
     provides="zope.schema.interfaces.IVocabularyFactory"
     />
-  
+
   <utility
     component=".vocabularies.getWebProperties"
     name="collective.googleanalytics.WebProperties"
     provides="zope.schema.interfaces.IVocabularyFactory"
     />
-  
+
   <utility
     component=".vocabularies.getSiteWideReports"
     name="collective.googleanalytics.SiteWideReports"
     provides="zope.schema.interfaces.IVocabularyFactory"
     />
-    
+
   <utility
     component=".vocabularies.getPortletReports"
     name="collective.googleanalytics.PortletReports"
     provides="zope.schema.interfaces.IVocabularyFactory"
     />
-    
+
   <utility
     component=".vocabularies.getRoles"
     name="collective.googleanalytics.Roles"
     provides="zope.schema.interfaces.IVocabularyFactory"
     />
-    
+
   <utility
     component=".vocabularies.getTrackingPluginNames"
     name="collective.googleanalytics.TrackingPluginNames"
@@ -85,7 +84,7 @@
        description="Tools to pull statistics from Google Analytics."
        provides="Products.GenericSetup.interfaces.EXTENSION"
        />
-       
+
    <genericsetup:registerProfile
         name="upgrade_10a2_10a3"
         title="Upgrade profile for Google Analytics from 1.0a2 to 1.0a3"
@@ -93,7 +92,7 @@
         description="Configuration changes for the upgrade from 1.0a2 to 1.0a3."
         provides="Products.GenericSetup.interfaces.EXTENSION"
         />
-        
+
     <genericsetup:registerProfile
          name="upgrade_10a4_10b1"
          title="Upgrade profile for Google Analytics from 1.0a4 to 1.0b1"
@@ -101,7 +100,7 @@
          description="Configuration changes for the upgrade from 1.0a4 to 1.0b1."
          provides="Products.GenericSetup.interfaces.EXTENSION"
          />
-         
+
      <genericsetup:registerProfile
           name="upgrade_10b3_10"
           title="Upgrade profile for Google Analytics from 1.0b3 to 1.0"
