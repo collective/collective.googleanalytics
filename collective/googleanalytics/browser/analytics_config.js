@@ -1,16 +1,17 @@
-jq(function () {
+(function ($) {
     getAnalyticsContainerWidth = function(container) {
+        var container_width;
         // If we're displaying the report in an expanding dl, we need to expand it
         // before we can get the width.
-        if (jq(container).parents('dl.collapsedBlockCollapsible').length > 0) {
-            var dl_parent = jq(container).parents('dl.collapsedBlockCollapsible').eq(0);
+        if ($(container).parents('dl.collapsedBlockCollapsible').length > 0) {
+            var dl_parent = $(container).parents('dl.collapsedBlockCollapsible').eq(0);
             dl_parent.removeClass('collapsedBlockCollapsible').addClass('expandedBlockCollapsible');
-            var container_width = jq(container).innerWidth();
+            container_width = $(container).innerWidth();
             dl_parent.removeClass('expandedBlockCollapsible').addClass('collapsedBlockCollapsible');
         // Otherwise, we can just get the width.
         } else {
-            var container_width = jq(container).innerWidth();
+            container_width = $(container).innerWidth();
         }
         return container_width;
     }; 
-});
+}(jQuery));
