@@ -1,6 +1,6 @@
 from setuptools import setup, find_packages
 
-version = '1.3'
+version = '1.3.1'
 
 setup(name='collective.googleanalytics',
       version=version,
@@ -28,7 +28,7 @@ setup(name='collective.googleanalytics',
       install_requires=[
           'setuptools',
           # -*- Extra requirements: -*-
-          'gdata>=2.0.4',
+          'gdata>=2.0.17',
       ],
       entry_points="""
       [z3c.autoinclude.plugin]
