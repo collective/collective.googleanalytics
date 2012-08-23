@@ -1,6 +1,14 @@
 Changelog
 =========
 
+1.4 - unreleased
+----------------
+
+* When a Forbidden exception is encountered and the stored access_token is
+  removed, also be sure to clear the reports_profile so that a new
+  authorization won't encounter the same Forbidden exception immediately.
+  [2012-08-23 - davisagli]
+
 1.3 - 2012-04-09
 ----------------
 
