@@ -14,7 +14,7 @@ def getProfiles(context):
     analytics_tool = getToolByName(getSite(), 'portal_analytics')
     
     try:
-        accounts = analytics_tool.getAccountsFeed()
+        accounts = analytics_tool.getAccountsFeed('accounts/~all/webproperties/~all/profiles')
     except error.BadAuthenticationError:
         choices = [('Please authorize with Google in the Google Analytics \
             control panel.', None)]
@@ -26,8 +26,12 @@ def getProfiles(context):
     if accounts:
         unique_choices = {}
         for entry in accounts.entry:
-            title = unicode(entry.title.text, 'utf-8')
-            unique_choices.update({title: entry.tableId[0].text})
+            for prop in entry.property:
+                if prop.name == 'ga:profileName':
+                    title = unicode(prop.value, 'utf-8')
+                if prop.name == 'dxp:tableId':
+                    tableId = prop.value
+            unique_choices.update({title: tableId})
         choices = unique_choices.items()
     else:
         choices = [('No profiles available', None)]
@@ -42,7 +46,7 @@ def getWebProperties(context):
     analytics_tool = getToolByName(getSite(), 'portal_analytics')
 
     try:
-        accounts = analytics_tool.getAccountsFeed()
+        accounts = analytics_tool.getAccountsFeed('accounts/~all/webproperties/~all/profiles')
     except error.BadAuthenticationError:
         choices = [('Please authorize with Google in the Google Analytics \
             control panel.', None)]
@@ -58,11 +62,15 @@ def getWebProperties(context):
         # of all the profiles for each property. (Ideally we would use the URL for the
         # web property, but Google doesn't expose it through the Analytics API.)
         for entry in accounts.entry:
-            title = unicode(entry.title.text, 'utf-8')
-            if not entry.webPropertyId.value in unique_choices.keys():
-                unique_choices.update({entry.webPropertyId.value : title})
+            for prop in entry.property:
+                if prop.name == 'ga:profileName':
+                    title = unicode(prop.value, 'utf-8')
+                if prop.name == 'ga:webPropertyId':
+                    webPropertyId = prop.value
+            if not webPropertyId in unique_choices.keys():
+                unique_choices.update({webPropertyId : title})
             else:
-                unique_choices[entry.webPropertyId.value] += ', ' + title
+                unique_choices[webPropertyId] += ', ' + title
         # After we reverse the terms so that the profile name(s) is now the key, we need
         # to ensure that these keys are unique. So, we pass the resulting list through
         # dict() and then output a list of items.

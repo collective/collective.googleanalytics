@@ -81,12 +81,12 @@ class AnalyticsControlPanelForm(ControlPanelForm):
         analytics_tool = getToolByName(self.context, 'portal_analytics')
         
         try:
-            accounts = analytics_tool.getAccountsFeed()
+            res = analytics_tool.getAccountsFeed('accounts')
         except error.BadAuthenticationError:
             return None
         except error.RequestTimedOutError:
             return None
-        return accounts.title.text.split(' ')[-1]
+        return res.title.text.split(' ')[-1]
     
     def _on_save(self, data={}):
         """

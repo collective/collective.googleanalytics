@@ -20,8 +20,11 @@ from collective.googleanalytics.interfaces.report import IAnalyticsReport
 from collective.googleanalytics import error
 from collective.googleanalytics.config import GOOGLE_REQUEST_TIMEOUT
 
+import gdata.gauth
+import gdata.analytics.client
 import gdata.analytics.service
 from gdata.service import RequestError
+from gdata.client import Unauthorized
 
 import logging
 logger = logging.getLogger('collective.googleanalytics')
@@ -37,14 +40,14 @@ class AnalyticsClients(object):
         self.data = gdata.analytics.service.AnalyticsDataService()
         self.accounts = gdata.analytics.service.AccountsService()
 
-def account_feed_cachekey(func, instance):
+def account_feed_cachekey(func, instance, feed_path):
     """
     Cache key for the account feed. We only refresh it every ten minutes.
     """
     
     cache_interval = instance.cache_interval
     cache_interval = (cache_interval > 0 and cache_interval * 60) or 1
-    return hash((time() // cache_interval, instance.auth_token))
+    return hash((time() // cache_interval, instance.auth_token, feed_path))
 
 class Analytics(PloneBaseTool, IFAwareObjectManager, OrderedFolder):
     """
@@ -106,6 +109,7 @@ class Analytics(PloneBaseTool, IFAwareObjectManager, OrderedFolder):
             client = clients.accounts
         else:
             client = clients.data
+            client.ssl = True
             
         if not client.GetAuthSubToken():
             client.SetAuthSubToken(self.auth_token)
@@ -148,11 +152,14 @@ class Analytics(PloneBaseTool, IFAwareObjectManager, OrderedFolder):
         We need this wrapper method so that we can intelligently handle errors.
         """
         
-        client = self._getAuthenticatedClient(service)
-        query_method = getattr(client, method, None)
-        if not query_method:
-            raise error.InvalidRequestMethodError, \
-                '%s does not have a method %s' % (client.__class__.__name__, method)
+        if service is not None:
+            client = self._getAuthenticatedClient(service)
+            query_method = getattr(client, method, None)
+            if not query_method:
+                raise error.InvalidRequestMethodError, \
+                    '%s does not have a method %s' % (client.__class__.__name__, method)
+        else:
+            query_method = method
 
         # Workaround for the lack of timeout handling in gdata. This approach comes
         # from collective.twitterportlet. See:
@@ -171,12 +178,15 @@ class Analytics(PloneBaseTool, IFAwareObjectManager, OrderedFolder):
             socket.setdefaulttimeout(GOOGLE_REQUEST_TIMEOUT)
             try:
                 return query_method(*args, **kwargs)
-            except RequestError, e:
-                reason = e[0]['reason']
-                if 'Token invalid' in reason or reason == 'Forbidden':
+            except (Unauthorized, RequestError), e:
+                if hasattr(e, 'reason'):
+                    reason = e.reason
+                else:
+                    reason = e[0]['reason']
+                if 'Token invalid' in reason or reason in ('Forbidden', 'Unauthorized'):
                     # Reset the stored auth token.
                     self.auth_token = None
-                    self.reports_profile = None
+                    self.__dict__['reports_profile'] = None
                     raise error.BadAuthenticationError, 'You need to authorize with Google'
                 else:
                     raise
@@ -205,14 +215,18 @@ class Analytics(PloneBaseTool, IFAwareObjectManager, OrderedFolder):
         """
         
         return self.report_categories
-        
+    
     security.declarePrivate('getAccountsFeed')
     @ram.cache(account_feed_cachekey)
-    def getAccountsFeed(self):
+    def getAccountsFeed(self, feed_path):
         """
         Returns the list of accounts.
         """
 
-        return self.makeClientRequest('accounts', 'GetAccountList')
-        
+        feed_url = 'https://www.googleapis.com/analytics/v2.4/management/' + feed_path
+        token = gdata.gauth.AuthSubToken(self.auth_token)
+        client = gdata.analytics.client.AnalyticsClient(auth_token = token)
+        res = self.makeClientRequest(None, client.get_management_feed, feed_url)
+        return res
+    
 InitializeClass(Analytics)
