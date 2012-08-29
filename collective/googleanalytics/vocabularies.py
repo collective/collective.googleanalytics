@@ -12,6 +12,9 @@ def getProfiles(context):
     """
     
     analytics_tool = getToolByName(getSite(), 'portal_analytics')
+    # short circuit if user hasn't authorized yet
+    if not analytics_tool.auth_token:
+        return SimpleVocabulary([])
     
     try:
         accounts = analytics_tool.getAccountsFeed('accounts/~all/webproperties/~all/profiles')
@@ -44,6 +47,9 @@ def getWebProperties(context):
     """
     
     analytics_tool = getToolByName(getSite(), 'portal_analytics')
+    # short circuit if user hasn't authorized yet
+    if not analytics_tool.auth_token:
+        return SimpleVocabulary([])
 
     try:
         accounts = analytics_tool.getAccountsFeed('accounts/~all/webproperties/~all/profiles')
