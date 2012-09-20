@@ -1,4 +1,9 @@
-from zope.app.component.hooks import getSite
+try:
+    # >= Plone 4.3
+    from zope.app.component.hooks import getSite
+except:
+    # < Plone 4.3
+    from zope.app.component.hooks import getSite
 from zope.component import getGlobalSiteManager
 from zope.schema.vocabulary import SimpleVocabulary, SimpleTerm
 from Products.CMFCore.utils import getToolByName

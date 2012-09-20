@@ -6,7 +6,12 @@ from AccessControl import ClassSecurityInfo
 
 from zope.interface import implements
 from zope.component import queryMultiAdapter
-from zope.app.component.hooks import getSite
+try:
+    # >= Plone 4.3
+    from zope.component.hooks import getSite
+except:
+    # < Plone 4.3
+    from zope.app.component.hooks import getSite
 from zope.component import getGlobalSiteManager
 from OFS.PropertyManager import PropertyManager
 from OFS.SimpleItem import SimpleItem
