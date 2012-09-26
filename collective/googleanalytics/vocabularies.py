@@ -1,6 +1,6 @@
 try:
     # >= Plone 4.3
-    from zope.app.component.hooks import getSite
+    from zope.component.hooks import getSite
 except:
     # < Plone 4.3
     from zope.app.component.hooks import getSite
