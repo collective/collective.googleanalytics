@@ -1,6 +1,7 @@
 <configure 
     xmlns="http://namespaces.zope.org/zope"
     xmlns:browser="http://namespaces.zope.org/browser"
+    xmlns:zcml="http://namespaces.zope.org/zcml"
     i18n_domain="collective.googleanalytics">
         
     <browser:page
@@ -30,10 +31,21 @@
         layer="..interfaces.browserlayer.IAnalyticsLayer"
         />
     
+
 	<configure package="Products.GenericSetup.browser">
 	
-		<browser:page
+        <!-- BBB <= Plone 4.1 -->
+		<browser:page zcml:condition="installed zope.app.container.interfaces.IAdding"
 		    for="zope.app.container.interfaces.IAdding"
+		    name="add_analytics_report"
+		    template="addWithPresettings.pt"
+		    class="collective.googleanalytics.browser.report.AnalyticsReportAddView"
+		    permission="collective.googleanalytics.ManageAnalyticsReports"
+		    />
+
+        <!-- Plone 4.3 -->
+		<browser:page zcml:condition="installed zope.browser.interfaces.IAdding"
+		    for="zope.browser.interfaces.IAdding"
 		    name="add_analytics_report"
 		    template="addWithPresettings.pt"
 		    class="collective.googleanalytics.browser.report.AnalyticsReportAddView"
