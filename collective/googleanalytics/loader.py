@@ -1,7 +1,12 @@
 from zope.interface import implements
 from zope.component import getMultiAdapter
 from zope.publisher.browser import BrowserPage
-from zope.app.pagetemplate.viewpagetemplatefile import ViewPageTemplateFile
+try:
+    # >= Plone 4.3
+    from zope.browserpage.viewpagetemplatefile import ViewPageTemplateFile
+except:
+    # < Plone 4.3
+    from zope.app.pagetemplate.viewpagetemplatefile import ViewPageTemplateFile
 from plone.memoize.instance import memoize
 from Products.CMFCore.utils import getToolByName
 from collective.googleanalytics.interfaces.loader import IAnalyticsAsyncLoader
