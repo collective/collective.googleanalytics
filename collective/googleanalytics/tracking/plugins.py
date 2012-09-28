@@ -1,10 +1,5 @@
 from zope.interface import implements
-try:
-    # >= Plone 4.3
-    from zope.browserpage.viewpagetemplatefile import ViewPageTemplateFile
-except:
-    # < Plone 4.3
-    from zope.app.pagetemplate.viewpagetemplatefile import ViewPageTemplateFile
+from collective.googleanalytics.bbb import ViewPageTemplateFile
 from Products.CMFCore.utils import getToolByName
 from collective.googleanalytics.interfaces.tracking import IAnalyticsTrackingPlugin
 from collective.googleanalytics.config import FILE_EXTENSION_CHOICES
