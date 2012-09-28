@@ -4,7 +4,7 @@ except ImportError:
     from Globals import InitializeClass
 from AccessControl import ClassSecurityInfo
 from zope.interface import implements
-from zope.app.pagetemplate.viewpagetemplatefile import ViewPageTemplateFile
+from bbb import ViewPageTemplateFile
 from Products.CMFCore.Expression import getEngine
 from Products.CMFCore.utils import getToolByName
 from Products.PageTemplates.ZopePageTemplate import ZopePageTemplate

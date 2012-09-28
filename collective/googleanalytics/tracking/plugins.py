@@ -1,5 +1,5 @@
 from zope.interface import implements
-from zope.app.pagetemplate.viewpagetemplatefile import ViewPageTemplateFile
+from collective.googleanalytics.bbb import ViewPageTemplateFile
 from Products.CMFCore.utils import getToolByName
 from collective.googleanalytics.interfaces.tracking import IAnalyticsTrackingPlugin
 from collective.googleanalytics.config import FILE_EXTENSION_CHOICES
