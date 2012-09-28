@@ -34,24 +34,14 @@
 
 	<configure package="Products.GenericSetup.browser">
 	
-        <!-- BBB <= Plone 4.1 -->
-		<browser:page zcml:condition="installed zope.app.container.interfaces.IAdding"
-		    for="zope.app.container.interfaces.IAdding"
+		<browser:page
+		    for="collective.googleanalytics.browser.interfaces.IAdding"
 		    name="add_analytics_report"
 		    template="addWithPresettings.pt"
 		    class="collective.googleanalytics.browser.report.AnalyticsReportAddView"
 		    permission="collective.googleanalytics.ManageAnalyticsReports"
 		    />
 
-        <!-- Plone 4.3 -->
-		<browser:page zcml:condition="installed zope.browser.interfaces.IAdding"
-		    for="zope.browser.interfaces.IAdding"
-		    name="add_analytics_report"
-		    template="addWithPresettings.pt"
-		    class="collective.googleanalytics.browser.report.AnalyticsReportAddView"
-		    permission="collective.googleanalytics.ManageAnalyticsReports"
-		    />
-		
 	</configure>
 
 </configure>
