@@ -34,7 +34,9 @@
             </metal:block>
             
             <p style="float: right;">
-                <a href="http://www.google.com/analytics/" target="_blank">
+                <a href="http://www.google.com/analytics/" 
+                  i18n:translate=""
+                  target="_blank">
                     Visit Google Analytics
                 </a>
             </p>
@@ -64,20 +66,20 @@
             </a>
             
             <tal:notauthorized condition="not:view/authorized">
-                <h2>Authorization required</h2>
-                <p>
+                <h2 i18n:translate="">Authorization required</h2>
+                <p i18n:translate="">
                     Before you can use Google Analytics for Plone, you need to authorize
                     this site to access your Google Analytics account. Follow the steps
                     below to complete the authorization process.
                 </p>
                 <ol>
-                    <li>
+                    <li i18n:translate="">
                         To begin, log into the Google account that you use to access Google
                         Analytics if you have not done so already. To log in, you can
                         <a href="http://www.google.com/analytics">visit Google Analytics</a>
                         and sign in as usual.
                     </li>
-                    <li>
+                    <li i18n:translate="">
                         Once you have signed into your Google account, click this link
                         to begin the authorization process:
                         <div style="margin: 1em 0;">
@@ -85,7 +87,7 @@
                                 tal:attributes="href view/auth_url">Authorize with Google</a>
                         </div>
                     </li>
-                    <li>
+                    <li i18n:translate="">
                         Google will ask you if you want to allow this site to access your
                         Google Analytics data. If the URL displayed matches the one below,
                         click the Grant Access button.<br />
@@ -96,11 +98,11 @@
                             </strong>
                         </div>
                     </li>
-                    <li>
+                    <li i18n:translate="">
                         After you click Grant Access, you will be returned to this page where
                         you can configure Google Analytics for Plone.
                     </li>
-                    <li>
+                    <li i18n:translate="">
                         If you ever decide that you no longer want this site to have access
                         to your Google Analytics data, you can remove its authorization by
                         clicking the Revoke Access link in this control panel or by visiting
