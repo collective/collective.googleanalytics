@@ -1,6 +1,7 @@
 <configure 
     xmlns="http://namespaces.zope.org/zope"
     xmlns:browser="http://namespaces.zope.org/browser"
+    xmlns:zcml="http://namespaces.zope.org/zcml"
     i18n_domain="collective.googleanalytics">
         
     <browser:page
@@ -30,16 +31,17 @@
         layer="..interfaces.browserlayer.IAnalyticsLayer"
         />
     
+
 	<configure package="Products.GenericSetup.browser">
 	
 		<browser:page
-		    for="zope.app.container.interfaces.IAdding"
+		    for="collective.googleanalytics.bbb.IAdding"
 		    name="add_analytics_report"
 		    template="addWithPresettings.pt"
 		    class="collective.googleanalytics.browser.report.AnalyticsReportAddView"
 		    permission="collective.googleanalytics.ManageAnalyticsReports"
 		    />
-		
+
 	</configure>
 
 </configure>

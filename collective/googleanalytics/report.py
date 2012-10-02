@@ -6,7 +6,7 @@ from AccessControl import ClassSecurityInfo
 
 from zope.interface import implements
 from zope.component import queryMultiAdapter
-from zope.app.component.hooks import getSite
+from bbb import getSite
 from zope.component import getGlobalSiteManager
 from OFS.PropertyManager import PropertyManager
 from OFS.SimpleItem import SimpleItem
