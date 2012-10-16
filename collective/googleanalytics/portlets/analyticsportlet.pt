@@ -14,7 +14,8 @@
 
     <dd class="portletFooter">
         <span class="portletBottomLeft"></span>
-        <a href="http://www.google.com/analytics/" target="_blank">More analytics</a>
+        <a href="http://www.google.com/analytics/" 
+            i18n:translate="" target="_blank">More analytics</a>
         <span class="portletBottomRight"></span>
     </dd>
 </dl>
