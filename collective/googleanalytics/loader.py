@@ -10,9 +10,7 @@ from collective.googleanalytics import error
 from string import Template
 import time
 import os
-
-from zope.i18nmessageid import MessageFactory
-_ = MessageFactory('collective.googleanalytics')
+from collective.googleanalytics import GoogleAnalyticsMessageFactory as _
 
 class DefaultAnalyticsAsyncLoader(object):
     
@@ -107,4 +105,5 @@ class AsyncAnalyticsResults(BrowserPage):
         # Once we expose the date range optoin in the UI, we'll need to find a
         # way to generate this label dynamically, probably by using the variable
         # date range plugin from one of the report renderers.
-        return '<h2>%s</h2>'%(_('Last 30 Days')) + '\n'.join(results)
+        date_range_msg = _('Last 30 Days')
+        return '<h2>%s</h2>'%(self.context.translate(date_range_msg)) + '\n'.join(results)

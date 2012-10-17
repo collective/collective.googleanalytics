@@ -1,7 +1,6 @@
 from zope.interface import Interface
 from zope import schema
-from zope.i18nmessageid import MessageFactory
-_ = MessageFactory('collective.googleanalytics')
+from collective.googleanalytics.interfaces import GoogleAnalyticsMessageFactory as _
 
 class IAnalyticsCredentials(Interface):
     """
