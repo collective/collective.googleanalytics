@@ -12,9 +12,18 @@ as a control panel for authorizing your site and configuring settings.
 
 Installation
 ============
-To install collective.googleanalytics, add it to the eggs section of your buildout.
-If you are using Plone 3.2 or earlier, you also need to add a ZCML slug. Then
+To install collective.googleanalytics, add it to the eggs section of your buildout. Then
 re-run buildout and restart Zope.
+
+On Plone 3
+----------
+
+On Plone 3 it is recommended to use the following version pins::
+
+  [versions]
+  collective.googleanalytics = 1.4.1
+  gdata = 2.0.17
+  simplejson = 2.3.3
 
 Configuration
 =============
