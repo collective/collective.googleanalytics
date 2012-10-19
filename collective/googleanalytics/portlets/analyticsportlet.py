@@ -9,8 +9,7 @@ from plone.app.controlpanel.widgets import MultiCheckBoxVocabularyWidget
 from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
 from Products.CMFCore.utils import getToolByName
 
-from zope.i18nmessageid import MessageFactory
-_ = MessageFactory('collective.googleanalytics')
+from collective.googleanalytics import GoogleAnalyticsMessageFactory as _
 
 from collective.googleanalytics.interfaces.loader import IAnalyticsAsyncLoader
 

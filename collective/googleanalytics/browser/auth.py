@@ -1,10 +1,9 @@
 from zope.publisher.browser import BrowserPage
 from Products.CMFCore.utils import getToolByName
-from zope.i18nmessageid import MessageFactory
 from gdata.service import NonAuthSubToken, TokenUpgradeFailed
 import gdata.analytics.service
 import gdata.auth
-_ = MessageFactory('collective.googleanalytics')
+from collective.googleanalytics import GoogleAnalyticsMessageFactory as _
 
 class AnalyticsAuth(BrowserPage):
     """
