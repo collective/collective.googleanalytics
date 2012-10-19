@@ -1,6 +1,12 @@
 Changelog
 =========
 
+1.4.2 - Unreleased
+------------------
+* Improve i18n and include first version of the pt-br translation.
+  [2012-10-19 - tcurvelo]
+
+
 1.4.1 - 2012-08-29
 ------------------
 

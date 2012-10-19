@@ -1,6 +1,5 @@
 from zope.interface import Interface
 from zope.interface import implements
-from zope.i18nmessageid import MessageFactory
 
 from Products.CMFCore.utils import getToolByName
 from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
@@ -14,7 +13,7 @@ from collective.googleanalytics import error
 from collective.googleanalytics.interfaces.utility import \
     IAnalyticsReportsAssignment, IAnalyticsTracking, IAnalyticsSettings
 
-_ = MessageFactory('collective.googleanalytics')
+from collective.googleanalytics import GoogleAnalyticsMessageFactory as _
 
 class IAnalyticsControlPanelForm(Interface):
 	"""

@@ -2,6 +2,8 @@ from Products.CMFCore import utils as cmfutils
 from collective.googleanalytics.utility import Analytics
 from collective.googleanalytics.report import AnalyticsReport
 import gdata.gauth
+from zope.i18nmessageid import MessageFactory
+GoogleAnalyticsMessageFactory = MessageFactory('collective.googleanalytics')
 
 # patch gdata scopes
 gdata.gauth.AUTH_SCOPES['analytics'] += ('https://www.googleapis.com/auth/analytics.readonly',)

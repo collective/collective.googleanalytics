@@ -4,7 +4,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2012-09-17 22:14+0000\n"
+"POT-Creation-Date: 2012-10-16 19:34+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI +ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -126,6 +126,14 @@ msgstr ""
 
 #: ./browser/controlpanel.py:56
 msgid "Google Analytics Settings"
+msgstr ""
+
+#: ./loader.py:110
+msgid "Last 30 Days"
+msgstr ""
+
+#: ./portlets/analyticsportlet.pt:17
+msgid "More analytics"
 msgstr ""
 
 #: ./profiles/default/analytics.xml

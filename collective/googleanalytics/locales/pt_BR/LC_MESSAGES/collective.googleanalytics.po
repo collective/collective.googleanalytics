@@ -1,15 +1,15 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2012-09-17 22:14+0000\n"
+"POT-Creation-Date: 2012-10-16 19:34+0000\n"
 "PO-Revision-Date: 2012-09-18 16:02 -3000\n"
 "Last-Translator: Thiago Curvelo <tcurvelo@gmail.com>\n"
 "Language-Team: TRT13 <web@trt13.jus.br>\n"
 "MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=utf-8\n"
+"Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0\n"
-"Language-Code: pt_BR\n"
+"Language-Code: pt-br\n"
 "Language-Name: Brazilian Portuguese\n"
 "Preferred-Encodings: utf-8 latin1\n"
 "Domain: collective.googleanalytics\n"
@@ -124,6 +124,14 @@ msgstr ""
 #: ./browser/controlpanel.py:56
 msgid "Google Analytics Settings"
 msgstr "Configurações do Google Analytics"
+
+#: ./loader.py:110
+msgid "Last 30 Days"
+msgstr "Últimos 30 Dias"
+
+#: ./portlets/analyticsportlet.pt:17
+msgid "More analytics"
+msgstr "Mais estatísticas"
 
 #: ./profiles/default/analytics.xml
 #: ./profiles/upgrade_10a2_10a3/analytics.xml
