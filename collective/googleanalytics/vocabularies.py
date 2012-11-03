@@ -10,12 +10,12 @@ def getProfiles(context):
     Return list of Google Analytics profiles and corresponding
     account IDs (e.g. ga:30481).
     """
-    
+
     analytics_tool = getToolByName(getSite(), 'portal_analytics')
     # short circuit if user hasn't authorized yet
     if not analytics_tool.auth_token:
         return SimpleVocabulary([])
-    
+
     try:
         accounts = analytics_tool.getAccountsFeed('accounts/~all/webproperties/~all/profiles')
     except error.BadAuthenticationError:
@@ -31,7 +31,9 @@ def getProfiles(context):
         for entry in accounts.entry:
             for prop in entry.property:
                 if prop.name == 'ga:profileName':
-                    title = unicode(prop.value, 'utf-8')
+                    title = prop.value
+                    if not isinstance(title, unicode):
+                        title = unicode(title, 'utf-8')
                 if prop.name == 'dxp:tableId':
                     tableId = prop.value
             unique_choices.update({title: tableId})
@@ -45,7 +47,7 @@ def getWebProperties(context):
     Return list of Google Analytics profiles and web property
     IDs (e.g. UA-30481-22).
     """
-    
+
     analytics_tool = getToolByName(getSite(), 'portal_analytics')
     # short circuit if user hasn't authorized yet
     if not analytics_tool.auth_token:
@@ -70,7 +72,9 @@ def getWebProperties(context):
         for entry in accounts.entry:
             for prop in entry.property:
                 if prop.name == 'ga:profileName':
-                    title = unicode(prop.value, 'utf-8')
+                    title = prop.value
+                    if not isinstance(title, unicode):
+                        title = unicode(title, 'utf-8') 
                 if prop.name == 'ga:webPropertyId':
                     webPropertyId = prop.value
             if not webPropertyId in unique_choices.keys():
@@ -96,14 +100,14 @@ def getReports(context, category=None):
     if reports:
         choices = [(report.title, report.id,) for report in reports]
     return SimpleVocabulary.fromItems(choices)
-    
+
 def getSiteWideReports(context):
     """
     Return list of site wide Google Analytics reports.
     """
 
     return getReports(context, category="Site Wide")
-    
+
 def getPortletReports(context):
     """
     Return list of portlet Google Analytics reports.
@@ -115,11 +119,11 @@ def getRoles(context):
     """
     Return a list of user roles.
     """
-    
+
     pmemb = getToolByName(getSite(), 'portal_membership')
     roles = [role for role in pmemb.getPortalRoles() if role != 'Owner']
     return SimpleVocabulary.fromValues(roles)
-    
+
 def getTrackingPluginNames(context):
     """
     Return a list of the names of the available tracking plugins.
@@ -128,10 +132,10 @@ def getTrackingPluginNames(context):
     gsm = getGlobalSiteManager()
     global_plugins = set([p.name for p in gsm.registeredAdapters() \
         if p.provided == IAnalyticsTrackingPlugin])
-    
+
     lsm = getSite().getSiteManager()
     local_plugins = set([p.name for p in lsm.registeredAdapters() \
         if p.provided == IAnalyticsTrackingPlugin])
-    
+
     values = sorted(list(global_plugins | local_plugins))
     return SimpleVocabulary.fromValues(values)
