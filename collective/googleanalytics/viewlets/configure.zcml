@@ -6,7 +6,7 @@
     <browser:viewletManager
         name="collective.googleanalytics.controlpanel"
         provides="..interfaces.viewlets.IAnalyticsControlPanelViewletManager"
-        permission="cmf.ManagePortal"
+        permission="collective.googleanalytics.ManageAnalyticsReports"
         class="plone.app.viewletmanager.manager.OrderedViewletManager"
         />
 		
