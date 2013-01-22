@@ -2,10 +2,10 @@
 <rolemap>
   <permissions>
     <permission name="Google Analytics: View Analytics Results" acquire="True">
-      <role name="Site Administrator"/>
+      <role name="Manager"/>
     </permission>
     <permission name="Google Analytics: Manage Analytics Reports" acquire="True">
-      <role name="Site Administrator"/>
+      <role name="Manager"/>
     </permission>
   </permissions>
 </rolemap>

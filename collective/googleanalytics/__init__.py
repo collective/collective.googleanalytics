@@ -1,4 +1,5 @@
 from Products.CMFCore import utils as cmfutils
+from Products.CMFCore.permissions import setDefaultRoles
 from collective.googleanalytics.utility import Analytics
 from collective.googleanalytics.report import AnalyticsReport
 import gdata.gauth
@@ -12,6 +13,11 @@ gdata.gauth.AUTH_SCOPES['analytics'] += ('https://www.googleapis.com/auth/analyt
 tools = (
     Analytics,
     )
+
+setDefaultRoles( 'Google Analytics: View Analytics Results', 
+                ( 'Site Administrator', ) )
+setDefaultRoles( 'Google Analytics: Manage Analytics Reports', 
+                ( 'Site Administrator', ) )
 
 def initialize(context):
     """
