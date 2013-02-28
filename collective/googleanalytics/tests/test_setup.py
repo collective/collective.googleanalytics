@@ -138,6 +138,27 @@ class TestUnicode(FunctionalTestCase):
             u'A - Nantes D\xe9veloppement'
         )
 
+    def test_cga_overlong_profile_names(self):
+        # fails with unicode error with c.googleanalytics <= 1.4.1
+        analytics_tool = getToolByName(self.portal, 'portal_analytics')
+        analytics_tool.accounts = Accounts(
+            [Entry(
+                [Prop('ga:profileName', u'A - Nantes D\xe9veloppement a very long profile name and continuing'),
+                 Prop('ga:webPropertyId', 'foo'),
+                 Prop('dxp:tableId', 'foo'),]
+            )]
+        )
+        accounts = getProfiles(analytics_tool)
+        self.assertEquals(
+            accounts.by_value['foo'].title,
+            u'A - Nantes D\xe9veloppement a very long ...'
+        )
+        props = getWebProperties(analytics_tool)
+        self.assertEquals(
+            props.by_value['foo'].title,
+            u'A - Nantes D\xe9veloppement a very long ...'
+        )
+
 
 def test_suite():
     suite = unittest.TestSuite()
