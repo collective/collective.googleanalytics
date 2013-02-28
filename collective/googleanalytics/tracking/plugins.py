@@ -1,9 +1,9 @@
+import json
 from zope.interface import implements
 from collective.googleanalytics.bbb import ViewPageTemplateFile
 from Products.CMFCore.utils import getToolByName
 from collective.googleanalytics.interfaces.tracking import IAnalyticsTrackingPlugin
 from collective.googleanalytics.config import FILE_EXTENSION_CHOICES
-from collective.googleanalytics.utils import json_serialize
 
 class AnalyticsBaseTrackingPlugin(object):
     """
@@ -47,7 +47,7 @@ class AnalyticsDownloadPlugin(AnalyticsBaseTrackingPlugin):
 
     __call__ = ViewPageTemplateFile('download.pt')
     
-    file_extensions = json_serialize(FILE_EXTENSION_CHOICES)
+    file_extensions = json.dumps(FILE_EXTENSION_CHOICES)
     
 class AnalyticsCommentPlugin(AnalyticsBaseTrackingPlugin):
     """
