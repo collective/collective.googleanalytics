@@ -85,7 +85,6 @@ def getWebProperties(context):
                     title = prop.value
                     if not isinstance(title, unicode):
                         title = unicode(title, 'utf-8')
-                    title = crop(title, 40)
                 if prop.name == 'ga:webPropertyId':
                     webPropertyId = prop.value
             if not webPropertyId in unique_choices.keys():
@@ -95,7 +94,7 @@ def getWebProperties(context):
         # After we reverse the terms so that the profile name(s) is now the key, we need
         # to ensure that these keys are unique. So, we pass the resulting list through
         # dict() and then output a list of items.
-        choices = dict([(title, property_id) for (property_id, title) in unique_choices.items()]).items()
+        choices = dict([(crop(title, 40), property_id) for (property_id, title) in unique_choices.items()]).items()
     else:
         choices = [('No profiles available', None)]
     return SimpleVocabulary([SimpleTerm(c[1], c[1], c[0]) for c in choices])
