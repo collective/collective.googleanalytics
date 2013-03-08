@@ -14,7 +14,7 @@ class AnalyticsTrackingViewlet(AnalyticsViewlet):
     render = ViewPageTemplateFile('tracking.pt')
 
     def __init__(self, context, request, view, manager):
-        super(AnalyticsViewlet, self).__init__(context, request, view, manager)
+        super(AnalyticsTrackingViewlet, self).__init__(context, request, view, manager)
         self.analytics_tool = getToolByName(context, "portal_analytics")
         self.membership_tool = getToolByName(context, "portal_membership")
 
