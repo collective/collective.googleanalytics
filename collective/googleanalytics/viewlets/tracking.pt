@@ -15,7 +15,7 @@
         <tal:block content="structure view/renderPlugins"></tal:block>
         <script type="text/javascript"
             tal:content="string:
-            _gaq.push(['_trackPageview']);
+            _gaq.push(['_trackPageview', '${context/absolute_url_path}']);
             ">
         </script>
     </tal:webproperty>

@@ -102,8 +102,5 @@ class AsyncAnalyticsResults(BrowserPage):
             except error.RequestTimedOutError:
                 return self.timed_out()
                 
-        # Once we expose the date range optoin in the UI, we'll need to find a
-        # way to generate this label dynamically, probably by using the variable
-        # date range plugin from one of the report renderers.
-        date_range_msg = _('Last 30 Days')
+        date_range_msg = _('range_%s' % self.request.get('date_range'))
         return '<h2>%s</h2>'%(self.context.translate(date_range_msg)) + '\n'.join(results)

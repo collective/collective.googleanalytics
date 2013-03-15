@@ -37,4 +37,10 @@
         factory=".plugins.AnalyticsPageLoadTimePlugin"
         />
 
+    <adapter
+        for="* zope.publisher.interfaces.IRequest"
+        name="User name"
+        factory=".plugins.AnalyticsUserNamePlugin"
+        />
+
 </configure>

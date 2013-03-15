@@ -71,3 +71,6 @@ class IAnalytics(
         default=['Site Wide', 'Portlet'],
         required=False)
         
+class IDateRangeDownload(Interface):
+    start_date = schema.Date(title=u"Start date")
+    end_date = schema.Date(title=u"End date")

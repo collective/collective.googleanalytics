@@ -1,0 +1,146 @@
+<?xml version="1.0"?>
+<object name="portal_analytics" meta_type="Google Analytics Tool"
+   xmlns:i18n="http://xml.zope.org/namespaces/i18n">
+ <object name="top-5-users-table" meta_type="Google Analytics Report"
+    i18n:domain="collective.googleanalytics">
+  <property name="title" i18n:translate="">Top 5 Users: Table</property>
+  <property name="description"
+     i18n:translate="">Displays a table of the top users by number of page views for this month.</property>
+  <property name="categories">
+   <element value="Site Wide"/>
+  </property>
+  <property name="plugin_names">
+   <element value="Variable Date Range"/>
+  </property>
+  <property name="metrics">
+   <element value="ga:pageviews"/>
+  </property>
+  <property name="dimensions">
+   <element value="ga:customVarValue2"/>
+  </property>
+  <property name="filters"/>
+  <property name="sort">
+   <element value="-ga:pageviews"/>
+  </property>
+  <property name="start_date"></property>
+  <property name="end_date"></property>
+  <property name="max_results">python:5</property>
+  <property name="columns">python:['User name', 'Views']</property>
+  <property name="row_repeat">python:dimension('ga:customVarValue2')</property>
+  <property
+     name="rows">python:[row, metric('ga:pageviews', {'ga:customVarValue2': row})]</property>
+  <property name="viz_type">Table</property>
+  <property name="viz_options"/>
+  <property name="body">&lt;h3&gt;Top 5 Users&lt;/h3&gt;
+   &lt;div tal:replace="structure view/visualization"&gt;&lt;/div&gt;</property>
+ </object>
+ <object name="top-users-table" meta_type="Google Analytics Report"
+    i18n:domain="collective.googleanalytics">
+  <property name="title" i18n:translate="">Top Users: Table</property>
+  <property name="description"
+     i18n:translate="">Displays a table of the top users by number of page views for this month.</property>
+  <property name="categories">
+   <element value="Site Wide"/>
+  </property>
+  <property name="plugin_names">
+   <element value="Variable Date Range"/>
+  </property>
+  <property name="metrics">
+   <element value="ga:pageviews"/>
+  </property>
+  <property name="dimensions">
+   <element value="ga:customVarValue2"/>
+  </property>
+  <property name="filters"/>
+  <property name="sort">
+   <element value="-ga:pageviews"/>
+  </property>
+  <property name="start_date"></property>
+  <property name="end_date"></property>
+  <property name="max_results"></property>
+  <property name="columns">python:['User name', 'Views']</property>
+  <property name="row_repeat">python:dimension('ga:customVarValue2')</property>
+  <property
+     name="rows">python:[row, metric('ga:pageviews', {'ga:customVarValue2': row})]</property>
+  <property name="viz_type">Table</property>
+  <property name="viz_options"/>
+  <property name="body">&lt;h3&gt;Top 5 Users&lt;/h3&gt;
+   &lt;div tal:replace="structure view/visualization"&gt;&lt;/div&gt;</property>
+ </object>
+ <object name="page-top-users-table-portlet" meta_type="Google Analytics Report"
+    i18n:domain="collective.googleanalytics">
+  <property name="title"
+     i18n:translate="">Top 10 Page Users: Table</property>
+  <property name="description"
+     i18n:translate="">Displays a table of the top users for this page.</property>
+  <property name="categories">
+   <element value="Portlet"/>
+  </property>
+  <property name="plugin_names">
+   <element value="Contextual Results"/>
+   <element value="Variable Date Range"/>
+  </property>
+  <property name="metrics">
+   <element value="ga:pageviews"/>
+  </property>
+  <property name="dimensions">
+   <element value="ga:pagePath"/>
+   <element value="ga:customVarValue2"/>
+  </property>
+  <property name="filters">
+   <element value="page_filter"/>
+  </property>
+  <property name="sort">
+   <element value="-ga:pageviews"/>
+  </property>
+  <property name="start_date"></property>
+  <property name="end_date"></property>
+  <property name="max_results">python:10</property>
+  <property name="columns">python:['Page Views', 'User name']</property>
+  <property name="row_repeat">python:dimension('ga:customVarValue2')</property>
+  <property
+     name="rows">python:[metric('ga:pageviews', {'ga:customVarValue2': row}), row]</property>
+  <property name="viz_type">Table</property>
+  <property name="viz_options"/>
+  <property name="body">&lt;h3&gt;Top 10 Users&lt;/h3&gt;
+   &lt;div tal:replace="structure view/visualization"&gt;&lt;/div&gt;</property>
+ </object>
+ <object name="page-top-users-table" meta_type="Google Analytics Report"
+    i18n:domain="collective.googleanalytics">
+  <property name="title"
+     i18n:translate="">Page Top Users: Table</property>
+  <property name="description"
+     i18n:translate="">Displays a table of the top users for this page.</property>
+  <property name="categories">
+   <element value="Object"/>
+  </property>
+  <property name="plugin_names">
+   <element value="Contextual Results"/>
+   <element value="Variable Date Range"/>
+  </property>
+  <property name="metrics">
+   <element value="ga:pageviews"/>
+  </property>
+  <property name="dimensions">
+   <element value="ga:pagePath"/>
+   <element value="ga:customVarValue2"/>
+  </property>
+  <property name="filters">
+   <element value="page_filter"/>
+  </property>
+  <property name="sort">
+   <element value="-ga:pageviews"/>
+  </property>
+  <property name="start_date"></property>
+  <property name="end_date"></property>
+  <property name="max_results"></property>
+  <property name="columns">python:['Page Views', 'User name']</property>
+  <property name="row_repeat">python:dimension('ga:customVarValue2')</property>
+  <property
+     name="rows">python:[metric('ga:pageviews', {'ga:customVarValue2': row}), row]</property>
+  <property name="viz_type">Table</property>
+  <property name="viz_options"/>
+  <property name="body">&lt;h3&gt;Top Users&lt;/h3&gt;
+   &lt;div tal:replace="structure view/visualization"&gt;&lt;/div&gt;</property>
+ </object>
+</object>

@@ -258,3 +258,6 @@ msgstr ""
 
 msgid "range_month"
 msgstr "Last 30 days."
+
+msgid "range_year"
+msgstr "Last 365 days."

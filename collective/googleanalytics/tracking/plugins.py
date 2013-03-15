@@ -1,4 +1,5 @@
 from zope.interface import implements
+from zope.component import getMultiAdapter
 from collective.googleanalytics.bbb import ViewPageTemplateFile
 from Products.CMFCore.utils import getToolByName
 from collective.googleanalytics.interfaces.tracking import IAnalyticsTrackingPlugin
@@ -79,3 +80,21 @@ class AnalyticsPageLoadTimePlugin(AnalyticsBaseTrackingPlugin):
     """
 
     __call__ = ViewPageTemplateFile('pageloadtime.pt')
+
+class AnalyticsUserNamePlugin(AnalyticsBaseTrackingPlugin):
+    """
+    A tracking plugin to track username as a custom variable.
+    """
+
+    __call__ = ViewPageTemplateFile('username.pt')
+    
+    def username(self):
+        """
+        Returns username if the user is logged or Visitor otherwise.
+        """
+        
+        portal_state = getMultiAdapter((self.context, self.request),
+                                       name=u'plone_portal_state')
+        if portal_state.anonymous():
+            return 'Visitor'
+        return portal_state.member().getUserName()

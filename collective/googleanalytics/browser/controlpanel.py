@@ -1,5 +1,10 @@
+import csv
+from StringIO import StringIO
 from zope.interface import Interface
 from zope.interface import implements
+from z3c.form import form, field, button
+from plone.z3cform.layout import wrap_form
+from zope.component import getMultiAdapter
 
 from Products.CMFCore.utils import getToolByName
 from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
@@ -11,7 +16,8 @@ from plone.fieldsets.fieldsets import FormFieldsets
 import gdata.auth
 from collective.googleanalytics import error
 from collective.googleanalytics.interfaces.utility import \
-    IAnalyticsReportsAssignment, IAnalyticsTracking, IAnalyticsSettings
+    IAnalyticsReportsAssignment, IAnalyticsTracking, IAnalyticsSettings, IDateRangeDownload
+from collective.googleanalytics.interfaces.report import IAnalyticsReportRenderer
 
 from collective.googleanalytics import GoogleAnalyticsMessageFactory as _
 
@@ -104,3 +110,41 @@ class AnalyticsControlPanelForm(ControlPanelForm):
             code in the Site control panel. Please remove any Google Analytics \
             tracking code from the Site control panel to avoid conflicts.'),
             'warning')
+
+
+class DateRangeDownloadForm(form.Form):
+    fields = field.Fields(IDateRangeDownload)
+    ignoreContext = True # don't use context to get widget data
+    label = "CSV Download"
+    output = None
+
+    def render(self):
+        if self.output:
+            return self.output
+        return super(DateRangeDownloadForm, self).render() 
+
+    @button.buttonAndHandler(u'Download')
+    def handleDownload(self, action):
+        data, errors = self.extractData()
+        if errors:
+            return
+        analytics_tool = getToolByName(self.context, 'portal_analytics')        
+        profile = getattr(analytics_tool, 'reports_profile', None)
+        self.request['profile_ids'] = profile
+        report = analytics_tool['top-users-table']
+        renderer = getMultiAdapter(
+            (self.context, self.request, report),
+            interface=IAnalyticsReportRenderer
+        )
+        data = renderer.data()
+        if data:
+            csvdata = StringIO()
+            csvwriter = csv.DictWriter(csvdata, data[0].keys())
+            csvwriter.writeheader()
+            csvwriter.writerows(data)
+            self.request.response.setHeader('Content-Type', 'text/csv') 
+            self.request.response.addHeader("Content-Disposition",
+                                            "attachment;filename=top-users.csv")
+            self.output = csvdata.getvalue()
+
+DateRangeDownloadView = wrap_form(DateRangeDownloadForm)

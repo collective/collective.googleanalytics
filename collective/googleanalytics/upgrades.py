@@ -148,3 +148,11 @@ def upgrade_10b3_to_10(setup_tool):
     
     name = 'profile-collective.googleanalytics:upgrade_10b3_10'
     setup_tool.runAllImportStepsFromProfile(name)
+
+def upgrade_10_to_15a1(setup_tool):
+    """
+    Add icon expression in Plone 4.
+    """
+    
+    name = 'profile-collective.googleanalytics:upgrade_10_15a1'
+    setup_tool.runAllImportStepsFromProfile(name)

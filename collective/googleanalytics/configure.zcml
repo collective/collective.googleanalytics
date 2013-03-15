@@ -112,6 +112,14 @@
           provides="Products.GenericSetup.interfaces.EXTENSION"
           />
 
+     <genericsetup:registerProfile
+          name="upgrade_10_15a1"
+          title="Upgrade profile for Google Analytics from 1.0 to 1.5a1"
+          directory="profiles/upgrade_10_15a1"
+          description="Configuration changes for the upgrade from 1.0 to 1.5a1."
+          provides="Products.GenericSetup.interfaces.EXTENSION"
+          />
+
     <genericsetup:importStep
         name="analytics"
         title="Google Analytics"

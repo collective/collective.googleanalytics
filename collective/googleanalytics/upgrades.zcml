@@ -76,4 +76,13 @@
         handler="collective.googleanalytics.upgrades.null_upgrade_step"
         />
 
+    <genericsetup:upgradeStep
+        source="1.0"
+        destination="1.5a1"
+        title="Upgrade from 1.0 to 1.5a1"
+        description=""
+        profile="collective.googleanalytics:default"
+        handler="collective.googleanalytics.upgrades.upgrade_10_to_15a1"
+        />
+        
 </configure>

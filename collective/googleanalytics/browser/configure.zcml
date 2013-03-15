@@ -44,5 +44,21 @@
 
 	</configure>
 
+    <browser:page
+        for="*"
+        name="page-analytics-reports"
+        class=".page_analytics.Reports"
+        template="page_analytics.pt"
+        permission="cmf.ManagePortal"
+        layer="..interfaces.browserlayer.IAnalyticsLayer"
+        />
+
+    <browser:page
+        for="Products.CMFPlone.interfaces.IPloneSiteRoot"
+        name="daterange_download_form"
+        class=".controlpanel.DateRangeDownloadForm"
+        permission="cmf.ManagePortal"
+        />
+
 </configure>
 
