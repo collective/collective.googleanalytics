@@ -30,6 +30,9 @@ setup(name='collective.googleanalytics',
           # -*- Extra requirements: -*-
           'gdata>=2.0.17',
       ],
+      extras_require={
+          'test': ['mocker'],
+      },
       entry_points="""
       [z3c.autoinclude.plugin]
       target = plone

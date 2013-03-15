@@ -583,7 +583,7 @@
   <property name="description"
      i18n:translate="">Displays a table of the top users by number of page views for this month.</property>
   <property name="categories">
-   <element value="Site Wide"/>
+   <element value="CSV"/>
   </property>
   <property name="plugin_names">
    <element value="Variable Date Range"/>
@@ -607,7 +607,7 @@
      name="rows">python:[row, metric('ga:pageviews', {'ga:customVarValue2': row})]</property>
   <property name="viz_type">Table</property>
   <property name="viz_options"/>
-  <property name="body">&lt;h3&gt;Top 5 Users&lt;/h3&gt;
+  <property name="body">&lt;h3&gt;Top Users&lt;/h3&gt;
    &lt;div tal:replace="structure view/visualization"&gt;&lt;/div&gt;</property>
  </object>
  <object name="page-top-users-table-portlet" meta_type="Google Analytics Report"
