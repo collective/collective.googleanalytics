@@ -1,6 +1,12 @@
 Changelog
 =========
 
+1.5 (unreleased)
+----------------
+
+- Nothing changed yet.
+
+
 1.4.1-FHNW1 (2013-03-18)
 ------------------------
 * Improve i18n and include first version of the pt-br translation.
