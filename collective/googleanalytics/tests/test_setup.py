@@ -40,6 +40,15 @@ class TestInstall(FunctionalTestCase):
         self.assertEqual(report.viz_type, 'Table')
         self.assertNotEqual(report.body, '')
 
+        # Test the 'Top 5 Users: Table' report.
+        report = analytics_tool.get('top-5-users-table', None)
+        self.assertNotEqual(report, None)
+        self.assertEqual(report.viz_type, 'Table')
+        self.assertNotEqual(report.body, '')
+        self.assertEqual(report.columns, "python:['User name', 'Views']")
+        self.assertEqual(report.row_repeat, "python:dimension('ga:customVarValue2')")
+        self.assertEqual(report.rows, "python:[row, metric('ga:pageviews', {'ga:customVarValue2': row})]")
+
 class TestReinstall(FunctionalTestCase):
 
     def test_reinstallation_preserves_settings(self):
