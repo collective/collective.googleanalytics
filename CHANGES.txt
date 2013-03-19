@@ -17,7 +17,8 @@ Changelog
   [2013-02-28 - tomgross]
 * Crop overlong profile names
   [2013-02-28 - tomgross]
-
+* Pass viewlet view and manager
+  [2013-03-18 - tomgross]
 
 1.4.1 - 2012-08-29
 ------------------
