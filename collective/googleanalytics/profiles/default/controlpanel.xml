@@ -10,7 +10,7 @@
 		<permission>Manage portal</permission>
 	</configlet>
 	<configlet title="Google Analytics Top Users CSV Report"
-		action_id="Analytics" appId="Analytics"
+		action_id="AnalyticsTopUsersCSV" appId="Analytics"
 		category="Products"
 		condition_expr=""
 		icon_expr="string:${portal_url}/++resource++analytics_images/chart_curve.gif"
