@@ -139,8 +139,9 @@ class DateRangeDownloadForm(form.Form):
         data = renderer.data()
         if data:
             csvdata = StringIO()
+            csvwriter = csv.writer(csvdata)
+            csvwriter.writerow(data[0].keys())
             csvwriter = csv.DictWriter(csvdata, data[0].keys())
-            csvwriter.writeheader()
             csvwriter.writerows(data)
             self.request.response.setHeader('Content-Type', 'text/csv') 
             self.request.response.addHeader("Content-Disposition",
