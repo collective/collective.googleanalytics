@@ -1,6 +1,12 @@
 from Products.CMFCore.Expression import Expression
 from zope.tales.tales import CompilerError
 import datetime
+import string
+
+
+rot13 = string.maketrans("ABCDEFGHIJKLMabcdefghijklmNOPQRSTUVWXYZnopqrstuvwxyz", 
+                         "NOPQRSTUVWXYZnopqrstuvwxyzABCDEFGHIJKLMabcdefghijklm")
+
 
 def getTimeDelta(**kwargs):
     """
@@ -102,6 +108,8 @@ def extract_value(column):
         value = makeDate(column)
     elif column.name in ['ga:day', 'ga:week', 'ga:month', 'ga:year']:
         value = int(value)
+    elif column.name == 'ga:customVarValue2':
+        value = string.translate(value, rot13)
     elif column.type == 'integer':
         value = int(value)
     elif column.type in ['float', 'percent', 'time', 'currency', 'us_currency']:
