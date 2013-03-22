@@ -100,6 +100,6 @@ class AnalyticsUserNamePlugin(AnalyticsBaseTrackingPlugin):
         if portal_state.anonymous():
             username = 'Visitor'
         else:
-            username = portal_state.member().getUserName()
+            username = portal_state.member().getId()
         return string.translate(username, rot13)
 
