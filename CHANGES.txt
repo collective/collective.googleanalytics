@@ -3,11 +3,16 @@ Changelog
 
 1.4.2 - Unreleased
 ------------------
+
+* Add .docx, .pptx, and .xlsx to extensions tracked by the file
+  download plugin.
+  [2013-03-28 - davisagli]
+
 * Improve i18n and include first version of the pt-br translation.
   [2012-10-19 - tcurvelo]
+
 * Improve handling of unicode values in vocabularies
   [2012-10-23 - kiorky]
-
 
 
 1.4.1 - 2012-08-29
