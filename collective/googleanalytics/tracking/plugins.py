@@ -1,11 +1,10 @@
-import string
 from zope.interface import implements
 from zope.component import getMultiAdapter
 from collective.googleanalytics.bbb import ViewPageTemplateFile
 from Products.CMFCore.utils import getToolByName
 from collective.googleanalytics.interfaces.tracking import IAnalyticsTrackingPlugin
 from collective.googleanalytics.config import FILE_EXTENSION_CHOICES
-from collective.googleanalytics.utils import json_serialize, rot13
+from collective.googleanalytics.utils import json_serialize
 
 
 class AnalyticsBaseTrackingPlugin(object):
@@ -101,5 +100,4 @@ class AnalyticsUserNamePlugin(AnalyticsBaseTrackingPlugin):
             username = 'Visitor'
         else:
             username = portal_state.member().getId()
-        return string.translate(username, rot13)
-
+        return username.encode('rot13')

@@ -1,11 +1,6 @@
 from Products.CMFCore.Expression import Expression
 from zope.tales.tales import CompilerError
 import datetime
-import string
-
-
-rot13 = string.maketrans("ABCDEFGHIJKLMabcdefghijklmNOPQRSTUVWXYZnopqrstuvwxyz", 
-                         "NOPQRSTUVWXYZnopqrstuvwxyzABCDEFGHIJKLMabcdefghijklm")
 
 
 def getTimeDelta(**kwargs):
@@ -109,7 +104,7 @@ def extract_value(column):
     elif column.name in ['ga:day', 'ga:week', 'ga:month', 'ga:year']:
         value = int(value)
     elif column.name == 'ga:customVarValue2':
-        value = string.translate(value, rot13)
+        value = value.encode('rot13')
     elif column.type == 'integer':
         value = int(value)
     elif column.type in ['float', 'percent', 'time', 'currency', 'us_currency']:
@@ -121,7 +116,6 @@ def unique_list(original):
     Returns a list of unique items while preserving the order of the
     original list.
     """
-    
+
     used = set()
     return [x for x in original if x not in used and not used.add(x)]
-    
