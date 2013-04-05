@@ -40,6 +40,7 @@ setup(name='collective.googleanalytics',
       extras_require={
           'test': [
               'mocker',
+              'plone.app.testing',
               'Products.PloneTestCase',
           ],
       },
