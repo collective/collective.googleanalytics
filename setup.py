@@ -5,8 +5,8 @@ version = '1.4.1'
 setup(name='collective.googleanalytics',
       version=version,
       description="Tools for pulling statistics from Google Analytics.",
-      long_description=open("README.txt").read() + "\n" +
-                       open("CHANGES.txt").read(),
+      long_description=open("README.rst").read() + "\n" +
+                       open("CHANGES.rst").read(),
       classifiers=[
           "Development Status :: 5 - Production/Stable",
           "Framework :: Plone",
