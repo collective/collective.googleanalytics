@@ -4,6 +4,15 @@ Changelog
 1.4.2 - Unreleased
 ------------------
 
+* Add dependency on plone.app.testing and some tests for the control panel
+  configlet.
+  [2013-04-05 - hvelarde]
+
+* Package distribution refactoring: package classifiers were updated;
+  documentation files were renamed as .rst; MANIFEST.in was fixed and some
+  missing testing dependencies were added.
+  [2013-04-05 - hvelarde]
+
 * Add .docx, .pptx, and .xlsx to extensions tracked by the file
   download plugin.
   [2013-03-28 - davisagli]
