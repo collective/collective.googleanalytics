@@ -42,6 +42,7 @@ setup(name='collective.googleanalytics',
               'mocker',
               'plone.app.testing',
               'Products.PloneTestCase',
+              'unittest2',
           ],
       },
       entry_points="""
