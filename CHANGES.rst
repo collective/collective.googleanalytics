@@ -4,6 +4,10 @@ Changelog
 1.4.2 - Unreleased
 ------------------
 
+* Add dependency on unittest2 to support advance testing features under
+  Python 2.6.
+  [2013-04-06 - hvelarde]
+
 * Add dependency on plone.app.testing and some tests for the control panel
   configlet.
   [2013-04-05 - hvelarde]
