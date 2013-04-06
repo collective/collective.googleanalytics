@@ -10,6 +10,8 @@ setup(name='collective.googleanalytics',
       classifiers=[
           "Development Status :: 5 - Production/Stable",
           "Framework :: Plone",
+          "Framework :: Plone :: 4.0",
+          "Framework :: Plone :: 4.1",
           "Framework :: Plone :: 4.2",
           "Framework :: Plone :: 4.3",
           "Intended Audience :: System Administrators",
