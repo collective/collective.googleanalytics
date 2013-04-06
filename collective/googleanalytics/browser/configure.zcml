@@ -8,7 +8,7 @@
         for="collective.googleanalytics.interfaces.utility.IAnalytics"
         name="analytics-controlpanel"
         class=".controlpanel.AnalyticsControlPanelForm"
-        permission="cmf.ManagePortal"
+        permission="collective.googleanalytics.ManageAnalyticsReports"
         layer="..interfaces.browserlayer.IAnalyticsLayer"
         />
         
@@ -16,7 +16,7 @@
         for="Products.CMFPlone.interfaces.IPloneSiteRoot"
         name="analytics-auth"
         class=".auth.AnalyticsAuth"
-        permission="cmf.ManagePortal"
+        permission="collective.googleanalytics.ManageAnalyticsReports"
         layer="..interfaces.browserlayer.IAnalyticsLayer"
         />
 
