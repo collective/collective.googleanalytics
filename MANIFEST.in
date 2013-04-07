@@ -1,3 +1,6 @@
-include *.txt docs/*.txt
-recursive-include collective *.css *.js *.pdf *.jpg *.gif *.png *.po *.pot *.pt *.txt *.xml *.zcml *.tpl
-global-exclude *.pyc *~ *.mo
+include *.rst
+
+recursive-include collective *
+recursive-include docs *
+
+global-exclude *.pyc
