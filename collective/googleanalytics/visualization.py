@@ -4,7 +4,11 @@ from string import Template
 import datetime
 import time
 import os
-import json
+try:
+    import simplejson as json
+    json    # pyflakes
+except ImportError:
+    import json
 
 class AnalyticsReportVisualization(object):
     """
