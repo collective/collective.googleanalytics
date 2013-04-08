@@ -19,7 +19,7 @@ class AnalyticsReportVisualization(object):
         self.columns = columns
         self.rows = rows
         self.options = options
-            
+
     @memoize
     def render(self):
         """
@@ -30,16 +30,16 @@ class AnalyticsReportVisualization(object):
         template = Template(open(template_file).read())
 
         template_vars = {
-            'package_name': self.report.viz_type.lower(), 
-            'columns': self._getColumns(), 
-            'data': json.dumps(self.rows), 
-            'chart_type': self.report.viz_type, 
+            'package_name': self.report.viz_type.lower(),
+            'columns': self._getColumns(),
+            'data': json.dumps(self.rows),
+            'chart_type': self.report.viz_type,
             'id': self.id(),
             'options': self._getOptions()
         }
 
         return template.substitute(template_vars)
-            
+
     @memoize
     def id(self):
         """
@@ -54,7 +54,7 @@ class AnalyticsReportVisualization(object):
         """
         Returns javascript that adds the appropriate columns to the DataTable.
         """
-        
+
         column_types = []
         if self.rows:
             for value in self.rows[0]:
@@ -76,7 +76,7 @@ class AnalyticsReportVisualization(object):
         """
         Returns a javascript object containing the options for the visualization.
         """
-        
+
         options = self.options.copy()
         # Set the width of the visualization to the container width if it
         # if not already set.
