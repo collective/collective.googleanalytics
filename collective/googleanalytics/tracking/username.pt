@@ -1,6 +1,10 @@
-<script type="text/javascript" tal:content="structure string:
+<script type="text/javascript"
+		tal:define="DateTime python:modules['DateTime'].DateTime;
+				    now python:DateTime('UTC')" 
+		tal:content="structure string:
     /*&lt;![CDATA[*/
     _gaq.push(['_setCustomVar', 2, 'User name', '${view/username}', 2]);
+    _gaq.push(['_setCustomVar', 3, '${view/username}', '$now', 2]);
     /*]]&gt;*/
 ">
 </script>

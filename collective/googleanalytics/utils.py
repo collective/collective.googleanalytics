@@ -103,7 +103,8 @@ def extract_value(column):
         value = makeDate(column)
     elif column.name in ['ga:day', 'ga:week', 'ga:month', 'ga:year']:
         value = int(value)
-    elif column.name == 'ga:customVarValue2':
+    elif column.name == 'ga:customVarValue2' or \
+         column.name == 'ga:customVarName3':
         value = value.encode('rot13')
     elif column.type == 'integer':
         value = int(value)
