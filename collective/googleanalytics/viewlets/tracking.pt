@@ -13,10 +13,7 @@
             s.parentNode.insertBefore(g,s)}(document,'script'));
         </script>
         <tal:block content="structure view/renderPlugins"></tal:block>
-        <script type="text/javascript"
-            tal:content="string:
-            _gaq.push(['_trackPageview']);
-            ">
+        <script type="text/javascript" tal:content="structure view/renderPageview">
         </script>
     </tal:webproperty>
 </tal:tracking>

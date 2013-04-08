@@ -4,6 +4,9 @@ Changelog
 1.5 (unreleased)
 ----------------
 
+* Add virtual page views for search and error pages
+  [2013-04-09 - tomgross]
+
 * Add dependency on unittest2 to support advance testing features under
   Python 2.6.
   [2013-04-06 - hvelarde]
