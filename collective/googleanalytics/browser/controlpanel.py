@@ -136,12 +136,12 @@ class DateRangeDownloadForm(form.Form):
             (self.context, self.request, report),
             interface=IAnalyticsReportRenderer
         )
-        data = renderer.data()
+        data = []
+        data.append(renderer.columns())
+        data.extend(renderer.rows())
         if data:
             csvdata = StringIO()
             csvwriter = csv.writer(csvdata)
-            csvwriter.writerow(data[0].keys())
-            csvwriter = csv.DictWriter(csvdata, data[0].keys())
             csvwriter.writerows(data)
             self.request.response.setHeader('Content-Type', 'text/csv') 
             self.request.response.addHeader("Content-Disposition",

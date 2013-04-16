@@ -50,6 +50,7 @@
   </property>
   <property name="dimensions">
    <element value="ga:customVarName3"/>
+   <element value="ga:customVarValue3"/>
   </property>
   <property name="filters"/>
   <property name="sort">
@@ -58,10 +59,10 @@
   <property name="start_date"></property>
   <property name="end_date"></property>
   <property name="max_results"></property>
-  <property name="columns">python:['User name', 'Views']</property>
+  <property name="columns">python:['Page Views', 'User name', 'Last access']</property>
   <property name="row_repeat">python:dimension('ga:customVarName3')</property>
   <property
-     name="rows">python:[row, metric('ga:pageviews', {'ga:customVarName3': row})]</property>
+     name="rows">python:[metric('ga:pageviews', {'ga:customVarName3': row}), row] + [max(dimension('ga:customVarValue3', {'ga:customVarName3': row}))]</property>
   <property name="viz_type">Table</property>
   <property name="viz_options"/>
   <property name="body">&lt;h3&gt;Top Users&lt;/h3&gt;
@@ -135,7 +136,7 @@
   <property name="start_date"></property>
   <property name="end_date"></property>
   <property name="max_results"></property>
-  <property name="columns">python:['Page Views', 'User name', 'Days']</property>
+  <property name="columns">python:['Page Views', 'User name', 'Last access']</property>
   <property name="row_repeat">python:dimension('ga:customVarName3')</property>
   <property
      name="rows">python:[metric('ga:pageviews', {'ga:customVarName3': row}), row] + [max(dimension('ga:customVarValue3', {'ga:customVarName3': row}))]</property>
