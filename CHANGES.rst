@@ -1,7 +1,7 @@
 Changelog
 =========
 
-1.4.2 (unreleased)
+1.4.2 (2013-05-28)
 ------------------
 
 - Fix release, add *.mo [kiorky]
