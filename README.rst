@@ -13,8 +13,8 @@ as a control panel for authorizing your site and configuring settings.
 .. contents::
 
 
-.. image:: https://secure.travis-ci.org/collective/collective.analytics.png
-    :target: http://travis-ci.org/collective/collective.analytics
+.. image:: https://secure.travis-ci.org/collective/collective.googleanalytics.png
+    :target: http://travis-ci.org/collective/collective.googleanalytics
 
 
 Installation
