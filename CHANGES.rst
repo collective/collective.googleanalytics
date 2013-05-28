@@ -27,6 +27,8 @@ Changelog
 * Improve handling of unicode values in vocabularies
   [2012-10-23 - kiorky]
 
+* Release & QA Stuff
+  [2013-05-28 - kiorky]
 
 1.4.1 - 2012-08-29
 ------------------

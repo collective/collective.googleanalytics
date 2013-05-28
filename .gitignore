@@ -1,4 +1,9 @@
 *.pyo
+.cache/
+.mr.developer.cfg
+b.sh
+sys/
+*minitage*
 *.pyc
 *.swp
 *.mo
