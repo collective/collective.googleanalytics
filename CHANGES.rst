@@ -1,7 +1,7 @@
 Changelog
 =========
 
-1.4.2 - Unreleased
+1.4.1 (2013-05-28)
 ------------------
 
 * Add dependency on unittest2 to support advance testing features under
