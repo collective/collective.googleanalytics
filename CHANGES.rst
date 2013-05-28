@@ -4,7 +4,7 @@ Changelog
 1.4.3 (unreleased)
 ------------------
 
-- Nothing changed yet.
+- french translations [kiorky]
 
 
 1.4.2 (2013-05-28)

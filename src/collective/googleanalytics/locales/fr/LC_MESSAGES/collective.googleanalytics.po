@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "POT-Creation-Date: 2013-05-28 10:06+0000\n"
-"PO-Revision-Date: 2012-09-18 16:02 -3000\n"
+"PO-Revision-Date: 2013-05-28 12:05+0200\n"
 "Last-Translator: Thiago Curvelo <tcurvelo@gmail.com>\n"
 "Language-Team: TRT13 <web@trt13.jus.br>\n"
 "MIME-Version: 1.0\n"
@@ -16,106 +16,106 @@ msgstr ""
 
 #: ./browser/auth.py:54
 msgid "Authorization failed. Google Analytics for                     Plone received an invalid token."
-msgstr "Falha na autorização. O Google Analytics para Plone recebeu um token inválido."
+msgstr "Autorisation échouée. Google Analytics pour plone a reçu un token invalide"
 
 #: ./browser/auth.py:31
 msgid "Authorization revoked. You may now reauthorize with                 a different Google account."
-msgstr "Autorização revogada. Agora você pode reautorizar com uma conta do Google diferente."
+msgstr "Autorisation révoquée. Vous devez vous enregistrer avec un compte Google différent"
 
 #: ./browser/auth.py:50
 msgid "Authorization succeeded. You may now configure                 Google Analytics for Plone."
-msgstr "Autorização bem-sucedida. Agora você pode configurar o Google Analytics para Plone."
+msgstr "Autorisation réussie. Vous pouvez maintenant configurer Google Analytics pour plone"
 
 #: ./interfaces/utility.py:55
 msgid "Cache interval"
-msgstr "Intervalo de cache"
+msgstr "Interval de cache"
 
 #: ./interfaces/utility.py:19
 #: ./portlets/analyticsportlet.py:32
 msgid "Choose the Web property profile from Google Analytics."
-msgstr "Escolha o perfil da propriedade Web do Google Analytics."
+msgstr "Choisissez la propriété de profil web pour Google Analytics."
 
 #: ./interfaces/utility.py:47
 #: ./portlets/analyticsportlet.py:38
 msgid "Choose the reports to display."
-msgstr "Selecione os relatórios para exibição"
+msgstr "Selectionnez les rapports à afficher."
 
 #: ./interfaces/utility.py:31
 msgid "Choose the roles that should be excluded from tracking."
-msgstr "Escolha os papéis que devem ser excluídos do acompanhamento."
+msgstr "Choisissez les roles qui doivent être exlus du suivi"
 
 #: ./interfaces/utility.py:25
 msgid "Choose which tracking plugins to use."
-msgstr "Escolha quais plugins de acompanhamento usar."
+msgstr "Selectionnez les plugins de suivi à utiliser"
 
 #: ./profiles/default/analytics.xml
 #: ./profiles/upgrade_10a2_10a3/analytics.xml
 msgid "Displays a table of the top five next pages."
-msgstr "Exibe uma tabela com as Top 5 Páginas seguintes."
+msgstr "Montrer un tableau des 5 pages suivantes"
 
 #: ./profiles/default/analytics.xml
 #: ./profiles/upgrade_10a2_10a3/analytics.xml
 msgid "Displays a table of the top five previous pages."
-msgstr "Exibe uma tabela com as Top 5 Páginas anteriores."
+msgstr "Montrer un tableau des premières 5 dernières pages"
 
 #: ./profiles/default/analytics.xml
 msgid "Displays a table of the top pages by number of page views for this month."
-msgstr "Exibe uma tabela das principais páginas em número de visualizações para este mês."
+msgstr "Montrer un tableau des premières pages par nombre de visite pour ce mois."
 
 #: ./profiles/default/analytics.xml
 msgid "Displays a table of the top source domains by number of visits."
-msgstr "Exibe uma tabela com os principais domínios de origem pelo número de visitas."
+msgstr "Afficher un tableau des premiers domaines sources par nombre de visites"
 
 #: ./profiles/default/analytics.xml
 #: ./profiles/upgrade_10a2_10a3/analytics.xml
 msgid "Displays a table of the top source domains for this page."
-msgstr "Exibe uma tabela com os domínios de origem principais para essa página."
+msgstr "Montrer un tableau des premiers domaines sources pour cette page."
 
 #: ./profiles/default/analytics.xml
 #: ./profiles/upgrade_10a2_10a3/analytics.xml
 msgid "Displays a table of the top ten keywords."
-msgstr "Exibe uma tabela das dez principais palavras-chave."
+msgstr "Montrer un tableau des 10 premiers mots-clés"
 
 #: ./profiles/default/analytics.xml
 #: ./profiles/upgrade_10a2_10a3/analytics.xml
 msgid "Displays the average time on page for the last 30 days as a sparkline."
-msgstr "Exibe o tempo médio na página dos últimos 30 dias como um minigráfico."
+msgstr "Montrer le temps moyen par page pour les 30 derniers jours sur une courbe de tendance."
 
 #: ./profiles/default/analytics.xml
 #: ./profiles/upgrade_10a2_10a3/analytics.xml
 msgid "Displays the average time on site as a line graph."
-msgstr "Exibe o tempo médio no site como um gráfico de linha."
+msgstr "Montrer le temps moyen sute le site sur une courbe"
 
 #: ./profiles/default/analytics.xml
 #: ./profiles/upgrade_10a2_10a3/analytics.xml
 msgid "Displays the number of page views as a sparkline."
-msgstr "Exibe o número de visualizações de página como um minigráfico."
+msgstr "Montrer le nombre de pages vues sur une courbe de tendance"
 
 #: ./profiles/default/analytics.xml
 #: ./profiles/upgrade_10a2_10a3/analytics.xml
 msgid "Displays the number of site page views as a line graph."
-msgstr "Exibe o número de visualizações de página do site como um gráfico de linha."
+msgstr "Montrer le nombre de page vues sur une courbe"
 
 #: ./profiles/default/analytics.xml
 #: ./profiles/upgrade_10a2_10a3/analytics.xml
 msgid "Displays the number of site unique visitors as a line graph."
-msgstr "Exibe o número de visitantes únicos do site como um gráfico de linha."
+msgstr "Montrer le nombre de visiteurs uniques sur une courbe"
 
 #: ./profiles/default/analytics.xml
 msgid "Displays the number of site visits as a line graph."
-msgstr "Exibe o número de visitas do site como um gráfico de linha."
+msgstr "Montrer le nombre de visites du site sur une courbe"
 
 #: ./interfaces/utility.py:56
 msgid "Enter the number of minutes for which account             information and report results should be cached."
-msgstr "Digite o número de minutos que as informações de contas e resultados de relatório devam ser armazenados em cache."
+msgstr "Entrer le nombre de minutes pendant lesquelles les informations du compte et des rapports vont etre cachées"
 
 #: ./portlets/analyticsportlet.py:25
 msgid "Enter the title of the portlet."
-msgstr "Digite o título do portlet."
+msgstr "Entrer le titre de la portlet"
 
 #: ./interfaces/utility.py:28
 msgid "Excluded Roles"
-msgstr "Papéis Excluídos"
+msgstr "Roles exclus"
 
 #: ./browser/controlpanel.py:54
 #: ./profiles/default/controlpanel.xml
@@ -124,133 +124,133 @@ msgstr ""
 
 #: ./browser/controlpanel.py:55
 msgid "Google Analytics Settings"
-msgstr "Configurações do Google Analytics"
+msgstr "Google Analytics paramêtres"
 
 #: ./loader.py:108
 msgid "Last 30 Days"
-msgstr "Últimos 30 Dias"
+msgstr "30 derniers jours"
 
 #: ./portlets/analyticsportlet.pt:17
 msgid "More analytics"
-msgstr "Mais estatísticas"
+msgstr "Plus d'analyses"
 
 #: ./profiles/default/analytics.xml
 #: ./profiles/upgrade_10a2_10a3/analytics.xml
 msgid "Page Views: Sparkline"
-msgstr "Visualizações de Página: Minigráfico"
+msgstr "Pages vues: courbe de tendance"
 
 #: ./interfaces/utility.py:22
 msgid "Plugins"
-msgstr ""
+msgstr "Plugins"
 
 #: ./portlets/analyticsportlet.py:30
 msgid "Profile"
-msgstr "Perfil"
+msgstr "Profile"
 
 #: ./interfaces/utility.py:70
 msgid "Report Categories"
-msgstr "Categorias de Relatório"
+msgstr "Catégories de rapport"
 
 #: ./interfaces/utility.py:44
 #: ./portlets/analyticsportlet.py:35
 msgid "Reports"
-msgstr "Relatórios"
+msgstr "Rapports"
 
 #: ./interfaces/utility.py:39
 msgid "Reports Profile"
-msgstr "Perfil de Relatórios"
+msgstr "Profil des rapports"
 
 #: ./profiles/default/analytics.xml
 #: ./profiles/upgrade_10a2_10a3/analytics.xml
 msgid "Site Page Views: Line Chart"
-msgstr "Visualizações de Página do Site: Gráfico de Linha"
+msgstr "Pages vues du site: Courbe"
 
 #: ./profiles/default/analytics.xml
 #: ./profiles/upgrade_10a2_10a3/analytics.xml
 msgid "Site Unique Visitors: Line Chart"
-msgstr "Visitantes Únicos do Site: Gráfico de Linha"
+msgstr "Visiteurs uniques du site: Courbe"
 
 #: ./profiles/default/analytics.xml
 msgid "Site Visits: Line Chart"
-msgstr "Visitas do site: Gráfico de Linha"
+msgstr "Visites sur le site: Courbe"
 
 #: ./profiles/default/analytics.xml
 #: ./profiles/upgrade_10a2_10a3/analytics.xml
 msgid "Time on Page: Sparkline"
-msgstr "Tempo na Página: Minigráfico"
+msgstr "Temps sur la page: ligne de tendance"
 
 #: ./profiles/default/analytics.xml
 #: ./profiles/upgrade_10a2_10a3/analytics.xml
 msgid "Time on Site: Line Chart"
-msgstr "Tempo na Página: Gráfico de Linha"
+msgstr "Temps sur le site: courbe"
 
 #: ./portlets/analyticsportlet.py:24
 msgid "Title"
-msgstr "Título"
+msgstr "Titre"
 
 #: ./profiles/default/analytics.xml
 #: ./profiles/upgrade_10a2_10a3/analytics.xml
 msgid "Top 10 Keywords: Table"
-msgstr "Top 10 Palavras-chave: Tabela"
+msgstr "Top 10 Keywords: Tableau"
 
 #: ./profiles/default/analytics.xml
 #: ./profiles/upgrade_10a2_10a3/analytics.xml
 msgid "Top 10 Page Sources: Table"
-msgstr "Top 10 Fontes da Página: Tabela"
+msgstr "Top 10 Page Sources: Tableau"
 
 #: ./profiles/default/analytics.xml
 #: ./profiles/upgrade_10a2_10a3/analytics.xml
 msgid "Top 5 Next Pages: Table"
-msgstr "Top 5 Páginas Seguintes"
+msgstr "Top 5 Next Pages: Tableau"
 
 #: ./profiles/default/analytics.xml
 msgid "Top 5 Pages: Table"
-msgstr "Top 5 Páginas: Tabela"
+msgstr "Top 5 Pages: Tableau"
 
 #: ./profiles/default/analytics.xml
 #: ./profiles/upgrade_10a2_10a3/analytics.xml
 msgid "Top 5 Previous Pages: Table"
-msgstr "Top 5 Páginas Anteriores: Tabela"
+msgstr "Top 5 Previous Pages: Tableau"
 
 #: ./profiles/default/analytics.xml
 msgid "Top 5 Sources: Table"
-msgstr "Top 5 Origens: Tabela"
+msgstr "Top 5 sources: tableau"
 
 #: ./interfaces/utility.py:17
 msgid "Tracking Profile"
-msgstr "Perfil de acompanhamento"
+msgstr "Profil de suivi"
 
 #: ./browser/controlpanel.py:102
 msgid "You have enabled the tracking             feature of this product, but it looks like you still have tracking             code in the Site control panel. Please remove any Google Analytics             tracking code from the Site control panel to avoid conflicts."
-msgstr "Você ativou o recurso de acompanhamento deste produto, mas parece que você ainda tem o código de acompanhamento no painel de controle do Site. Por favor, remova qualquer código de acompanhamento do Google Analytics no painel de controle do Site para evitar conflitos."
+msgstr "Vous avez activé la fonctionnalité de suivi de ce produit, mais il semble que vous avez encore un javascript de suivi au niveau du panneau de configuration du site. S'il vous plait, enlevez ce code de suivi du panneau de configuration du site pour éviter tout conflit."
 
 #. Default: "Reports"
 #: ./browser/controlpanel.py:33
 msgid "analytics_assignment"
-msgstr "Relatórios"
+msgstr "Rapports"
 
 #. Default: "Configure the reports that are displayed in the Google Analytics control panel."
 #: ./browser/controlpanel.py:34
 msgid "analytics_assignment_description"
-msgstr "Configurar os relatórios que são exibidos no painel de controle do Google Analytics"
+msgstr "Configurer les rapports qui sont affichés dans le panneau de configuration de Google Analytics"
 
 #. Default: "Settings"
 #: ./browser/controlpanel.py:48
 msgid "analytics_settings"
-msgstr "Configurações"
+msgstr "Paramêtres"
 
 #. Default: "Configure the settings of the Google Analytics product."
 #: ./browser/controlpanel.py:49
 msgid "analytics_settings_description"
-msgstr "Definiar as configurações do produto do Google Analytics."
+msgstr "Configurer les paramêtres du produit Google Analytics"
 
 #. Default: "Tracking"
 #: ./browser/controlpanel.py:40
 msgid "analytics_tracking"
-msgstr "Acompanhamento"
+msgstr "Suivi"
 
 #. Default: "Configure the way Google Analytics tracks statistics about this site."
 #: ./browser/controlpanel.py:41
 msgid "analytics_tracking_description"
-msgstr "Configure a maneira como o Google Analytics monitora as estatísticas deste site."
+msgstr "Configurer la manière dont Google Analytics suit les statistiques de ce site"
 

@@ -4,7 +4,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2012-10-16 19:34+0000\n"
+"POT-Creation-Date: 2013-05-28 10:06+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI +ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,37 +17,37 @@ msgstr ""
 "Preferred-Encodings: utf-8 latin1\n"
 "Domain: collective.googleanalytics\n"
 
-#: ./browser/auth.py:55
+#: ./browser/auth.py:54
 msgid "Authorization failed. Google Analytics for                     Plone received an invalid token."
 msgstr ""
 
-#: ./browser/auth.py:32
+#: ./browser/auth.py:31
 msgid "Authorization revoked. You may now reauthorize with                 a different Google account."
 msgstr ""
 
-#: ./browser/auth.py:51
+#: ./browser/auth.py:50
 msgid "Authorization succeeded. You may now configure                 Google Analytics for Plone."
 msgstr ""
 
-#: ./interfaces/utility.py:56
+#: ./interfaces/utility.py:55
 msgid "Cache interval"
 msgstr ""
 
-#: ./interfaces/utility.py:20
-#: ./portlets/analyticsportlet.py:33
+#: ./interfaces/utility.py:19
+#: ./portlets/analyticsportlet.py:32
 msgid "Choose the Web property profile from Google Analytics."
 msgstr ""
 
-#: ./interfaces/utility.py:48
-#: ./portlets/analyticsportlet.py:39
+#: ./interfaces/utility.py:47
+#: ./portlets/analyticsportlet.py:38
 msgid "Choose the reports to display."
 msgstr ""
 
-#: ./interfaces/utility.py:32
+#: ./interfaces/utility.py:31
 msgid "Choose the roles that should be excluded from tracking."
 msgstr ""
 
-#: ./interfaces/utility.py:26
+#: ./interfaces/utility.py:25
 msgid "Choose which tracking plugins to use."
 msgstr ""
 
@@ -108,27 +108,28 @@ msgstr ""
 msgid "Displays the number of site visits as a line graph."
 msgstr ""
 
-#: ./interfaces/utility.py:57
+#: ./interfaces/utility.py:56
 msgid "Enter the number of minutes for which account             information and report results should be cached."
 msgstr ""
 
-#: ./portlets/analyticsportlet.py:26
+#: ./portlets/analyticsportlet.py:25
 msgid "Enter the title of the portlet."
 msgstr ""
 
-#: ./interfaces/utility.py:29
+#: ./interfaces/utility.py:28
 msgid "Excluded Roles"
 msgstr ""
 
-#: ./browser/controlpanel.py:55
+#: ./browser/controlpanel.py:54
+#: ./profiles/default/controlpanel.xml
 msgid "Google Analytics"
 msgstr ""
 
-#: ./browser/controlpanel.py:56
+#: ./browser/controlpanel.py:55
 msgid "Google Analytics Settings"
 msgstr ""
 
-#: ./loader.py:110
+#: ./loader.py:108
 msgid "Last 30 Days"
 msgstr ""
 
@@ -141,24 +142,24 @@ msgstr ""
 msgid "Page Views: Sparkline"
 msgstr ""
 
-#: ./interfaces/utility.py:23
+#: ./interfaces/utility.py:22
 msgid "Plugins"
 msgstr ""
 
-#: ./portlets/analyticsportlet.py:31
+#: ./portlets/analyticsportlet.py:30
 msgid "Profile"
 msgstr ""
 
-#: ./interfaces/utility.py:71
+#: ./interfaces/utility.py:70
 msgid "Report Categories"
 msgstr ""
 
-#: ./interfaces/utility.py:45
-#: ./portlets/analyticsportlet.py:36
+#: ./interfaces/utility.py:44
+#: ./portlets/analyticsportlet.py:35
 msgid "Reports"
 msgstr ""
 
-#: ./interfaces/utility.py:40
+#: ./interfaces/utility.py:39
 msgid "Reports Profile"
 msgstr ""
 
@@ -186,7 +187,7 @@ msgstr ""
 msgid "Time on Site: Line Chart"
 msgstr ""
 
-#: ./portlets/analyticsportlet.py:25
+#: ./portlets/analyticsportlet.py:24
 msgid "Title"
 msgstr ""
 
@@ -218,41 +219,41 @@ msgstr ""
 msgid "Top 5 Sources: Table"
 msgstr ""
 
-#: ./interfaces/utility.py:18
+#: ./interfaces/utility.py:17
 msgid "Tracking Profile"
 msgstr ""
 
-#: ./browser/controlpanel.py:103
+#: ./browser/controlpanel.py:102
 msgid "You have enabled the tracking             feature of this product, but it looks like you still have tracking             code in the Site control panel. Please remove any Google Analytics             tracking code from the Site control panel to avoid conflicts."
 msgstr ""
 
 #. Default: "Reports"
-#: ./browser/controlpanel.py:34
+#: ./browser/controlpanel.py:33
 msgid "analytics_assignment"
 msgstr ""
 
 #. Default: "Configure the reports that are displayed in the Google Analytics control panel."
-#: ./browser/controlpanel.py:35
+#: ./browser/controlpanel.py:34
 msgid "analytics_assignment_description"
 msgstr ""
 
 #. Default: "Settings"
-#: ./browser/controlpanel.py:49
+#: ./browser/controlpanel.py:48
 msgid "analytics_settings"
 msgstr ""
 
 #. Default: "Configure the settings of the Google Analytics product."
-#: ./browser/controlpanel.py:50
+#: ./browser/controlpanel.py:49
 msgid "analytics_settings_description"
 msgstr ""
 
 #. Default: "Tracking"
-#: ./browser/controlpanel.py:41
+#: ./browser/controlpanel.py:40
 msgid "analytics_tracking"
 msgstr ""
 
 #. Default: "Configure the way Google Analytics tracks statistics about this site."
-#: ./browser/controlpanel.py:42
+#: ./browser/controlpanel.py:41
 msgid "analytics_tracking_description"
 msgstr ""
 
