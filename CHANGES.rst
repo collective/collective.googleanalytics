@@ -1,7 +1,7 @@
 Changelog
 =========
 
-1.4.3 (unreleased)
+1.4.3 (2013-05-28)
 ------------------
 
 - french translations [kiorky]
