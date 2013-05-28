@@ -4,7 +4,7 @@ Changelog
 1.4.2 (unreleased)
 ------------------
 
-- Nothing changed yet.
+- Fix release, add *.mo [kiorky]
 
 
 1.4.1 (2013-05-28)
