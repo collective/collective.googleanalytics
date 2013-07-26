@@ -4,7 +4,7 @@ Changelog
 1.4.4 (unreleased)
 ------------------
 
-- Nothing changed yet.
+- Updated the core GA code with the latest snippet from Google [spanktar]
 
 
 1.4.3 (2013-05-28)
