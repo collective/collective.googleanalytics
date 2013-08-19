@@ -6,6 +6,10 @@ Changelog
 
 - Updated the core GA code with the latest snippet from Google [spanktar]
 
+- Prepend "Copy of" if copy&paste a report. [frapell]
+
+- Use SimpleTerm when creating the reports vocabulary. [frapell]
+
 
 1.4.3 (2013-05-28)
 ------------------
