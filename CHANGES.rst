@@ -4,6 +4,10 @@ Changelog
 1.4.4 (unreleased)
 ------------------
 
+- Added more improvements about i18n [macagua]
+
+- Added Spanish translations [macagua]
+
 - Updated the core GA code with the latest snippet from Google [spanktar]
 
 - Prepend "Copy of" if copy&paste a report. [frapell]
