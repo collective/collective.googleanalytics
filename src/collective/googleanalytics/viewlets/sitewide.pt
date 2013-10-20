@@ -1,6 +1,7 @@
 <fieldset tal:condition="view/available"
     id="fieldset-analytics_results">
-    <legend id="fieldsetlegend-analytics_results">Results</legend>
+    <legend id="fieldsetlegend-analytics_results" 
+            i18n:domain="collective.googleanalytics" i18n:translate="">Results</legend>
     <div tal:attributes="id view/getContainerId;" 
         class="analytics-async-container"></div>
     <script type="text/javascript">

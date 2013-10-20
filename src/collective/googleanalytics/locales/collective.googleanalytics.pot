@@ -4,7 +4,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2013-05-28 10:06+0000\n"
+"POT-Creation-Date: 2013-10-20 01:28+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI +ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,8 +17,20 @@ msgstr ""
 "Preferred-Encodings: utf-8 latin1\n"
 "Domain: collective.googleanalytics\n"
 
+#: ./browser/controlpanel.pt:102
+msgid "After you click Grant Access, you will be returned to this page where you can configure Google Analytics for Plone."
+msgstr ""
+
+#: ./report_templates/error.pt:2
+msgid "An error occurred while rendering"
+msgstr ""
+
 #: ./browser/auth.py:54
 msgid "Authorization failed. Google Analytics for                     Plone received an invalid token."
+msgstr ""
+
+#: ./browser/controlpanel.pt:70
+msgid "Authorization required"
 msgstr ""
 
 #: ./browser/auth.py:31
@@ -27,6 +39,18 @@ msgstr ""
 
 #: ./browser/auth.py:50
 msgid "Authorization succeeded. You may now configure                 Google Analytics for Plone."
+msgstr ""
+
+#: ./browser/controlpanel.pt:87
+msgid "Authorize with Google"
+msgstr ""
+
+#: ./browser/controlpanel.pt:55
+msgid "Authorized:"
+msgstr ""
+
+#: ./browser/controlpanel.pt:71
+msgid "Before you can use Google Analytics for Plone, you need to authorize this site to access your Google Analytics account. Follow the steps below to complete the authorization process."
 msgstr ""
 
 #: ./interfaces/utility.py:55
@@ -129,12 +153,28 @@ msgstr ""
 msgid "Google Analytics Settings"
 msgstr ""
 
+#: ./loader_templates/badauth.pt:3
+msgid "Google Analytics control panel"
+msgstr ""
+
+#: ./browser/controlpanel.pt:92
+msgid "Google will ask you if you want to allow this site to access your Google Analytics data. If the URL displayed matches the one below, click the Grant Access button."
+msgstr ""
+
+#: ./browser/controlpanel.pt:106
+msgid "If you ever decide that you no longer want this site to have access to your Google Analytics data, you can remove its authorization by clicking the Revoke Access link in this control panel or by visiting the Change Authorized Websites link in your Google account preferences."
+msgstr ""
+
 #: ./loader.py:108
 msgid "Last 30 Days"
 msgstr ""
 
 #: ./portlets/analyticsportlet.pt:17
 msgid "More analytics"
+msgstr ""
+
+#: ./browser/controlpanel.pt:84
+msgid "Once you have signed into your Google account, click this link to begin the authorization process:"
 msgstr ""
 
 #: ./profiles/default/analytics.xml
@@ -163,6 +203,14 @@ msgstr ""
 msgid "Reports Profile"
 msgstr ""
 
+#: ./viewlets/sitewide.pt:3
+msgid "Results"
+msgstr ""
+
+#: ./browser/controlpanel.pt:57
+msgid "Revoke access"
+msgstr ""
+
 #: ./profiles/default/analytics.xml
 #: ./profiles/upgrade_10a2_10a3/analytics.xml
 msgid "Site Page Views: Line Chart"
@@ -177,6 +225,14 @@ msgstr ""
 msgid "Site Visits: Line Chart"
 msgstr ""
 
+#: ./report_templates/noresults.pt:2
+msgid "The report"
+msgstr ""
+
+#: ./loader_templates/timedout.pt:1
+msgid "The request to Google Analytics timed out. Please try again later."
+msgstr ""
+
 #: ./profiles/default/analytics.xml
 #: ./profiles/upgrade_10a2_10a3/analytics.xml
 msgid "Time on Page: Sparkline"
@@ -189,6 +245,10 @@ msgstr ""
 
 #: ./portlets/analyticsportlet.py:24
 msgid "Title"
+msgstr ""
+
+#: ./browser/controlpanel.pt:80
+msgid "To begin, log into the Google account that you use to access Google Analytics if you have not done so already. To log in, you can ${visit_google_analytics} and sign in as usual."
 msgstr ""
 
 #: ./profiles/default/analytics.xml
@@ -223,8 +283,16 @@ msgstr ""
 msgid "Tracking Profile"
 msgstr ""
 
+#: ./browser/controlpanel.pt:37
+msgid "Visit Google Analytics"
+msgstr ""
+
 #: ./browser/controlpanel.py:102
 msgid "You have enabled the tracking             feature of this product, but it looks like you still have tracking             code in the Site control panel. Please remove any Google Analytics             tracking code from the Site control panel to avoid conflicts."
+msgstr ""
+
+#: ./loader_templates/badauth.pt:2
+msgid "You need to authorize with Google in the"
 msgstr ""
 
 #. Default: "Reports"
@@ -255,5 +323,9 @@ msgstr ""
 #. Default: "Configure the way Google Analytics tracks statistics about this site."
 #: ./browser/controlpanel.py:41
 msgid "analytics_tracking_description"
+msgstr ""
+
+#: ./report_templates/noresults.pt:3
+msgid "did not return any results"
 msgstr ""
 

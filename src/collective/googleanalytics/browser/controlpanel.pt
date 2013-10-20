@@ -33,7 +33,7 @@
 
             </metal:block>
             
-            <p style="float: right;">
+            <p style="float: right;" i18n:domain="collective.googleanalytics">
                 <a href="http://www.google.com/analytics/" 
                   i18n:translate=""
                   target="_blank">
@@ -50,12 +50,13 @@
             </h1>
             
             <div tal:condition="view/authorized" 
-                class="analytics-status" style="float:right;">
-                 Authorized:
-                 <strong tal:content="view/account_name">me@example.com</strong>
+                class="analytics-status" style="float:right;" 
+                i18n:domain="collective.googleanalytics">
+                 <span i18n:translate="">Authorized:</span>
+                 <strong tal:content="view/account_name"><tal:comment replace="nothing">me@example.com</tal:comment></strong>
                  [<a 
                     tal:attributes="href string:${context/portal_url}/analytics-auth?revoke_token=1;"
-                    href="">Revoke access</a>]
+                    href="" i18n:translate="">Revoke access</a>]
              </div>
 
             <a href=""
@@ -65,7 +66,7 @@
                 Up to Site Setup
             </a>
             
-            <tal:notauthorized condition="not:view/authorized">
+            <tal:notauthorized condition="not:view/authorized" i18n:domain="collective.googleanalytics">
                 <h2 i18n:translate="">Authorization required</h2>
                 <p i18n:translate="">
                     Before you can use Google Analytics for Plone, you need to authorize
@@ -76,25 +77,25 @@
                     <li i18n:translate="">
                         To begin, log into the Google account that you use to access Google
                         Analytics if you have not done so already. To log in, you can
-                        <a href="http://www.google.com/analytics">visit Google Analytics</a>
+                        <a href="http://www.google.com/analytics" i18n:name="visit_google_analytics">visit Google Analytics</a>
                         and sign in as usual.
                     </li>
-                    <li i18n:translate="">
-                        Once you have signed into your Google account, click this link
-                        to begin the authorization process:
+                    <li>
+                        <span i18n:translate="">Once you have signed into your Google account, click this link
+                        to begin the authorization process:</span>
                         <div style="margin: 1em 0;">
                             <a style="font-size:1.3em; font-weight: bold;"
-                                tal:attributes="href view/auth_url">Authorize with Google</a>
+                                tal:attributes="href view/auth_url" i18n:translate="">Authorize with Google</a>
                         </div>
                     </li>
-                    <li i18n:translate="">
-                        Google will ask you if you want to allow this site to access your
+                    <li>
+                        <span i18n:translate="">Google will ask you if you want to allow this site to access your
                         Google Analytics data. If the URL displayed matches the one below,
-                        click the Grant Access button.<br />
+                        click the Grant Access button.</span><br />
                         <div style="margin: 1em 0;">
                             <strong style="font-size:1.3em;"
                                 tal:content="string:${context/portal_url}/analytics-auth">
-                                Analytics authorization URL
+                                <tal:comment replace="nothing">Analytics authorization URL</tal:comment>
                             </strong>
                         </div>
                     </li>

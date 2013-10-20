@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2013-05-28 10:06+0000\n"
+"POT-Creation-Date: 2013-10-20 01:28+0000\n"
 "PO-Revision-Date: 2013-05-28 12:05+0200\n"
 "Last-Translator: Thiago Curvelo <tcurvelo@gmail.com>\n"
 "Language-Team: TRT13 <web@trt13.jus.br>\n"
@@ -14,9 +14,21 @@ msgstr ""
 "Preferred-Encodings: utf-8 latin1\n"
 "Domain: collective.googleanalytics\n"
 
+#: ./browser/controlpanel.pt:102
+msgid "After you click Grant Access, you will be returned to this page where you can configure Google Analytics for Plone."
+msgstr ""
+
+#: ./report_templates/error.pt:2
+msgid "An error occurred while rendering"
+msgstr ""
+
 #: ./browser/auth.py:54
 msgid "Authorization failed. Google Analytics for                     Plone received an invalid token."
 msgstr "Autorisation échouée. Google Analytics pour plone a reçu un token invalide"
+
+#: ./browser/controlpanel.pt:70
+msgid "Authorization required"
+msgstr ""
 
 #: ./browser/auth.py:31
 msgid "Authorization revoked. You may now reauthorize with                 a different Google account."
@@ -25,6 +37,18 @@ msgstr "Autorisation révoquée. Vous devez vous enregistrer avec un compte Goog
 #: ./browser/auth.py:50
 msgid "Authorization succeeded. You may now configure                 Google Analytics for Plone."
 msgstr "Autorisation réussie. Vous pouvez maintenant configurer Google Analytics pour plone"
+
+#: ./browser/controlpanel.pt:87
+msgid "Authorize with Google"
+msgstr ""
+
+#: ./browser/controlpanel.pt:55
+msgid "Authorized:"
+msgstr ""
+
+#: ./browser/controlpanel.pt:71
+msgid "Before you can use Google Analytics for Plone, you need to authorize this site to access your Google Analytics account. Follow the steps below to complete the authorization process."
+msgstr ""
 
 #: ./interfaces/utility.py:55
 msgid "Cache interval"
@@ -126,6 +150,18 @@ msgstr ""
 msgid "Google Analytics Settings"
 msgstr "Google Analytics paramêtres"
 
+#: ./loader_templates/badauth.pt:3
+msgid "Google Analytics control panel"
+msgstr ""
+
+#: ./browser/controlpanel.pt:92
+msgid "Google will ask you if you want to allow this site to access your Google Analytics data. If the URL displayed matches the one below, click the Grant Access button."
+msgstr ""
+
+#: ./browser/controlpanel.pt:106
+msgid "If you ever decide that you no longer want this site to have access to your Google Analytics data, you can remove its authorization by clicking the Revoke Access link in this control panel or by visiting the Change Authorized Websites link in your Google account preferences."
+msgstr ""
+
 #: ./loader.py:108
 msgid "Last 30 Days"
 msgstr "30 derniers jours"
@@ -133,6 +169,10 @@ msgstr "30 derniers jours"
 #: ./portlets/analyticsportlet.pt:17
 msgid "More analytics"
 msgstr "Plus d'analyses"
+
+#: ./browser/controlpanel.pt:84
+msgid "Once you have signed into your Google account, click this link to begin the authorization process:"
+msgstr ""
 
 #: ./profiles/default/analytics.xml
 #: ./profiles/upgrade_10a2_10a3/analytics.xml
@@ -160,6 +200,14 @@ msgstr "Rapports"
 msgid "Reports Profile"
 msgstr "Profil des rapports"
 
+#: ./viewlets/sitewide.pt:3
+msgid "Results"
+msgstr ""
+
+#: ./browser/controlpanel.pt:57
+msgid "Revoke access"
+msgstr ""
+
 #: ./profiles/default/analytics.xml
 #: ./profiles/upgrade_10a2_10a3/analytics.xml
 msgid "Site Page Views: Line Chart"
@@ -174,6 +222,14 @@ msgstr "Visiteurs uniques du site: Courbe"
 msgid "Site Visits: Line Chart"
 msgstr "Visites sur le site: Courbe"
 
+#: ./report_templates/noresults.pt:2
+msgid "The report"
+msgstr ""
+
+#: ./loader_templates/timedout.pt:1
+msgid "The request to Google Analytics timed out. Please try again later."
+msgstr ""
+
 #: ./profiles/default/analytics.xml
 #: ./profiles/upgrade_10a2_10a3/analytics.xml
 msgid "Time on Page: Sparkline"
@@ -187,6 +243,10 @@ msgstr "Temps sur le site: courbe"
 #: ./portlets/analyticsportlet.py:24
 msgid "Title"
 msgstr "Titre"
+
+#: ./browser/controlpanel.pt:80
+msgid "To begin, log into the Google account that you use to access Google Analytics if you have not done so already. To log in, you can ${visit_google_analytics} and sign in as usual."
+msgstr ""
 
 #: ./profiles/default/analytics.xml
 #: ./profiles/upgrade_10a2_10a3/analytics.xml
@@ -220,9 +280,17 @@ msgstr "Top 5 sources: tableau"
 msgid "Tracking Profile"
 msgstr "Profil de suivi"
 
+#: ./browser/controlpanel.pt:37
+msgid "Visit Google Analytics"
+msgstr ""
+
 #: ./browser/controlpanel.py:102
 msgid "You have enabled the tracking             feature of this product, but it looks like you still have tracking             code in the Site control panel. Please remove any Google Analytics             tracking code from the Site control panel to avoid conflicts."
 msgstr "Vous avez activé la fonctionnalité de suivi de ce produit, mais il semble que vous avez encore un javascript de suivi au niveau du panneau de configuration du site. S'il vous plait, enlevez ce code de suivi du panneau de configuration du site pour éviter tout conflit."
+
+#: ./loader_templates/badauth.pt:2
+msgid "You need to authorize with Google in the"
+msgstr ""
 
 #. Default: "Reports"
 #: ./browser/controlpanel.py:33
@@ -253,4 +321,8 @@ msgstr "Suivi"
 #: ./browser/controlpanel.py:41
 msgid "analytics_tracking_description"
 msgstr "Configurer la manière dont Google Analytics suit les statistiques de ce site"
+
+#: ./report_templates/noresults.pt:3
+msgid "did not return any results"
+msgstr ""
 
