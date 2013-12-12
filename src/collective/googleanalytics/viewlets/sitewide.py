@@ -38,11 +38,11 @@ class SiteWideAnalyticsViewlet(ViewletBase):
         
         return self.async_loader.getContainerId()
 
-    def getJavascript(self):
+    def getJavascript(self, date_range='month'):
         """
         Returns a list of AnalyticsReportResults objects for the selected reports.
         """
         
         profile = getattr(self.analytics_tool, 'reports_profile', None)
         reports = getattr(self.analytics_tool, 'reports', None)
-        return self.async_loader.getJavascript(reports, profile)
+        return self.async_loader.getJavascript(reports, profile, date_range=date_range)

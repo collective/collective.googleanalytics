@@ -79,6 +79,12 @@
     name="collective.googleanalytics.TrackingPluginNames"
     provides="zope.schema.interfaces.IVocabularyFactory"
     />
+  
+  <utility
+    component=".vocabularies.getPossibleDateRanges"
+    name="collective.googleanalytics.PossibleDateRanges"
+    provides="zope.schema.interfaces.IVocabularyFactory"
+    />
 
   <subscriber
     for="collective.googleanalytics.interfaces.report.IAnalyticsReport

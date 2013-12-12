@@ -104,3 +104,9 @@ class AnalyticsControlPanelForm(ControlPanelForm):
             code in the Site control panel. Please remove any Google Analytics \
             tracking code from the Site control panel to avoid conflicts.'),
             'warning')
+
+    def get_date_range(self):
+        analytics_tool = getToolByName(self.context, 'portal_analytics')
+
+        return analytics_tool.date_range
+

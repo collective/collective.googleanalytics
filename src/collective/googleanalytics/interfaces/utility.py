@@ -1,6 +1,8 @@
 from zope.interface import Interface
 from zope import schema
 from collective.googleanalytics.interfaces import GoogleAnalyticsMessageFactory as _
+from zope.schema.vocabulary import SimpleVocabulary, SimpleTerm
+
 
 class IAnalyticsCredentials(Interface):
     """
@@ -56,6 +58,12 @@ class IAnalyticsSettings(Interface):
         description=_(u"Enter the number of minutes for which account \
             information and report results should be cached."),
         default=60,
+        required=True)
+
+    date_range = schema.Choice(title=_(u"Date Range"),
+        vocabulary='collective.googleanalytics.PossibleDateRanges',
+        description=_(u"Choose the date range for the reports"),
+        default='month',
         required=True)
 
 class IAnalytics(

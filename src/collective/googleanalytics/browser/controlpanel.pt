@@ -10,7 +10,9 @@
 <metal:block use-macro="context/prefs_main_template/macros/master">
 
 <metal:block metal:fill-slot="top_slot"
-             tal:define="dummy python:request.set('disable_border', 1)" />
+             tal:define="dummy python:request.set('disable_border', 1);
+                         date_range view/get_date_range;
+                         dummy_def python: request.set('date_range', date_range);" />
 
 <body>
 

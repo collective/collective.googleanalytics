@@ -99,9 +99,13 @@ class Renderer(base.Renderer):
         """
         Returns a list of AnalyticsReportResults objects for the selected reports.
         """
-        
-        return self.async_loader.getJavascript(self.data.reports, self.data.profile)
-    
+        analytics_tool = getToolByName(self.context, 'portal_analytics')
+        date_range = analytics_tool.date_range
+
+        return self.async_loader.getJavascript(self.data.reports,
+                                            self.data.profile,
+                                            date_range)
+
     render = ViewPageTemplateFile('analyticsportlet.pt')
             
 class AddForm(base.AddForm):

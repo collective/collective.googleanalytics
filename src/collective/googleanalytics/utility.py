@@ -87,6 +87,9 @@ class Analytics(PloneBaseTool, IFAwareObjectManager, OrderedFolder):
     security.declarePrivate('cache_interval')
     cache_interval = FieldProperty(IAnalytics['cache_interval'])
     
+    security.declarePrivate('date_range')
+    date_range = FieldProperty(IAnalytics['date_range'])
+
     security.declarePrivate('report_categories')
     report_categories = FieldProperty(IAnalytics['report_categories'])
     

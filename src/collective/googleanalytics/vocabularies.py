@@ -4,6 +4,8 @@ from zope.schema.vocabulary import SimpleVocabulary, SimpleTerm
 from Products.CMFCore.utils import getToolByName
 from collective.googleanalytics.interfaces.tracking import IAnalyticsTrackingPlugin
 from collective.googleanalytics import error
+from collective.googleanalytics import GoogleAnalyticsMessageFactory as _
+
 
 def getProfiles(context):
     """
@@ -139,3 +141,17 @@ def getTrackingPluginNames(context):
 
     values = sorted(list(global_plugins | local_plugins))
     return SimpleVocabulary.fromValues(values)
+
+
+def getPossibleDateRanges(context):
+    """
+    Return the possible date ranges
+    """
+    vocab = [
+        SimpleTerm('week', 'week', _(u"Week")),
+        SimpleTerm('month', 'month', _(u"Month")),
+        SimpleTerm('quarter', 'quarter', _(u"Quarter")),
+        SimpleTerm('year', 'year', _(u"Year")),
+    ]
+
+    return SimpleVocabulary(vocab)
