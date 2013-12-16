@@ -2,7 +2,7 @@ Changelog
 =========
 
 1.4.4 (unreleased)
-----------------------
+------------------
 
 - Added possibility to set the date range of the reports in the analytics
   control panel. This setting will reflect on the portlets as well.
