@@ -1,7 +1,7 @@
 Changelog
 =========
 
-1.4.4.eea (unreleased)
+1.4.4 (unreleased)
 ----------------------
 
 - Added possibility to set the date range of the reports in the analytics
