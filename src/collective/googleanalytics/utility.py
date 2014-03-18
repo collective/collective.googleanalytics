@@ -4,6 +4,8 @@ except ImportError:
     from Globals import InitializeClass
 from AccessControl import ClassSecurityInfo
 
+from zope.annotation import IAnnotations
+from zope.annotation.interfaces import IAttributeAnnotatable
 from zope.interface import implements
 from zope.schema.fieldproperty import FieldProperty
 
@@ -31,20 +33,12 @@ logger = logging.getLogger('collective.googleanalytics')
 
 DEFAULT_TIMEOUT = socket.getdefaulttimeout()
 
-class AnalyticsClients(object):
-    """
-    An object for storing Google Analytics clients.
-    """
-    
-    def __init__(self):
-        self.data = gdata.analytics.service.AnalyticsDataService()
-        self.accounts = gdata.analytics.service.AccountsService()
 
 def account_feed_cachekey(func, instance, feed_path):
     """
     Cache key for the account feed. We only refresh it every ten minutes.
     """
-    
+
     cache_interval = instance.cache_interval
     cache_interval = (cache_interval > 0 and cache_interval * 60) or 1
     return hash((time() // cache_interval, instance.auth_token, feed_path))
@@ -53,119 +47,89 @@ class Analytics(PloneBaseTool, IFAwareObjectManager, OrderedFolder):
     """
     Analytics utility
     """
-    
-    implements(IAnalytics)
-    
+
+    implements(IAnalytics, IAttributeAnnotatable)
+
     security = ClassSecurityInfo()
-    
+
     id = 'portal_analytics'
     meta_type = 'Google Analytics Tool'
-    
+
     _product_interfaces = (IAnalyticsReport,)
-    
+
     security.declarePrivate('email')
     security.declarePrivate('password')
-    
-    security.declarePrivate('auth_token')
-    auth_token = FieldProperty(IAnalytics['auth_token'])
-    
+
     security.declarePrivate('tracking_web_property')
     tracking_web_property = FieldProperty(IAnalytics['tracking_web_property'])
-    
+
     security.declarePrivate('tracking_plugin_names')
     tracking_plugin_names = FieldProperty(IAnalytics['tracking_plugin_names'])
-    
+
     security.declarePrivate('tracking_excluded_roles')
     tracking_excluded_roles = FieldProperty(IAnalytics['tracking_excluded_roles'])
-    
+
     security.declarePrivate('reports_profile')
     reports_profile = FieldProperty(IAnalytics['reports_profile'])
-    
+
     security.declarePrivate('reports')
     reports = FieldProperty(IAnalytics['reports'])
-    
+
     security.declarePrivate('cache_interval')
     cache_interval = FieldProperty(IAnalytics['cache_interval'])
-    
+
     security.declarePrivate('report_categories')
     report_categories = FieldProperty(IAnalytics['report_categories'])
-    
+
     security.declarePrivate('_v_temp_clients')
     _v_temp_clients = None
-    
+
     security.declarePrivate('_getAuthenticatedClient')
-    def _getAuthenticatedClient(self, service='data'):
+    def _getAuthenticatedClient(self):
         """
         Get the client object and authenticate using our stored credentials.
         """
-        
-        if not self.auth_token:
+        client = None
+        if self.is_auth():
+            ann = IAnnotations(self)
+            client = gdata.analytics.client.AnalyticsClient()
+            ann['auth_token'].authorize(client)
+        else:
             raise error.BadAuthenticationError, 'You need to authorize with Google'
-            
-        clients = self.getClients()
-        
-        # Get the appropriate client class.
-        if service == 'accounts':
-            client = clients.accounts
-        else:
-            client = clients.data
-            client.ssl = True
-            
-        if not client.GetAuthSubToken():
-            client.SetAuthSubToken(self.auth_token)
-        
+
         return client
-        
-    security.declarePrivate('getClients')
-    def getClients(self):
-        """
-        Returns an AnalyticsClients object.
-        """
 
-        # We store the clients object on the ZODB database connection. This approach
-        # comes from alm.solrindex. See the documentation for that product for a
-        # full explanation.
-        jar = self._p_jar
-        oid = self._p_oid
+    security.declarePrivate('is_auth')
+    def is_auth(self):
+        ann = IAnnotations(self)
+        valid_token = ann.get('valid_token', None)
+        if valid_token:
+            return True
+        return False
 
-        if jar is None or oid is None:
-            # This object is not yet stored in ZODB, so we use a
-            # volatile attribute.
-            clients = self._v_temp_clients
-            if clients is None:
-                self._v_temp_clients = clients = AnalyticsClients() 
-        else:
-            foreign_connections = getattr(jar, 'foreign_connections', None)
-            if foreign_connections is None:
-                jar.foreign_connections = foreign_connections = {}
-
-            clients = foreign_connections.get(oid)
-            if clients is None:
-                foreign_connections[oid] = clients = AnalyticsClients()
-
-        return clients
-        
     security.declarePrivate('makeClientRequest')
-    def makeClientRequest(self, service, method, *args, **kwargs):
+    def makeClientRequest(self, feed, *args, **kwargs):
         """
         Get the authenticated client object and make the specified request.
         We need this wrapper method so that we can intelligently handle errors.
         """
-        
-        if service is not None:
-            client = self._getAuthenticatedClient(service)
-            query_method = getattr(client, method, None)
-            if not query_method:
-                raise error.InvalidRequestMethodError, \
-                    '%s does not have a method %s' % (client.__class__.__name__, method)
-        else:
-            query_method = method
+
+        # XXX: Have to use v2.4. gdata 2.0.18 doesn't yet support v3 for
+        #      analytics
+        feed_url = 'https://www.googleapis.com/analytics/v2.4/' + feed
+        client = self._getAuthenticatedClient()
+
+        if feed.startswith('management'):
+            query_method = client.get_management_feed
+        if feed.startswith('data'):
+            query_method = client.get_data_feed
+
 
         # Workaround for the lack of timeout handling in gdata. This approach comes
         # from collective.twitterportlet. See:
         # https://svn.plone.org/svn/collective/collective.twitterportlet/
         timeout = socket.getdefaulttimeout()
-        
+
         # If the current timeout is set to GOOGLE_REQUEST_TIMEOUT, then another
         # thread has called this method before we had a chance to reset the
         # default timeout. In that case, we fall back to the system default
@@ -177,7 +141,7 @@ class Analytics(PloneBaseTool, IFAwareObjectManager, OrderedFolder):
         try:
             socket.setdefaulttimeout(GOOGLE_REQUEST_TIMEOUT)
             try:
-                return query_method(*args, **kwargs)
+                return query_method(feed_url, *args, **kwargs)
             except (Unauthorized, RequestError), e:
                 if hasattr(e, 'reason'):
                     reason = e.reason
@@ -194,7 +158,7 @@ class Analytics(PloneBaseTool, IFAwareObjectManager, OrderedFolder):
                 raise error.RequestTimedOutError, 'The request to Google timed out'
         finally:
             socket.setdefaulttimeout(timeout)
-    
+
     security.declarePrivate('getReports')
     def getReports(self, category=None):
         """
@@ -202,7 +166,7 @@ class Analytics(PloneBaseTool, IFAwareObjectManager, OrderedFolder):
         reports of that category are returned. Otherwise, all reports are
         returned.
         """
-                
+
         for obj in self.objectValues():
             if IAnalyticsReport.providedBy(obj):
                 if (category and category in obj.categories) or not category:
@@ -213,20 +177,17 @@ class Analytics(PloneBaseTool, IFAwareObjectManager, OrderedFolder):
         """
         Return a list of possible report categories.
         """
-        
+
         return self.report_categories
-    
+
     security.declarePrivate('getAccountsFeed')
     @ram.cache(account_feed_cachekey)
     def getAccountsFeed(self, feed_path):
         """
         Returns the list of accounts.
         """
-
-        feed_url = 'https://www.googleapis.com/analytics/v2.4/management/' + feed_path
-        token = gdata.gauth.AuthSubToken(self.auth_token)
-        client = gdata.analytics.client.AnalyticsClient(auth_token = token)
-        res = self.makeClientRequest(None, client.get_management_feed, feed_url)
+        feed = 'management/'+feed_path
+        res = self.makeClientRequest(feed)
         return res
-    
+
 InitializeClass(Analytics)
