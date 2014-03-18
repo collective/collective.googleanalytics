@@ -7,7 +7,7 @@ def getTimeDelta(**kwargs):
     Return a python timedelta for use in TALES expressions.
     """
     return datetime.timedelta(**kwargs)
-    
+
 def getDate(year, month, day):
     """
     Return a python date for use in TALES expressions.
@@ -19,7 +19,7 @@ def evaluateTALES(parent, exp_context, evaluate_keys=False):
     Evaluates each TALES expression in a list, set, tuple, dictionary
     or string.
     """
-    
+
     if type(parent) in [list, set, tuple]:
         results = []
         for child in parent:
@@ -37,13 +37,18 @@ def evaluateTALES(parent, exp_context, evaluate_keys=False):
         return Expression(str(parent))(exp_context)
     except (KeyError, CompilerError):
         return parent
-    
+
 def makeDate(date_stamp):
     """
     Given a date string returned by Google, return the corresponding python
     date object.
     """
-    date_string = str(date_stamp)
+    try:
+        # XXX: Should we be doing it like this?
+        date_string = date_stamp.value
+    except:
+        date_string = str(date_stamp)
+
     year = int(date_string[0:4])
     month = int(date_string[4:6])
     day = int(date_string[6:8])
@@ -75,7 +80,7 @@ def js_value(value):
     """
     Given a python value, return the corresponding javascript value.
     """
-    
+
     # A javascript literal
     if isinstance(value, js_literal):
         return str(value)
@@ -90,30 +95,32 @@ def js_value(value):
         return '"%s"' % (value.replace('"', '\\"').replace("'", "\\'"))
     # A number
     return str(value)
-    
+
 def extract_value(column):
     """
-    Returns a tuple containing the diimension or metric name and value value
+    Returns a tuple containing the dimension or metric name and value value
     for an entry from a Google Analytics data feed.
     """
-    
     value = column.value
     if column.name == 'ga:date':
         value = makeDate(column)
     elif column.name in ['ga:day', 'ga:week', 'ga:month', 'ga:year']:
         value = int(value)
-    elif column.type == 'integer':
-        value = int(value)
-    elif column.type in ['float', 'percent', 'time', 'currency', 'us_currency']:
-        value = float(value)
+    else:
+        try:
+            value = int(value)
+        except ValueError:
+            try:
+                value = float(value)
+            except:
+                pass
     return (column.name, value)
-    
+
 def unique_list(original):
     """
     Returns a list of unique items while preserving the order of the
     original list.
     """
-    
+
     used = set()
     return [x for x in original if x not in used and not used.add(x)]
-    
