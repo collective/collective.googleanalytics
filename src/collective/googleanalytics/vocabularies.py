@@ -4,6 +4,8 @@ from zope.schema.vocabulary import SimpleVocabulary, SimpleTerm
 from Products.CMFCore.utils import getToolByName
 from collective.googleanalytics.interfaces.tracking import IAnalyticsTrackingPlugin
 from collective.googleanalytics import error
+from gdata.client import RequestError
+
 
 def getProfiles(context):
     """
@@ -13,7 +15,7 @@ def getProfiles(context):
 
     analytics_tool = getToolByName(getSite(), 'portal_analytics')
     # short circuit if user hasn't authorized yet
-    if not analytics_tool.auth_token:
+    if not analytics_tool.is_auth():
         return SimpleVocabulary([])
 
     try:
@@ -25,6 +27,10 @@ def getProfiles(context):
     except error.RequestTimedOutError:
         choices = [('The request to Google Analytics timed out. Please try \
             again later.', None)]
+        return SimpleVocabulary.fromItems(choices)
+    except RequestError:
+        choices = [('Request to Google Analytics errored, you might need to '
+                    'authenticate again.', None)]
         return SimpleVocabulary.fromItems(choices)
     if accounts:
         unique_choices = {}
@@ -50,7 +56,7 @@ def getWebProperties(context):
 
     analytics_tool = getToolByName(getSite(), 'portal_analytics')
     # short circuit if user hasn't authorized yet
-    if not analytics_tool.auth_token:
+    if not analytics_tool.is_auth():
         return SimpleVocabulary([])
 
     try:
@@ -63,6 +69,10 @@ def getWebProperties(context):
         choices = [('The request to Google Analytics timed out. Please try \
             again later.', None)]
         return SimpleVocabulary.fromItems(choices)
+    except RequestError:
+        choices = [('Request to Google Analytics errored, you might need to '
+                    'authenticate again.', None)]
+        return SimpleVocabulary.fromItems(choices)
     if accounts:
         unique_choices = {}
         # In vocabularies, both the terms and the values must be unique. Since
@@ -74,7 +84,7 @@ def getWebProperties(context):
                 if prop.name == 'ga:profileName':
                     title = prop.value
                     if not isinstance(title, unicode):
-                        title = unicode(title, 'utf-8') 
+                        title = unicode(title, 'utf-8')
                 if prop.name == 'ga:webPropertyId':
                     webPropertyId = prop.value
             if not webPropertyId in unique_choices.keys():
