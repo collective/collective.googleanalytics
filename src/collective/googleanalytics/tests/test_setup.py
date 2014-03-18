@@ -105,6 +105,8 @@ class DummyTool(object):
     accounts = None
     def getAccountsFeed(self, *a, **kw):
         return self.accounts
+    def is_auth(self):
+        return True
 
 class TestUnicode(FunctionalTestCase):
 
