@@ -76,7 +76,6 @@ class AnalyticsControlPanelForm(ControlPanelForm):
         if key and secret:
 
             analytics_tool = getToolByName(self.context, 'portal_analytics')
-            clients = analytics_tool.getClients()
 
             next = '%s/analytics-auth' % self.context.portal_url()
 

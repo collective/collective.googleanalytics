@@ -24,7 +24,6 @@ class AnalyticsAuth(BrowserPage):
 
         analytics_tool = getToolByName(self.context, 'portal_analytics')
         plone_utils = getToolByName(self.context, 'plone_utils')
-        clients = analytics_tool.getClients()
 
         # Check if we are revoking the token.
         if self.request.get('revoke_token', 0):
