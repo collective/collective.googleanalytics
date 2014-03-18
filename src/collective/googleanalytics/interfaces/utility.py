@@ -2,12 +2,6 @@ from zope.interface import Interface
 from zope import schema
 from collective.googleanalytics.interfaces import GoogleAnalyticsMessageFactory as _
 
-class IAnalyticsCredentials(Interface):
-    """
-    This interface defines the configlet.
-    """
-
-    auth_token = schema.TextLine(required=False)
 
 class IAnalyticsTracking(Interface):
     """
@@ -35,12 +29,12 @@ class IAnalyticsReportsAssignment(Interface):
     """
     An assignment that specifies a profile and one or more reports.
     """
-    
+
     reports_profile = schema.Choice(title=_(u"Reports Profile"),
         vocabulary='collective.googleanalytics.Profiles',
         description=_(u"Choose the Web property profile from Google Analytics."),
         required=False)
-        
+
     reports = schema.List(title=_(u"Reports"),
         value_type=schema.Choice(vocabulary='collective.googleanalytics.SiteWideReports'),
         default=[],
@@ -51,7 +45,7 @@ class IAnalyticsSettings(Interface):
     """
     Settings for the Analytics configlet.
     """
-    
+
     cache_interval = schema.Int(title=_(u"Cache interval"),
         description=_(u"Enter the number of minutes for which account \
             information and report results should be cached."),
@@ -59,15 +53,15 @@ class IAnalyticsSettings(Interface):
         required=True)
 
 class IAnalytics(
-        IAnalyticsCredentials, 
-        IAnalyticsReportsAssignment, 
-        IAnalyticsTracking, 
+        IAnalyticsCredentials,
+        IAnalyticsReportsAssignment,
+        IAnalyticsTracking,
         IAnalyticsSettings):
     """
     Analytics utility
     """
-    
+
     report_categories = schema.List(title=_(u"Report Categories"),
         default=['Site Wide', 'Portlet'],
         required=False)
-        
+
