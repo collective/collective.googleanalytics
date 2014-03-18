@@ -32,9 +32,9 @@
                 </dl>
 
             </metal:block>
-            
+
             <p style="float: right;" i18n:domain="collective.googleanalytics">
-                <a href="http://www.google.com/analytics/" 
+                <a href="http://www.google.com/analytics/"
                   i18n:translate=""
                   target="_blank">
                     Visit Google Analytics
@@ -48,13 +48,13 @@
                 metal:define-slot="heading">
                 Do something
             </h1>
-            
-            <div tal:condition="view/authorized" 
-                class="analytics-status" style="float:right;" 
+
+            <div tal:condition="view/authorized"
+                class="analytics-status" style="float:right;"
                 i18n:domain="collective.googleanalytics">
                  <span i18n:translate="">Authorized:</span>
                  <strong tal:content="view/account_name"><tal:comment replace="nothing">me@example.com</tal:comment></strong>
-                 [<a 
+                 [<a
                     tal:attributes="href string:${context/portal_url}/analytics-auth?revoke_token=1;"
                     href="" i18n:translate="">Revoke access</a>]
              </div>
@@ -65,7 +65,7 @@
                i18n:translate="label_up_to_plone_setup">
                 Up to Site Setup
             </a>
-            
+
             <tal:notauthorized condition="not:view/authorized" i18n:domain="collective.googleanalytics">
                 <h2 i18n:translate="">Authorization required</h2>
                 <p i18n:translate="">
@@ -73,47 +73,89 @@
                     this site to access your Google Analytics account. Follow the steps
                     below to complete the authorization process.
                 </p>
+                <h2 i18n:translate="">If you haven't created a project and obtained an OAuth key and secret from Google, follow these steps.</h2>
                 <ol>
                     <li i18n:translate="">
-                        To begin, log into the Google account that you use to access Google
-                        Analytics if you have not done so already. To log in, you can
-                        <a href="http://www.google.com/analytics" i18n:name="visit_google_analytics">visit Google Analytics</a>
-                        and sign in as usual.
+                        Go to the <a href="https://console.developers.google.com" target="_blank" i18n:name="google_developers_console">Google Developers Console</a>
+                        and create a Project, if you haven't already.
                     </li>
                     <li>
-                        <span i18n:translate="">Once you have signed into your Google account, click this link
-                        to begin the authorization process:</span>
+                        <span i18n:translate="">Access your project, and go to APIs & auth entry</span>
+                    </li>
+                    <li>
+                        <span i18n:translate="">Make sure "Analytics API" is enabled</span>
+                    </li>
+                    <li>
+                        <span i18n:translate="">Click the "Credentials" menu entry under "APIs & auth", and click "Create new client ID"</span>
+                    </li>
+                    <li>
+                        <span i18n:translate="">Under "Application type" choose "Web application"</span>
+                    </li>
+                    <li>
+                        <span i18n:translate="">Under "Authorized JavaScript origins" add your domains, such as:</span><br />
                         <div style="margin: 1em 0;">
-                            <a style="font-size:1.3em; font-weight: bold;"
-                                tal:attributes="href view/auth_url" i18n:translate="">Authorize with Google</a>
+                            <strong style="font-size:1.3em;"
+                                tal:content="context/portal_url">
+                                <tal:comment replace="nothing">Portal URL</tal:comment>
+                            </strong>
                         </div>
+                        <p i18n:translate="">Make sure you include "http" and "https", if needed.</p>
                     </li>
                     <li>
-                        <span i18n:translate="">Google will ask you if you want to allow this site to access your
-                        Google Analytics data. If the URL displayed matches the one below,
-                        click the Grant Access button.</span><br />
+                        <span i18n:translate="">Under "Authorized redirect URI" add this URL:</span><br />
                         <div style="margin: 1em 0;">
                             <strong style="font-size:1.3em;"
                                 tal:content="string:${context/portal_url}/analytics-auth">
                                 <tal:comment replace="nothing">Analytics authorization URL</tal:comment>
                             </strong>
                         </div>
+                        <p i18n:translate="">Make sure to also include "http" and "https", if needed.</p>
                     </li>
-                    <li i18n:translate="">
-                        After you click Grant Access, you will be returned to this page where
-                        you can configure Google Analytics for Plone.
-                    </li>
-                    <li i18n:translate="">
-                        If you ever decide that you no longer want this site to have access
-                        to your Google Analytics data, you can remove its authorization by
-                        clicking the Revoke Access link in this control panel or by visiting
-                        the Change Authorized Websites link in your Google account preferences.
+                    <li>
+                        <span i18n:translate="">Click "Create Client ID"</span>
                     </li>
                 </ol>
-                
+
+                <h2 i18n:translate="">If you already have your Project and OAuth credentials, follow these steps</h2>
+                <ol>
+                    <li i18n:translate="">
+                        Go to the <a href="https://console.developers.google.com" target="_blank" i18n:name="google_developers_console">Google Developers Console</a>
+                        and go to your Project.
+                    </li>
+                    <li>
+                        <span i18n:translate="">Access your project, and go to APIs & auth entry</span>
+                    </li>
+                    <li>
+                        <span i18n:translate="">Make sure "Analytics API" is enabled</span>
+                    </li>
+                    <li>
+                        <span i18n:translate="">Click the "Credentials" menu entry under "APIs & auth"</span>
+                    </li>
+                    <li>
+                        <span i18n:translate="">Enter below</span>
+                        <br/>
+                        <form method="post"
+                              enctype="multipart/form-data">
+                            <label for="consumer_key" i18n:translate="">Client ID</label>
+                            <input name="consumer_key" id="consumer_key" />
+                            <label for="consumer_secret" i18n:translate="">Client secret</label>
+                            <input type="password" name="consumer_secret" id="consumer_secret" />
+                            <button id="generate_auth_url" i18n:translate="">Generate Authentication URL</button>
+                        </form>
+                    </li>
+                    <li tal:define="auth_url view/auth_url"
+                        tal:condition="auth_url">
+                        <span i18n:translate="">Finally </span>
+                        <div style="margin: 1em 0;">
+                            <a style="font-size:1.3em; font-weight: bold;"
+                                tal:attributes="href auth_url" i18n:translate="">Authorize with Google</a>
+                        </div>
+                    </li>
+                </ol>
+
             </tal:notauthorized>
-            
-            <tal:authorized condition="view/authorized">          
+
+            <tal:authorized condition="view/authorized">
                 <form action="."
                       metal:define-macro="master"
                       tal:define="is_fieldsets view/is_fieldsets"
@@ -131,7 +173,7 @@
 
                     <div metal:define-slot="extra_info" tal:replace="nothing">
                     </div>
-                    
+
                     <tal:results replace="structure provider:collective.googleanalytics.controlpanel" />
 
                     <fieldset tal:condition="not: is_fieldsets">
@@ -186,7 +228,7 @@
                         <legend tal:define="form_name fieldset/label"
                                 tal:condition="form_name"
                                 tal:attributes="id python:'fieldsetlegend-%s' % fieldset.id"
-                                tal:content="form_name">Form name</legend>        
+                                tal:content="form_name">Form name</legend>
 
                         <p i18n:translate=""
                            tal:condition="fieldset/description"
@@ -254,7 +296,7 @@
 
                 </form>
             </tal:authorized>
-            
+
         </div>
 
         <script type="text/javascript"
