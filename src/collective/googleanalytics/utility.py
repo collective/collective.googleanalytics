@@ -14,6 +14,7 @@ from OFS.OrderedFolder import OrderedFolder
 
 from Products.CMFPlone.PloneBaseTool import PloneBaseTool
 from plone.memoize import ram
+from datetime import datetime
 from time import time
 import socket
 
@@ -141,7 +142,16 @@ class Analytics(PloneBaseTool, IFAwareObjectManager, OrderedFolder):
         try:
             socket.setdefaulttimeout(GOOGLE_REQUEST_TIMEOUT)
             try:
-                return query_method(feed_url, *args, **kwargs)
+                ann = IAnnotations(self)
+                expired = False
+                # Token gets refreshed when a new request is made to Google,
+                # so check before
+                if ann['auth_token'].token_expiry < datetime.now():
+                    expired = True
+                result = query_method(feed_url, *args, **kwargs)
+                if expired:
+                    IAnnotations(self)['auth_token'] = ann['auth_token']
+                return result
             except (Unauthorized, RequestError), e:
                 if hasattr(e, 'reason'):
                     reason = e.reason
