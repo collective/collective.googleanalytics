@@ -53,7 +53,6 @@ class IAnalyticsSettings(Interface):
         required=True)
 
 class IAnalytics(
-        IAnalyticsCredentials,
         IAnalyticsReportsAssignment,
         IAnalyticsTracking,
         IAnalyticsSettings):
