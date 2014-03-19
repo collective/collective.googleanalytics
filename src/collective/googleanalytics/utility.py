@@ -167,6 +167,8 @@ class Analytics(PloneBaseTool, IFAwareObjectManager, OrderedFolder):
                     raise
             except (socket.sslerror, socket.timeout):
                 raise error.RequestTimedOutError, 'The request to Google timed out'
+            except socket.gaierror:
+                raise error.RequestTimedOutError, 'You may not have internet access. Please try again later.'
         finally:
             socket.setdefaulttimeout(timeout)
 

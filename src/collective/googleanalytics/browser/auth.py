@@ -7,9 +7,12 @@ from gdata.service import NonAuthSubToken, TokenUpgradeFailed
 import gdata.analytics.service
 import gdata.auth
 import gdata.oauth
+from collective.googleanalytics import error
 from collective.googleanalytics import GoogleAnalyticsMessageFactory as _
 from gdata.gauth import OAuth2RevokeError
 from gdata.gauth import OAuth2AccessTokenError
+
+import socket
 
 
 class AnalyticsAuth(BrowserPage):
@@ -35,6 +38,8 @@ class AnalyticsAuth(BrowserPage):
             except OAuth2RevokeError:
                 # Authorization already revoked
                 pass
+            except socket.gaierror:
+                raise error.RequestTimedOutError, 'You may not have internet access. Please try again later.'
 
             ann['auth_token'] = None
             ann['valid_token'] = False
