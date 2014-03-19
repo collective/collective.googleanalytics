@@ -163,8 +163,6 @@ def upgrade_10_to_11(setup_tool):
         analytics_tool._v_temp_clients = None
 
     jar = analytics_tool._p_jar
-    oid = analytics_tool._p_oid
 
-    foreign_connections = getattr(jar, 'foreign_connections', None)
-    if foreign_connections and oid in blah:
-        del foreign_connections[oid]
+    if hasattr(jar, 'foreign_connections'):
+        delattr(jar, 'foreign_connections')
