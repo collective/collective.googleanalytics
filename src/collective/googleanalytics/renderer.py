@@ -284,9 +284,10 @@ class AnalyticsReportRenderer(object):
 
         analytics_tool = getToolByName(self.context, 'portal_analytics')
         query_args = self._getQueryArguments()
+        logger.debug("Querying Google for report '%s' on context '%s'. "
+                     "Arguments: %s" %
+                     (self.report.id, self.context.id, query_args))
         data_feed = analytics_tool.makeClientRequest('data', **query_args)
-        logger.debug("Querying Google for report '%s' on context '%s'." %
-            (self.report.id, self.context.id))
 
         return data_feed
 

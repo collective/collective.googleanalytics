@@ -20,6 +20,10 @@ from collective.googleanalytics.interfaces.utility import \
 
 from collective.googleanalytics import GoogleAnalyticsMessageFactory as _
 
+import logging
+logger = logging.getLogger('collective.googleanalytics')
+
+
 class IAnalyticsControlPanelForm(Interface):
 	"""
 	Google Analytics Control Panel Form
@@ -85,6 +89,8 @@ class AnalyticsControlPanelForm(ControlPanelForm):
                 scope="https://www.googleapis.com/auth/analytics",
                 user_agent='collective-googleanalytics',
             )
+            logger.debug(u"Created new OAuth2 token with id: '%s' and secret:"
+                         u" '%s'" % (key, secret))
 
             oauth2_token.redirect_uri = next
             ann = IAnnotations(analytics_tool)
@@ -94,6 +100,8 @@ class AnalyticsControlPanelForm(ControlPanelForm):
                 redirect_uri=next,
                 approval_prompt='force'
             )
+
+            logger.debug(u"Auth URL: %s" % auth_url)
 
         return auth_url
 

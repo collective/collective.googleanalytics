@@ -148,9 +148,13 @@ class Analytics(PloneBaseTool, IFAwareObjectManager, OrderedFolder):
                 # Token gets refreshed when a new request is made to Google,
                 # so check before
                 if ann['auth_token'].token_expiry < datetime.now():
+                    logger.debug("This access token expired, will try to "
+                        "refresh it.")
                     expired = True
                 result = query_method(feed_url, *args, **kwargs)
                 if expired:
+                    logger.debug("Token was refreshed successfuly. New expire "
+                        "date: %s" % ann['auth_token'].token_expiry)
                     IAnnotations(self)['auth_token'] = ann['auth_token']
                 return result
             except (Unauthorized, RequestError), e:
