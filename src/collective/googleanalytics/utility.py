@@ -42,7 +42,8 @@ def account_feed_cachekey(func, instance, feed_path):
 
     cache_interval = instance.cache_interval
     cache_interval = (cache_interval > 0 and cache_interval * 60) or 1
-    return hash((time() // cache_interval, instance.auth_token, feed_path))
+    return hash((time() // cache_interval, feed_path))
+
 
 class Analytics(PloneBaseTool, IFAwareObjectManager, OrderedFolder):
     """
