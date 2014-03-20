@@ -87,6 +87,12 @@ class Analytics(PloneBaseTool, IFAwareObjectManager, OrderedFolder):
     _v_temp_clients = None
 
     security.declarePrivate('_getAuthenticatedClient')
+    security.declarePrivate('is_auth')
+    security.declarePrivate('makeClientRequest')
+    security.declarePrivate('getReports')
+    security.declarePrivate('getCategoriesChoices')
+    security.declarePrivate('getAccountsFeed')
+
     def _getAuthenticatedClient(self):
         """
         Get the client object and authenticate using our stored credentials.
@@ -101,7 +107,6 @@ class Analytics(PloneBaseTool, IFAwareObjectManager, OrderedFolder):
 
         return client
 
-    security.declarePrivate('is_auth')
     def is_auth(self):
         ann = IAnnotations(self)
         valid_token = ann.get('valid_token', None)
@@ -109,7 +114,6 @@ class Analytics(PloneBaseTool, IFAwareObjectManager, OrderedFolder):
             return True
         return False
 
-    security.declarePrivate('makeClientRequest')
     def makeClientRequest(self, feed, *args, **kwargs):
         """
         Get the authenticated client object and make the specified request.
@@ -125,7 +129,6 @@ class Analytics(PloneBaseTool, IFAwareObjectManager, OrderedFolder):
             query_method = client.get_management_feed
         if feed.startswith('data'):
             query_method = client.get_data_feed
-
 
         # Workaround for the lack of timeout handling in gdata. This approach comes
         # from collective.twitterportlet. See:
@@ -149,12 +152,12 @@ class Analytics(PloneBaseTool, IFAwareObjectManager, OrderedFolder):
                 # so check before
                 if ann['auth_token'].token_expiry < datetime.now():
                     logger.debug("This access token expired, will try to "
-                        "refresh it.")
+                                 "refresh it.")
                     expired = True
                 result = query_method(feed_url, *args, **kwargs)
                 if expired:
                     logger.debug("Token was refreshed successfuly. New expire "
-                        "date: %s" % ann['auth_token'].token_expiry)
+                                 "date: %s" % ann['auth_token'].token_expiry)
                     IAnnotations(self)['auth_token'] = ann['auth_token']
                 return result
             except (Unauthorized, RequestError), e:
@@ -176,7 +179,6 @@ class Analytics(PloneBaseTool, IFAwareObjectManager, OrderedFolder):
         finally:
             socket.setdefaulttimeout(timeout)
 
-    security.declarePrivate('getReports')
     def getReports(self, category=None):
         """
         List the available Analytics reports. If a category is specified, only
@@ -189,7 +191,6 @@ class Analytics(PloneBaseTool, IFAwareObjectManager, OrderedFolder):
                 if (category and category in obj.categories) or not category:
                     yield obj
 
-    security.declarePrivate('getCategoriesChoices')
     def getCategoriesChoices(self):
         """
         Return a list of possible report categories.
@@ -197,13 +198,12 @@ class Analytics(PloneBaseTool, IFAwareObjectManager, OrderedFolder):
 
         return self.report_categories
 
-    security.declarePrivate('getAccountsFeed')
     @ram.cache(account_feed_cachekey)
     def getAccountsFeed(self, feed_path):
         """
         Returns the list of accounts.
         """
-        feed = 'management/'+feed_path
+        feed = 'management/' + feed_path
         res = self.makeClientRequest(feed)
         return res
 

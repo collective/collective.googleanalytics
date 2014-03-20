@@ -3,10 +3,6 @@ from zope.annotation import IAnnotations
 
 from zope.publisher.browser import BrowserPage
 from Products.CMFCore.utils import getToolByName
-from gdata.service import NonAuthSubToken, TokenUpgradeFailed
-import gdata.analytics.service
-import gdata.auth
-import gdata.oauth
 from collective.googleanalytics import error
 from collective.googleanalytics import GoogleAnalyticsMessageFactory as _
 from gdata.gauth import OAuth2RevokeError
@@ -47,8 +43,10 @@ class AnalyticsAuth(BrowserPage):
             except socket.gaierror:
                 logger.debug("There was a connection issue, could not revoke "
                              "token.")
-                raise error.RequestTimedOutError, ('You may not have internet '
-                    'access. Please try again later.')
+                raise error.RequestTimedOutError, (
+                    'You may not have internet access. Please try again '
+                    'later.'
+                )
 
             ann['auth_token'] = None
             ann['valid_token'] = False
@@ -60,14 +58,16 @@ class AnalyticsAuth(BrowserPage):
         # Otherwise, we are setting the token.
         elif self.request.QUERY_STRING and 'code' in self.request:
             code = self.request.get('code')
-            logger.debug("Received callback from Google with code '%s' "
-                % code)
+            logger.debug(
+                "Received callback from Google with code '%s' " % code
+            )
             ann = IAnnotations(analytics_tool)
             oauth2_token = ann.get('auth_token', None)
             try:
                 oauth2_token.get_access_token(code)
-                logger.debug("Code was valid, got '%s' as access_token and "
-                    "'%s' as refresh_token. Token will expire on '%s'" %
+                logger.debug(
+                    "Code was valid, got '%s' as access_token and '%s' as "
+                    "refresh_token. Token will expire on '%s'" %
                     (oauth2_token.access_token,
                      oauth2_token.refresh_token,
                      oauth2_token.token_expiry))

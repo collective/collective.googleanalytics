@@ -12,6 +12,7 @@ import time
 import os
 from collective.googleanalytics import GoogleAnalyticsMessageFactory as _
 
+
 class DefaultAnalyticsAsyncLoader(object):
 
     implements(IAnalyticsAsyncLoader)
@@ -63,6 +64,7 @@ class DefaultAnalyticsAsyncLoader(object):
 
         return template.substitute(template_vars)
 
+
 class AsyncAnalyticsResults(BrowserPage):
     """
     Returns a HTML snippet for report results to be inserted dynamically
@@ -106,4 +108,4 @@ class AsyncAnalyticsResults(BrowserPage):
         # way to generate this label dynamically, probably by using the variable
         # date range plugin from one of the report renderers.
         date_range_msg = _('Last 30 Days')
-        return '<h2>%s</h2>'%(self.context.translate(date_range_msg)) + '\n'.join(results)
+        return '<h2>%s</h2>' % (self.context.translate(date_range_msg)) + '\n'.join(results)

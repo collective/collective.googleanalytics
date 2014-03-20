@@ -48,6 +48,7 @@ def getProfiles(context):
         choices = [('No profiles available', None)]
     return SimpleVocabulary([SimpleTerm(c[1], c[1], c[0]) for c in choices])
 
+
 def getWebProperties(context):
     """
     Return list of Google Analytics profiles and web property
@@ -88,7 +89,7 @@ def getWebProperties(context):
                 if prop.name == 'ga:webPropertyId':
                     webPropertyId = prop.value
             if not webPropertyId in unique_choices.keys():
-                unique_choices.update({webPropertyId : title})
+                unique_choices.update({webPropertyId: title})
             else:
                 unique_choices[webPropertyId] += ', ' + title
         # After we reverse the terms so that the profile name(s) is now the key, we need
@@ -98,6 +99,7 @@ def getWebProperties(context):
     else:
         choices = [('No profiles available', None)]
     return SimpleVocabulary([SimpleTerm(c[1], c[1], c[0]) for c in choices])
+
 
 def getReports(context, category=None):
     """
@@ -111,6 +113,7 @@ def getReports(context, category=None):
         choices = [SimpleTerm(value=report.id, token=report.id, title=report.title) for report in reports]
     return SimpleVocabulary(choices)
 
+
 def getSiteWideReports(context):
     """
     Return list of site wide Google Analytics reports.
@@ -118,12 +121,14 @@ def getSiteWideReports(context):
 
     return getReports(context, category="Site Wide")
 
+
 def getPortletReports(context):
     """
     Return list of portlet Google Analytics reports.
     """
 
     return getReports(context, category="Portlet")
+
 
 def getRoles(context):
     """
@@ -134,18 +139,19 @@ def getRoles(context):
     roles = [role for role in pmemb.getPortalRoles() if role != 'Owner']
     return SimpleVocabulary.fromValues(roles)
 
+
 def getTrackingPluginNames(context):
     """
     Return a list of the names of the available tracking plugins.
     """
 
     gsm = getGlobalSiteManager()
-    global_plugins = set([p.name for p in gsm.registeredAdapters() \
-        if p.provided == IAnalyticsTrackingPlugin])
+    global_plugins = set([p.name for p in gsm.registeredAdapters()
+                          if p.provided == IAnalyticsTrackingPlugin])
 
     lsm = getSite().getSiteManager()
-    local_plugins = set([p.name for p in lsm.registeredAdapters() \
-        if p.provided == IAnalyticsTrackingPlugin])
+    local_plugins = set([p.name for p in lsm.registeredAdapters()
+                         if p.provided == IAnalyticsTrackingPlugin])
 
     values = sorted(list(global_plugins | local_plugins))
     return SimpleVocabulary.fromValues(values)

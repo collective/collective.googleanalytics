@@ -1,10 +1,12 @@
 from Products.CMFCore.utils import getToolByName
 
+
 def null_upgrade_step(setup_tool):
     """
     This is a null upgrade, use it when nothing happens
     """
     pass
+
 
 def upgrade_10a2_to_10a3(setup_tool):
     """
@@ -14,6 +16,7 @@ def upgrade_10a2_to_10a3(setup_tool):
 
     name = 'profile-collective.googleanalytics:upgrade_10a2_10a3'
     setup_tool.runAllImportStepsFromProfile(name)
+
 
 def upgrade_10a4_to_10b1(setup_tool):
     """
@@ -105,6 +108,7 @@ def upgrade_10a4_to_10b1(setup_tool):
     step_id = 'analytics'
     setup_tool.runImportStepFromProfile(profile_id, step_id)
 
+
 def upgrade_10b1_to_10b2(setup_tool):
     """
     Update Analytics tool to use new properties.
@@ -140,6 +144,7 @@ def upgrade_10b1_to_10b2(setup_tool):
         report = analytics_tool['site-timeonsite-line']
         if report.rows == OLD_ROWS:
             report.rows = NEW_ROWS
+
 
 def upgrade_10b3_to_10(setup_tool):
     """

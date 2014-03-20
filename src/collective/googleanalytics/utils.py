@@ -2,17 +2,20 @@ from Products.CMFCore.Expression import Expression
 from zope.tales.tales import CompilerError
 import datetime
 
+
 def getTimeDelta(**kwargs):
     """
     Return a python timedelta for use in TALES expressions.
     """
     return datetime.timedelta(**kwargs)
 
+
 def getDate(year, month, day):
     """
     Return a python date for use in TALES expressions.
     """
     return datetime.date(year, month, day)
+
 
 def evaluateTALES(parent, exp_context, evaluate_keys=False):
     """
@@ -38,6 +41,7 @@ def evaluateTALES(parent, exp_context, evaluate_keys=False):
     except (KeyError, CompilerError):
         return parent
 
+
 def makeDate(date_stamp):
     """
     Given a date string returned by Google, return the corresponding python
@@ -53,6 +57,7 @@ def makeDate(date_stamp):
     month = int(date_string[4:6])
     day = int(date_string[6:8])
     return datetime.date(year, month, day)
+
 
 def json_serialize(parent):
     """
@@ -70,11 +75,13 @@ def json_serialize(parent):
         return '{%s}' % ', '.join(json_parts)
     return js_value(parent)
 
+
 class js_literal(str):
     """
     Marks a Python string object as a literal so that it is not enclosed
     in quotes when it is passed through js_value.
     """
+
 
 def js_value(value):
     """
@@ -96,6 +103,7 @@ def js_value(value):
     # A number
     return str(value)
 
+
 def extract_value(column):
     """
     Returns a tuple containing the dimension or metric name and value value
@@ -115,6 +123,7 @@ def extract_value(column):
             except:
                 pass
     return (column.name, value)
+
 
 def unique_list(original):
     """
