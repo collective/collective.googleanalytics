@@ -6,9 +6,16 @@ enables easy tracking of the standard Google statistics as well as external
 links, e-mail address clicks and file downloads. It also defines Analytics
 reports that are used to query Google and display the results using Google
 Visualizations. Reports are Zope objects that can be imported and exported
-using GenericSetup XML and modified on a site-by-site basis. The product 
+using GenericSetup XML and modified on a site-by-site basis. The product
 currently provides a portlet that can display results of reports as well
 as a control panel for authorizing your site and configuring settings.
+
+.. contents::
+
+
+.. image:: https://secure.travis-ci.org/collective/collective.googleanalytics.png
+    :target: http://travis-ci.org/collective/collective.googleanalytics
+
 
 Installation
 ============
@@ -35,7 +42,7 @@ the section on `Registering a Domain`_ below.
 
 After authorizing your site, you can select the profile where you want to
 track analytics for this site. Choose a profile from the dropdown menu. If you
-do not see any profiles listed, make sure that your Google Analytics account 
+do not see any profiles listed, make sure that your Google Analytics account
 has access to at least one profile. Also, be sure to remove any Google
 Analytics tracking code that you may have pasted in the Site control panel.
 
@@ -51,7 +58,7 @@ data will not be recorded for users with the selected roles. Note that this
 setting does not affect the inclusion of scripts specified in the Site
 control panel.
 
-On the settings tab, you can also configure the amount of time, in minutes, 
+On the settings tab, you can also configure the amount of time, in minutes,
 that account information and report results will be cached, reducing the need
 to query Google. Sixty minutes is the default caching interval.
 
@@ -61,9 +68,9 @@ When you authorize your site to access your Google Analytics data, you may
 receive an error::
 
     The site "http://example.com" has not been registered.
-    
+
 When this happens, you need to register your domain with Google before you
-can authorize your site. Follow steps 1-3 of Google's `directions for 
+can authorize your site. Follow steps 1-3 of Google's `directions for
 registering a new domain`__. In step two, you can upload the file provided
 by Google to your Plone site root. Be sure to use the File content type, and
 make sure that the short name matches the filename specified by Google.
@@ -78,16 +85,16 @@ collective.googleanalytics ships with four tracking plugins:
 Comments
     This plugin records a tracking event in Google Analytics for each comment
     created on your site.
-    
+
 Email links
     This plugin records a tracking event in Google Analytics each time a
     visitor clicks on a "mailto:" link.
-    
+
 External links
     This plugin records a tracking event in Google Analytics each at time a
     visitor clicks on a link with a domain name different from the domain
     name of your site.
-    
+
 File downloads
     This plugin records a tracking event in Google Analytics each time a
     visitor clicks on a link to a file with one of these extensions: avi, css,
@@ -99,8 +106,8 @@ Using Reports
 After you have authorized your site in the control panel, you can begin using
 Analytics reports. First navigate to the page where you would like to display
 the report results. Where you place the portlet depends on your goals and the
-type of reports you are displaying. Even if you place a portlet on a public 
-page, the portlet will only be visible to users who have the "View Google 
+type of reports you are displaying. Even if you place a portlet on a public
+page, the portlet will only be visible to users who have the "View Google
 Analytics Reports" permission, which, by default is assigned to Managers.
 
 Next, place the portlet as you normally would, using the manage portlets page
@@ -157,39 +164,39 @@ throughout the site.
 The Report Rendering Process
 ============================
 
-By default, Analytics reports are rendered asynchronously using jQuery. This 
+By default, Analytics reports are rendered asynchronously using jQuery. This
 improves site performance by allowing the body of page to render without
 waiting for a response from Google Analytics. The basic flow of a request
 that renders an Analytics report might go as follows:
 
 1. A user requests the content item front-page, which has a Google Analytics
    portlet assigned in the right column.
-   
+
 2. Plone renders front-page as usual. When it renders the Google Analytics
    portlet, it looks up a loader component.
-   
+
 3. Instead of requesting the actual results, the loader produces javascript
    that will load the results after the page has finished loading. It also
    produces javascript to load the visualization modules that the reports
    will require.
-   
+
 4. The javascript from the loader is included with front-page when it is
    rendered. As soon as the page has finished loading, the javascript produced
    by the loader is activated. It sends another request to the server that
    includes the requested reports and any options for evaluating them.
-   
+
 5. A browser view associated with the loader is called as part of the
    asynchronous request. (The context for this browser view is still
    front-page.) This browser view loads the specified reports.
-   
+
 6. For each report in the request, the browser view looks up a renderer,
-   which is a multi-adapter on the current context (front-page), request 
+   which is a multi-adapter on the current context (front-page), request
    (the asynchronous request) and the report.
-   
+
 7. The renderer renders the report or returns a cached result if one exists.
    The browser view combines the results from all of the requested reports and
    returns them.
-   
+
 8. The results returned by the renderer are injected into the portlet. In the
    process, jQuery evaluates any javascript in the results, including the
    javascript that produces the visualization.
@@ -227,35 +234,35 @@ Description
 
 I18n Domain
 	The domain for translating the report.
-	
+
 Categories
     A list of categories to which the report belongs. Categories are used to
     determine where the report can be displayed.
-    
+
 Plugins
     Plugins are multi-adapters on the context, the request and the report
     that extend the default functionality of the report. Two plugins ship
     with collective.googleanalytics. See the sections on `Contextual Results
     Plugin`_ and `Variable Date Range Plugin`_ for more details.
-    
+
     Note that some plugins add additional dimension, metric and visualization
     choices, which are not available until the report is saved. As a result,
     it is generally a good idea to save the report immediately after adding
     or removing any plugin.
-	
+
 Query criteria
 --------------
-	
+
 The query criteria section of the report is made up of all the properties
 that begin with the word query. These properties determine the query that is
 sent to Google to retrieve Analytics data. All of these properties accept
 TALES expressions. They have access to the TALES variables defined in the
 section on `Using TAL and TALES in Reports`_ as well as any TALES objects
 provided by the selected plugins.
-	
+
 Query Metrics
 	A list of Google Analytics metrics to use in the query.
-	
+
 Query Dimensions
 	A list of Google Analytics dimensions to return in the query. This list can
 	include the special dimension variables date_range_dimension and
@@ -267,24 +274,24 @@ Query Filters
 	TALES expressions that evaluate to strings in the format METRIC==VALUE,
 	where METRIC is the name of a Google Analytics metric or dimension,
 	VALUE is the desired value, and == is the appropriate logical operator.
-	
+
 Query Sort
 	A list of metrics or dimensions on which to sort the query results. Sort
 	parameters are defined using strings or TALES expressions that evaluate to
 	strings containing the name of a Google Analytics dimension or metric. In
 	addition, the name of the dimension or metric can be preceded by a minus
 	sign (-) to change the sort order from ascending to descending.
-	
+
 Query Start Date
     The start date for query results. It must be a TALES expression that
     evaluates to a Python datetime.date object. In reports that use the
     `Variable Date Range Plugin`_, it is not necessary to specify the
     start date or end date.
-    
+
 Query End Date
     The end date for the query results. See Query Start Date above for more
     information.
-	
+
 Query Maximum Results
 	The maximum number of results that the query can return. It must be a TALES
 	expression that evaluates to a positive integer.
@@ -312,7 +319,7 @@ dimension(dimension, specified={}, aggregate=unique_list, default=[])
     the browsers returned by the query::
 
         python:dimension('ga:browser')
-            
+
 metric(metric, specified={}, aggregate=sum, default=0)
     Returns the value of the given metric across the specified
     dimensions and metrics using the specified aggregation method (sum by
@@ -323,7 +330,7 @@ metric(metric, specified={}, aggregate=sum, default=0)
     'ga:browser' equals 'Mozilla,' we could use this expression::
 
         python:metric('ga:visits', {'ga:browser': 'Mozilla'})
-    
+
     In reports that use the `Variable Date Range Plugin`_, the value
     of the specified argument is often set to an element in the list
     returned by the possible_dates method.
@@ -336,7 +343,7 @@ possible_dates(dimensions=[], aggregate=unique_list)
     This method is commonly used in place of the dimension method in
     reports that include date dimensions to ensure that the table contains
     one row for each date unit in the date range.
-    
+
 These three properties make up the table builder section of the report:
 
 Table Columns Expression
@@ -344,73 +351,73 @@ Table Columns Expression
 	to a Python list of strings. If and where these titles appear depends on
 	the type of visualization. For the Table visualization, for example, they
 	appear as the table column headings.
-	
+
 	In most reports, the table columns expression is a static Python list::
-	    
+
 	    python:['Visits']
-	    
+
 	It is, of course, possible to use TALES variables to populate the
 	columns list::
-	
+
 	    python:[date_range_unit, 'Visits']
-	    
+
 	In complex tables, the number of columns may be determined by the results
 	returned by the query. In this example, the first column is "Date" and the
 	names of the remaining columns are the names of the browsers returned
 	by the query::
-	
+
 	    python:['Date'] + dimension('ga:browser')
-	
+
 Table Row Repeat Expression
     The expression that produces the set of row keys used generate the rows in
     the results table. It is specified as a TALES expression that evaluates to
     a Python iterable with one element for each row in the final table.
-    
+
     When the report renderer is asked for the results table rows, it first
     evaluates the row repeat expression. It then iterates over each element
     in the resulting list and evaluates the table rows expression with
     the current element assigned to the variable "row."
-    
+
     Typically the values of the row repeat expression are generated using the
     dimension function or the possible_dates function::
-    
+
         python:dimension('ga:pagePath')
-        
+
     or::
-    
+
         possible_dates
-    
+
     See the section on `Using TAL and TALES in Reports`_ for more information
     about the use of these functions.
-	
+
 Table Rows Expression
     The contents of each table row. It is must be a TALES expression that
     evaluates to a Python list containing the value of the "cells" for that
     table row. The table rows expression has access to two special TALES
     varables:
-    
+
     row
         The value of the row key for the row that is currently being evaluated.
         These values come from the list produced by evaluating the table row
         repeat expression.
-        
+
     columns
         The list of table column headings produced by evaluating the table
         columns expression.
-        
+
     In tables with only one column, the value of the rows expression is
     often the same as the value of the row key::
-    
+
         python:[row]
-        
+
     In two column tables, the value of one column is typically the row key,
     and the other is a metric value looked up using the row key::
-    
+
         python:[row, metric('ga:visits', {'ga:browser': row})]
-        
+
     In complex, multi-column tables, it may be necessary to iterate over the
     columns variable using a Python list comprehension::
-    
+
         python:[row] + [metric('ga:visits', {'ga:browser': row, 'ga:operatingSystem': c}) for c in columns[1:]]
 
 Visualization settings
@@ -465,7 +472,7 @@ columns()
 
 rows()
     Returns the evaluated table rows.
-    
+
 visualization()
     Returns the rendered visualization.
 
@@ -473,17 +480,17 @@ dimension(dimension, specified={}, aggregate=unique_list, default=[])
     Returns the value of the given metric across the specified
     dimensions and metrics using the specified aggregation method. See
     the description in the `Table builder`_ section above.
-                
+
 metric(metric, specified={}, aggregate=sum, default=0)
     Returns the value of the given metric across the specified
     dimensions and metrics using the specified aggregation method. See
     the description in the `Table builder`_ section above.
-    
+
 possible_dates(dimensions=[], aggregate=unique_list)
     Returns a list of dictionaries containing all possible values for
     the given date dimension in the current date range. See the description
     in the `Table builder`_ section above.
-    
+
 Using TAL and TALES in Reports
 ==============================
 
@@ -496,7 +503,7 @@ variables:
 context
 	The object on which the current view is being called. In most cases, this
 	is the content object next to which the report will be displayed.
-	
+
 request
 	The current request object. Since Analytics reports are rendered
 	asynchronously, this request object is the asynchronous report request,
@@ -505,10 +512,10 @@ request
 
 date
 	An alias for the datetime.date function.
-	
+
 timedelta
 	An alias for the datetime.timedelta function.
-	
+
 unique_list
     A helper function that takes a Python list and returns a corresponding
     list where all duplicated elements in the original list have been removed.
@@ -526,7 +533,7 @@ simplify the process of creating page-specific reports:
 page_url
 	The relative URL of the current request. This is most commonly used in
 	the query filters property for creating page-specific reports.
-	
+
 page_filter
     A Google Analytics filter expression that matches records where the
     ga:pagePath record matches the current relative URL. It uses regular
@@ -560,8 +567,8 @@ start_date and end_date
 date_range
     An integer specifying the number of days prior to the current date to use
     as the report start date. The end date is assumed to be the current date.
-    The date_range argument can also accept a string keyword that evaluates 
-    to a particular date range depending on the current context. Current 
+    The date_range argument can also accept a string keyword that evaluates
+    to a particular date range depending on the current context. Current
     keywords include:
 
     week
@@ -592,7 +599,7 @@ Since dates for reports are dynamic, the plugin also provides two special
 dimensions that are date sensitive. This allows the granularity of the report
 results to be set based on the date range selected. (For example, if you specify
 a date range of a year, you probably don't want to segment your results by day.
-Instead, viewing results by month would be a more appropriate choice.) The two 
+Instead, viewing results by month would be a more appropriate choice.) The two
 special dimensions are:
 
 date_range_dimension
@@ -644,14 +651,14 @@ complicated multi-dimensional report, read on:
 2. Click the Add Google Analytics Report button.
 
 3. We'll give our new report the ID site-bounce-rate-browser-line,
-   following the naming convention of the default reports. This naming 
-   convention is optional, but it helps to keep things organized. Then 
+   following the naming convention of the default reports. This naming
+   convention is optional, but it helps to keep things organized. Then
    click the add button.
 
 4. Click on the new report to edit it. Give it a title of Site Bounce Rate
    By Browser: Line Chart and this description:
 
-   This report displays the site-wide bounce rate segmented by the user's 
+   This report displays the site-wide bounce rate segmented by the user's
    browser. It is useful for gauging how effective our site's new multimedia
    features are in each browser.
 
@@ -671,7 +678,7 @@ complicated multi-dimensional report, read on:
    that bounce rate is calculated as follows::
 
 		ga:bounces/ga:entrances
-		
+
    So, set the query metrics to ga:bounces and ga:entrances.
 
 9. We also know that we want to segment our results by browser, so we'll set
@@ -690,15 +697,15 @@ complicated multi-dimensional report, read on:
 
 11. In the query sort box, enter the dimensions provided by the Variable Date
     Range Plugin::
-    
+
         date_range_dimension
         date_range_sort_dimension
-    
+
 12. In query maximum results, leave the default value, python:1000.
 
 13. Now that our query arguments are complete, we can work on our results
     table. Let's begin by drawing out what our table should look like:
-    
+
     +-------+-----------+---------------------+----------+----------+
     | "Day" | "Firefox" | "Internet Explorer" | "Safari" | "Chrome" |
     +=======+===========+=====================+==========+==========+
@@ -710,58 +717,58 @@ complicated multi-dimensional report, read on:
     +-------+-----------+---------------------+----------+----------+
     | Etc.                                                          |
     +-------+-----------+---------------------+----------+----------+
-    
+
     Note that the day column contains strings, not integers. This is necessary
     so that the line chart visualization will treat these values as labels
     instead of data.
-	
+
 14. Great! Now we can write the expressions to generate the table. Enter this
     expression in the table columns expression field::
-    
+
         python:[date_range_unit] + dimension('ga:browser')
-        
+
     This expression combines the value of the date_range_unit, which is
     provided by the Variable Date Range Plugin, with all of the possible
     values of the ga:browser dimension.
-    
+
 15. For the table row repeat expression, enter::
 
-        possible_dates    
-    
+        possible_dates
+
     This expression will populate the row keys with dictionaries that contain
     the values of date_range_dimension and date_range_sort_dimension. We use
     possible_dates instead of dimension(date_range_dimension) because we want
     one entry for every period of time in the current date range, even if there
     aren't any results for that particular period of time.
-    
+
 16: In the table rows expression field, enter the following expression,
     removing the line breaks::
-    
-        python:[str(row[date_range_dimension])] + 
+
+        python:[str(row[date_range_dimension])] +
         [int(100*float(metric('ga:bounces', row))/(float(metric('ga:entrances', row)) + 0.0001))
             for c in columns[1:] if not row.update({'ga:browser': c})]
-        
+
     Whoa! That looks complicated! If we break down the expression into its
     parts, however, it's easy to see what's going on::
-    
+
         [str(row[date_range_dimension])]
-        
+
     This part of the expression creates a list with a single element: the value
     of date_range_dimension as a string. Recall that, in this expression, row
     is a dictionary that contains key-value pairs for date_range_expression
     and date_range_sort_expression.
-    
+
     Now let's skip to the end of the expression::
-    
+
         for c in columns[1:]
-        
+
     This code serves as the repeat expression in a Python list comprehension
     that generates the bounce rate for each browser for the specified date.
     columns[1:] represents the list of browser names generated by
     dimension('ga:browser')::
-    
+
         if not row.update({'ga:browser': c})
-        
+
     This tricky bit of code updates the row dictionary to include the value of
     the current browser as it iterates over the list of browsers. That way we
     can pass row to the metric() method to get value of the metric for the
@@ -770,9 +777,9 @@ complicated multi-dimensional report, read on:
 
     Finally, the rest of the expression is just the math used to calculate
     the bounce rate::
-    
+
         int(100*float(metric('ga:bounces', row))/(float(metric('ga:entrances', row)) + 0.0001))
-        
+
     We have to convert the values we get back from metric() into floating point
     numbers so that the division operates as we expect. We also add a tiny
     number to the denominator to avoid getting a divide by zero error if the
@@ -781,27 +788,27 @@ complicated multi-dimensional report, read on:
 
 17. We're almost done! From the visualization type drop down menu, choose
     LineChart.
-	
+
 18. In the visualization options box, enter these option definitions, one
     per line::
-    
+
         title string:Bounce Rate By Browser
         height python:250
         titleX python:date_range_unit
         titleY string:Bounce Rate (%)
         smoothLine python:True
-		
+
     These options are all aesthetic. Once you become familiar with Google
     visualizations, you can adjust them to fit your personal preferences. For
     a full list of the options available for each visualization, visit the
     Google Visualization Gallery referenced in the section on `Where to Learn
     More`_.
-	
+
 19. In the report body field, enter this block of TAL code, which renders the
     line chart visualization::
 
         <div tal:replace="structure view/visualization"></div>
-	
+
 18. You're done! Click the save button in the ZMI. Then test out your new
     report on the site as described in the section about `Using Reports`_.
 
@@ -811,7 +818,7 @@ Defining Reports in a Filesystem Product
 Any product that imports a GenericSetup profile can define Analytics reports.
 These reports should be defined in a file called analytics.xml in the
 product's GenericSetup profile directory. The easiest way to generate the XML
-for a report is to create the report through the web and then export it. 
+for a report is to create the report through the web and then export it.
 
 For example, after following the instructions above for creating a new report,
 you could use the portal_setup tool in the ZMI to create a snapshot of the
@@ -865,7 +872,7 @@ Google Analytics API
 
   gdata is the Python module that interacts with the Google API. This
   documentation is most useful for developers who wish to contribute to or
-  extend collective.googleanalytics. The relevant documentation is divided into 
+  extend collective.googleanalytics. The relevant documentation is divided into
   two sections:
 
   - `gdata.analtyics.service Reference`__
@@ -920,7 +927,7 @@ TAL and TALES
 * `Zope Page Template Reference`__
 
   __ http://docs.zope.org/zope2/zope2book/AppendixC.html
-  
+
   This appendix from the Zope2 Book provides a comprehensive overview of
   TAL and TALES as they are used in Zope page templates.
 

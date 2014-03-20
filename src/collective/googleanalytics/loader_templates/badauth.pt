@@ -1,0 +1,5 @@
+<p class="analytics-error" i18n:domain="collective.googleanalytics">
+	<span i18n:translate="">You need to authorize with Google in the</span> 
+	<a tal:attributes="href string:${context/portal_url}/portal_analytics/@@analytics-controlpanel" 
+		href="" i18n:translate="">Google Analytics control panel</a>.
+</p>

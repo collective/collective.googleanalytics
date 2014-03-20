@@ -4,8 +4,36 @@ Changelog
 1.5 (unreleased)
 ----------------
 
-* Add virtual page views for search and error pages
-  [2013-04-09 - tomgross]
+- Add virtual page views for search and error pages [tomgross]
+ 
+- Use Python json instead of custom one [tomgross]
+
+- Added more improvements about i18n [macagua]
+
+- Added Spanish translations [macagua]
+
+- Updated the core GA code with the latest snippet from Google [spanktar]
+
+- Prepend "Copy of" if copy&paste a report. [frapell]
+
+- Use SimpleTerm when creating the reports vocabulary. [frapell]
+
+
+1.4.3 (2013-05-28)
+------------------
+
+- french translations [kiorky]
+
+
+1.4.2 (2013-05-28)
+------------------
+
+- Fix release, add .mo [kiorky]
+
+
+1.4.1 (2013-05-28)
+------------------
+>>>>>>> master
 
 * Add dependency on unittest2 to support advance testing features under
   Python 2.6.
@@ -30,6 +58,7 @@ Changelog
 * Improve handling of unicode values in vocabularies
   [2012-10-23 - kiorky]
 
+<<<<<<< HEAD
 * Use Python json / simplejson instead of custom one
   [2013-02-28 - tomgross]
 
@@ -38,6 +67,10 @@ Changelog
 
 * Pass viewlet view and manager
   [2013-03-18 - tomgross]
+=======
+* Release & QA Stuff
+  [2013-05-28 - kiorky]
+>>>>>>> master
 
 1.4.1 - 2012-08-29
 ------------------

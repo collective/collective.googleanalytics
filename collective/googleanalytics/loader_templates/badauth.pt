@@ -1,5 +1,0 @@
-<p class="analytics-error">
-	You need to authorize with Google in the 
-	<a tal:attributes="href string:${context/portal_url}/portal_analytics/@@analytics-controlpanel" 
-		href="">Google Analytics control panel</a>.
-</p>

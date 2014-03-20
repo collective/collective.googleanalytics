@@ -1,0 +1,328 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: \n"
+"POT-Creation-Date: 2013-10-20 01:28+0000\n"
+"PO-Revision-Date: 2012-09-18 16:02 -3000\n"
+"Last-Translator: Thiago Curvelo <tcurvelo@gmail.com>\n"
+"Language-Team: TRT13 <web@trt13.jus.br>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0\n"
+"Language-Code: pt-br\n"
+"Language-Name: Brazilian Portuguese\n"
+"Preferred-Encodings: utf-8 latin1\n"
+"Domain: collective.googleanalytics\n"
+
+#: ./browser/controlpanel.pt:102
+msgid "After you click Grant Access, you will be returned to this page where you can configure Google Analytics for Plone."
+msgstr ""
+
+#: ./report_templates/error.pt:2
+msgid "An error occurred while rendering"
+msgstr ""
+
+#: ./browser/auth.py:54
+msgid "Authorization failed. Google Analytics for                     Plone received an invalid token."
+msgstr "Falha na autorização. O Google Analytics para Plone recebeu um token inválido."
+
+#: ./browser/controlpanel.pt:70
+msgid "Authorization required"
+msgstr ""
+
+#: ./browser/auth.py:31
+msgid "Authorization revoked. You may now reauthorize with                 a different Google account."
+msgstr "Autorização revogada. Agora você pode reautorizar com uma conta do Google diferente."
+
+#: ./browser/auth.py:50
+msgid "Authorization succeeded. You may now configure                 Google Analytics for Plone."
+msgstr "Autorização bem-sucedida. Agora você pode configurar o Google Analytics para Plone."
+
+#: ./browser/controlpanel.pt:87
+msgid "Authorize with Google"
+msgstr ""
+
+#: ./browser/controlpanel.pt:55
+msgid "Authorized:"
+msgstr ""
+
+#: ./browser/controlpanel.pt:71
+msgid "Before you can use Google Analytics for Plone, you need to authorize this site to access your Google Analytics account. Follow the steps below to complete the authorization process."
+msgstr ""
+
+#: ./interfaces/utility.py:55
+msgid "Cache interval"
+msgstr "Intervalo de cache"
+
+#: ./interfaces/utility.py:19
+#: ./portlets/analyticsportlet.py:32
+msgid "Choose the Web property profile from Google Analytics."
+msgstr "Escolha o perfil da propriedade Web do Google Analytics."
+
+#: ./interfaces/utility.py:47
+#: ./portlets/analyticsportlet.py:38
+msgid "Choose the reports to display."
+msgstr "Selecione os relatórios para exibição"
+
+#: ./interfaces/utility.py:31
+msgid "Choose the roles that should be excluded from tracking."
+msgstr "Escolha os papéis que devem ser excluídos do acompanhamento."
+
+#: ./interfaces/utility.py:25
+msgid "Choose which tracking plugins to use."
+msgstr "Escolha quais plugins de acompanhamento usar."
+
+#: ./profiles/default/analytics.xml
+#: ./profiles/upgrade_10a2_10a3/analytics.xml
+msgid "Displays a table of the top five next pages."
+msgstr "Exibe uma tabela com as Top 5 Páginas seguintes."
+
+#: ./profiles/default/analytics.xml
+#: ./profiles/upgrade_10a2_10a3/analytics.xml
+msgid "Displays a table of the top five previous pages."
+msgstr "Exibe uma tabela com as Top 5 Páginas anteriores."
+
+#: ./profiles/default/analytics.xml
+msgid "Displays a table of the top pages by number of page views for this month."
+msgstr "Exibe uma tabela das principais páginas em número de visualizações para este mês."
+
+#: ./profiles/default/analytics.xml
+msgid "Displays a table of the top source domains by number of visits."
+msgstr "Exibe uma tabela com os principais domínios de origem pelo número de visitas."
+
+#: ./profiles/default/analytics.xml
+#: ./profiles/upgrade_10a2_10a3/analytics.xml
+msgid "Displays a table of the top source domains for this page."
+msgstr "Exibe uma tabela com os domínios de origem principais para essa página."
+
+#: ./profiles/default/analytics.xml
+#: ./profiles/upgrade_10a2_10a3/analytics.xml
+msgid "Displays a table of the top ten keywords."
+msgstr "Exibe uma tabela das dez principais palavras-chave."
+
+#: ./profiles/default/analytics.xml
+#: ./profiles/upgrade_10a2_10a3/analytics.xml
+msgid "Displays the average time on page for the last 30 days as a sparkline."
+msgstr "Exibe o tempo médio na página dos últimos 30 dias como um minigráfico."
+
+#: ./profiles/default/analytics.xml
+#: ./profiles/upgrade_10a2_10a3/analytics.xml
+msgid "Displays the average time on site as a line graph."
+msgstr "Exibe o tempo médio no site como um gráfico de linha."
+
+#: ./profiles/default/analytics.xml
+#: ./profiles/upgrade_10a2_10a3/analytics.xml
+msgid "Displays the number of page views as a sparkline."
+msgstr "Exibe o número de visualizações de página como um minigráfico."
+
+#: ./profiles/default/analytics.xml
+#: ./profiles/upgrade_10a2_10a3/analytics.xml
+msgid "Displays the number of site page views as a line graph."
+msgstr "Exibe o número de visualizações de página do site como um gráfico de linha."
+
+#: ./profiles/default/analytics.xml
+#: ./profiles/upgrade_10a2_10a3/analytics.xml
+msgid "Displays the number of site unique visitors as a line graph."
+msgstr "Exibe o número de visitantes únicos do site como um gráfico de linha."
+
+#: ./profiles/default/analytics.xml
+msgid "Displays the number of site visits as a line graph."
+msgstr "Exibe o número de visitas do site como um gráfico de linha."
+
+#: ./interfaces/utility.py:56
+msgid "Enter the number of minutes for which account             information and report results should be cached."
+msgstr "Digite o número de minutos que as informações de contas e resultados de relatório devam ser armazenados em cache."
+
+#: ./portlets/analyticsportlet.py:25
+msgid "Enter the title of the portlet."
+msgstr "Digite o título do portlet."
+
+#: ./interfaces/utility.py:28
+msgid "Excluded Roles"
+msgstr "Papéis Excluídos"
+
+#: ./browser/controlpanel.py:54
+#: ./profiles/default/controlpanel.xml
+msgid "Google Analytics"
+msgstr ""
+
+#: ./browser/controlpanel.py:55
+msgid "Google Analytics Settings"
+msgstr "Configurações do Google Analytics"
+
+#: ./loader_templates/badauth.pt:3
+msgid "Google Analytics control panel"
+msgstr ""
+
+#: ./browser/controlpanel.pt:92
+msgid "Google will ask you if you want to allow this site to access your Google Analytics data. If the URL displayed matches the one below, click the Grant Access button."
+msgstr ""
+
+#: ./browser/controlpanel.pt:106
+msgid "If you ever decide that you no longer want this site to have access to your Google Analytics data, you can remove its authorization by clicking the Revoke Access link in this control panel or by visiting the Change Authorized Websites link in your Google account preferences."
+msgstr ""
+
+#: ./loader.py:108
+msgid "Last 30 Days"
+msgstr "Últimos 30 Dias"
+
+#: ./portlets/analyticsportlet.pt:17
+msgid "More analytics"
+msgstr "Mais estatísticas"
+
+#: ./browser/controlpanel.pt:84
+msgid "Once you have signed into your Google account, click this link to begin the authorization process:"
+msgstr ""
+
+#: ./profiles/default/analytics.xml
+#: ./profiles/upgrade_10a2_10a3/analytics.xml
+msgid "Page Views: Sparkline"
+msgstr "Visualizações de Página: Minigráfico"
+
+#: ./interfaces/utility.py:22
+msgid "Plugins"
+msgstr ""
+
+#: ./portlets/analyticsportlet.py:30
+msgid "Profile"
+msgstr "Perfil"
+
+#: ./interfaces/utility.py:70
+msgid "Report Categories"
+msgstr "Categorias de Relatório"
+
+#: ./interfaces/utility.py:44
+#: ./portlets/analyticsportlet.py:35
+msgid "Reports"
+msgstr "Relatórios"
+
+#: ./interfaces/utility.py:39
+msgid "Reports Profile"
+msgstr "Perfil de Relatórios"
+
+#: ./viewlets/sitewide.pt:3
+msgid "Results"
+msgstr ""
+
+#: ./browser/controlpanel.pt:57
+msgid "Revoke access"
+msgstr ""
+
+#: ./profiles/default/analytics.xml
+#: ./profiles/upgrade_10a2_10a3/analytics.xml
+msgid "Site Page Views: Line Chart"
+msgstr "Visualizações de Página do Site: Gráfico de Linha"
+
+#: ./profiles/default/analytics.xml
+#: ./profiles/upgrade_10a2_10a3/analytics.xml
+msgid "Site Unique Visitors: Line Chart"
+msgstr "Visitantes Únicos do Site: Gráfico de Linha"
+
+#: ./profiles/default/analytics.xml
+msgid "Site Visits: Line Chart"
+msgstr "Visitas do site: Gráfico de Linha"
+
+#: ./report_templates/noresults.pt:2
+msgid "The report"
+msgstr ""
+
+#: ./loader_templates/timedout.pt:1
+msgid "The request to Google Analytics timed out. Please try again later."
+msgstr ""
+
+#: ./profiles/default/analytics.xml
+#: ./profiles/upgrade_10a2_10a3/analytics.xml
+msgid "Time on Page: Sparkline"
+msgstr "Tempo na Página: Minigráfico"
+
+#: ./profiles/default/analytics.xml
+#: ./profiles/upgrade_10a2_10a3/analytics.xml
+msgid "Time on Site: Line Chart"
+msgstr "Tempo na Página: Gráfico de Linha"
+
+#: ./portlets/analyticsportlet.py:24
+msgid "Title"
+msgstr "Título"
+
+#: ./browser/controlpanel.pt:80
+msgid "To begin, log into the Google account that you use to access Google Analytics if you have not done so already. To log in, you can ${visit_google_analytics} and sign in as usual."
+msgstr ""
+
+#: ./profiles/default/analytics.xml
+#: ./profiles/upgrade_10a2_10a3/analytics.xml
+msgid "Top 10 Keywords: Table"
+msgstr "Top 10 Palavras-chave: Tabela"
+
+#: ./profiles/default/analytics.xml
+#: ./profiles/upgrade_10a2_10a3/analytics.xml
+msgid "Top 10 Page Sources: Table"
+msgstr "Top 10 Fontes da Página: Tabela"
+
+#: ./profiles/default/analytics.xml
+#: ./profiles/upgrade_10a2_10a3/analytics.xml
+msgid "Top 5 Next Pages: Table"
+msgstr "Top 5 Páginas Seguintes"
+
+#: ./profiles/default/analytics.xml
+msgid "Top 5 Pages: Table"
+msgstr "Top 5 Páginas: Tabela"
+
+#: ./profiles/default/analytics.xml
+#: ./profiles/upgrade_10a2_10a3/analytics.xml
+msgid "Top 5 Previous Pages: Table"
+msgstr "Top 5 Páginas Anteriores: Tabela"
+
+#: ./profiles/default/analytics.xml
+msgid "Top 5 Sources: Table"
+msgstr "Top 5 Origens: Tabela"
+
+#: ./interfaces/utility.py:17
+msgid "Tracking Profile"
+msgstr "Perfil de acompanhamento"
+
+#: ./browser/controlpanel.pt:37
+msgid "Visit Google Analytics"
+msgstr ""
+
+#: ./browser/controlpanel.py:102
+msgid "You have enabled the tracking             feature of this product, but it looks like you still have tracking             code in the Site control panel. Please remove any Google Analytics             tracking code from the Site control panel to avoid conflicts."
+msgstr "Você ativou o recurso de acompanhamento deste produto, mas parece que você ainda tem o código de acompanhamento no painel de controle do Site. Por favor, remova qualquer código de acompanhamento do Google Analytics no painel de controle do Site para evitar conflitos."
+
+#: ./loader_templates/badauth.pt:2
+msgid "You need to authorize with Google in the"
+msgstr ""
+
+#. Default: "Reports"
+#: ./browser/controlpanel.py:33
+msgid "analytics_assignment"
+msgstr "Relatórios"
+
+#. Default: "Configure the reports that are displayed in the Google Analytics control panel."
+#: ./browser/controlpanel.py:34
+msgid "analytics_assignment_description"
+msgstr "Configurar os relatórios que são exibidos no painel de controle do Google Analytics"
+
+#. Default: "Settings"
+#: ./browser/controlpanel.py:48
+msgid "analytics_settings"
+msgstr "Configurações"
+
+#. Default: "Configure the settings of the Google Analytics product."
+#: ./browser/controlpanel.py:49
+msgid "analytics_settings_description"
+msgstr "Definiar as configurações do produto do Google Analytics."
+
+#. Default: "Tracking"
+#: ./browser/controlpanel.py:40
+msgid "analytics_tracking"
+msgstr "Acompanhamento"
+
+#. Default: "Configure the way Google Analytics tracks statistics about this site."
+#: ./browser/controlpanel.py:41
+msgid "analytics_tracking_description"
+msgstr "Configure a maneira como o Google Analytics monitora as estatísticas deste site."
+
+#: ./report_templates/noresults.pt:3
+msgid "did not return any results"
+msgstr ""
+

@@ -18,7 +18,7 @@ CURRENT_PATH=`pwd`
 CATALOGNAME="collective.googleanalytics"
 
 # List of languages
-LANGUAGES="pt_BR"
+LANGUAGES="es fr pt_BR"
 
 # Create locales folder structure for languages
 install -d locales
@@ -79,3 +79,19 @@ for lang in $(find locales -mindepth 1 -maxdepth 1 -type d); do
         # msgfmt -o $MO $lang/LC_MESSAGES/${CATALOGNAME}.po
     fi
 done
+
+WARNINGS=`find . -name "*pt" | xargs $I18NDUDE find-untranslated | grep -e '^-WARN' | wc -l`
+ERRORS=`find . -name "*pt" | xargs $I18NDUDE find-untranslated | grep -e '^-ERROR' | wc -l`
+FATAL=`find . -name "*pt"  | xargs $I18NDUDE find-untranslated | grep -e '^-FATAL' | wc -l`
+
+echo
+echo "There are $WARNINGS warnings \(possibly missing i18n markup\)"
+echo "There are $ERRORS errors \(almost definitely missing i18n markup\)"
+echo "There are $FATAL fatal errors \(template could not be parsed, eg. if it\'s not html\)"
+echo "For more details, run \'find . -name \"\*pt\" \| xargs i18ndude find-untranslated\' or"
+echo "Look the rebuild i18n log generate for this script called \'rebuild_i18n.log\' on locales dir"
+
+rm ./locales/rebuild_i18n.log
+touch ./locales/rebuild_i18n.log
+
+find ./ -name "*pt" | xargs $I18NDUDE find-untranslated > ./locales/rebuild_i18n.log

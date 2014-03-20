@@ -108,8 +108,8 @@ def getReports(context, category=None):
     reports = analytics_tool.getReports(category=category)
     choices = []
     if reports:
-        choices = [(report.title, report.id,) for report in reports]
-    return SimpleVocabulary.fromItems(choices)
+        choices = [SimpleTerm(value=report.id, token=report.id, title=report.title) for report in reports]
+    return SimpleVocabulary(choices)
 
 def getSiteWideReports(context):
     """

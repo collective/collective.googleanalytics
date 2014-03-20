@@ -1,0 +1,4 @@
+<p class="analytics-error" i18n:domain="collective.googleanalytics">
+    <span i18n:translate="">An error occurred while rendering</span> 
+    <strong tal:content="view/report/title"><tal:comment replace="nothing">Report Title</tal:comment></strong>.
+</p>

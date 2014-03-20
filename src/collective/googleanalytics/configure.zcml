@@ -80,6 +80,12 @@
     provides="zope.schema.interfaces.IVocabularyFactory"
     />
 
+  <subscriber
+    for="collective.googleanalytics.interfaces.report.IAnalyticsReport
+         zope.lifecycleevent.interfaces.IObjectCopiedEvent"
+    handler=".events.report_copied"
+    />
+
   <genericsetup:registerProfile
        name="default"
        title="Google Analytics"
