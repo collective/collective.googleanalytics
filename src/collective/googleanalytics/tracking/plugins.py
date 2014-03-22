@@ -1,4 +1,7 @@
-import json
+try:
+    import simplejson as json
+except ImportError:
+    import json
 from zope.interface import implements
 from collective.googleanalytics.bbb import ViewPageTemplateFile
 from Products.CMFCore.utils import getToolByName
