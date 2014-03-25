@@ -18,6 +18,10 @@ Changelog
 
 - Use SimpleTerm when creating the reports vocabulary. [frapell]
 
+- Crop overlong profile names [tomgross]
+  
+- Pass viewlet view and manager [tomgross]
+
 
 1.4.3 (2013-05-28)
 ------------------
@@ -33,7 +37,6 @@ Changelog
 
 1.4.1 (2013-05-28)
 ------------------
->>>>>>> master
 
 * Add dependency on unittest2 to support advance testing features under
   Python 2.6.
@@ -58,19 +61,8 @@ Changelog
 * Improve handling of unicode values in vocabularies
   [2012-10-23 - kiorky]
 
-<<<<<<< HEAD
-* Use Python json / simplejson instead of custom one
-  [2013-02-28 - tomgross]
-
-* Crop overlong profile names
-  [2013-02-28 - tomgross]
-
-* Pass viewlet view and manager
-  [2013-03-18 - tomgross]
-=======
 * Release & QA Stuff
   [2013-05-28 - kiorky]
->>>>>>> master
 
 1.4.1 - 2012-08-29
 ------------------
