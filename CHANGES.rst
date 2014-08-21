@@ -4,7 +4,8 @@ Changelog
 1.7 (unreleased)
 ----------------
 
-- Nothing changed yet.
+- Added dynamic download link that is created from ajax.
+  [ivanteoh]
 
 
 1.6.1 (2017-08-22)
