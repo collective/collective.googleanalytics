@@ -3,7 +3,7 @@
     jq(function() {
         var extensions = ${view/file_extensions};
         var extensionsPattern = new RegExp('\\.((' + extensions.join(')|(') + '))$$', 'g');
-        jq('body').on('click', 'a', function() {
+        jq('body').delegate('a', 'click', function() {
             if (jq(this).attr('href').match(extensionsPattern) ||  jq(this).attr('href').match(/\/at_download\//g)) {
                 _gaq.push(['_trackEvent', 'File', 'Download', jq(this).attr('href')]);
             }
