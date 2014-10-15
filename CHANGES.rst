@@ -1,7 +1,7 @@
 Changelog
 =========
 
-1.4.4 (unreleased)
+1.4.4 (2014-10-15)
 ------------------
 
 - Added more improvements about i18n [macagua]
