@@ -6,6 +6,10 @@ Changelog
 
 - Move to OAuth2 credential authentication [frapell]
 
+
+1.4.4 (2014-10-15)
+------------------
+
 - Added more improvements about i18n [macagua]
 
 - Added Spanish translations [macagua]
