@@ -2,11 +2,12 @@ from zope.interface import Interface
 
 # General plugin interfaces
 
+
 class IAnalyticsPlugin(Interface):
     """
     A plugin for Analytics reports.
     """
-            
+
     def processDimensionsChoices(choices):
         """
         Process the dimensions choices.
@@ -16,26 +17,27 @@ class IAnalyticsPlugin(Interface):
         """
         Process the metrics choices.
         """
-        
+
     def processVisualizationChoices(choices):
         """
         Process the visualization choices.
         """
-    
+
     def processCacheArguments(cache_args):
         """
         Process the cache arguments.
         """
-    
+
     def processQueryCriteria(criteria):
         """
         Process the query criteria.
         """
-    
+
     def processExpressionContext(exp_context):
         """
         Process the expression context.
         """
+
 
 class IAnalyticsDateRangeChoices(Interface):
     """
