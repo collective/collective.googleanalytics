@@ -2,7 +2,8 @@ from bbb import getSite
 from zope.component import getGlobalSiteManager
 from zope.schema.vocabulary import SimpleVocabulary, SimpleTerm
 from Products.CMFCore.utils import getToolByName
-from collective.googleanalytics.interfaces.tracking import IAnalyticsTrackingPlugin
+from collective.googleanalytics.interfaces.tracking import \
+    IAnalyticsTrackingPlugin
 from collective.googleanalytics import error
 from collective.googleanalytics import GoogleAnalyticsMessageFactory as _
 
@@ -19,7 +20,8 @@ def getProfiles(context):
         return SimpleVocabulary([])
 
     try:
-        accounts = analytics_tool.getAccountsFeed('accounts/~all/webproperties/~all/profiles')
+        accounts = analytics_tool.getAccountsFeed(
+            'accounts/~all/webproperties/~all/profiles')
     except error.BadAuthenticationError:
         choices = [('Please authorize with Google in the Google Analytics \
             control panel.', None)]
@@ -44,6 +46,7 @@ def getProfiles(context):
         choices = [('No profiles available', None)]
     return SimpleVocabulary([SimpleTerm(c[1], c[1], c[0]) for c in choices])
 
+
 def getWebProperties(context):
     """
     Return list of Google Analytics profiles and web property
@@ -56,7 +59,8 @@ def getWebProperties(context):
         return SimpleVocabulary([])
 
     try:
-        accounts = analytics_tool.getAccountsFeed('accounts/~all/webproperties/~all/profiles')
+        accounts = analytics_tool.getAccountsFeed(
+            'accounts/~all/webproperties/~all/profiles')
     except error.BadAuthenticationError:
         choices = [('Please authorize with Google in the Google Analytics \
             control panel.', None)]
@@ -68,28 +72,31 @@ def getWebProperties(context):
     if accounts:
         unique_choices = {}
         # In vocabularies, both the terms and the values must be unique. Since
-        # there can be more than one profile for a given web property, we create a list
-        # of all the profiles for each property. (Ideally we would use the URL for the
-        # web property, but Google doesn't expose it through the Analytics API.)
+        # there can be more than one profile for a given web property,
+        # we create a list of all the profiles for each property.
+        # (Ideally we would use the URL for the web property, but Google
+        # doesn't expose it through the Analytics API.)
         for entry in accounts.entry:
             for prop in entry.property:
                 if prop.name == 'ga:profileName':
                     title = prop.value
                     if not isinstance(title, unicode):
-                        title = unicode(title, 'utf-8') 
+                        title = unicode(title, 'utf-8')
                 if prop.name == 'ga:webPropertyId':
                     webPropertyId = prop.value
-            if not webPropertyId in unique_choices.keys():
-                unique_choices.update({webPropertyId : title})
+            if webPropertyId not in unique_choices.keys():
+                unique_choices.update({webPropertyId: title})
             else:
                 unique_choices[webPropertyId] += ', ' + title
-        # After we reverse the terms so that the profile name(s) is now the key, we need
-        # to ensure that these keys are unique. So, we pass the resulting list through
-        # dict() and then output a list of items.
-        choices = dict([(title, property_id) for (property_id, title) in unique_choices.items()]).items()
+        # After we reverse the terms so that the profile name(s) is now the
+        # key, we need to ensure that these keys are unique. So, we pass the
+        # resulting list through dict() and then output a list of items.
+        choices = dict([(title, property_id) for (
+            property_id, title) in unique_choices.items()]).items()
     else:
         choices = [('No profiles available', None)]
     return SimpleVocabulary([SimpleTerm(c[1], c[1], c[0]) for c in choices])
+
 
 def getReports(context, category=None):
     """
@@ -100,8 +107,10 @@ def getReports(context, category=None):
     reports = analytics_tool.getReports(category=category)
     choices = []
     if reports:
-        choices = [SimpleTerm(value=report.id, token=report.id, title=report.title) for report in reports]
+        choices = [SimpleTerm(value=report.id, token=report.id,
+                   title=report.title) for report in reports]
     return SimpleVocabulary(choices)
+
 
 def getSiteWideReports(context):
     """
@@ -110,12 +119,14 @@ def getSiteWideReports(context):
 
     return getReports(context, category="Site Wide")
 
+
 def getPortletReports(context):
     """
     Return list of portlet Google Analytics reports.
     """
 
     return getReports(context, category="Portlet")
+
 
 def getRoles(context):
     """
@@ -126,18 +137,19 @@ def getRoles(context):
     roles = [role for role in pmemb.getPortalRoles() if role != 'Owner']
     return SimpleVocabulary.fromValues(roles)
 
+
 def getTrackingPluginNames(context):
     """
     Return a list of the names of the available tracking plugins.
     """
 
     gsm = getGlobalSiteManager()
-    global_plugins = set([p.name for p in gsm.registeredAdapters() \
-        if p.provided == IAnalyticsTrackingPlugin])
+    global_plugins = set([p.name for p in gsm.registeredAdapters()
+                         if p.provided == IAnalyticsTrackingPlugin])
 
     lsm = getSite().getSiteManager()
-    local_plugins = set([p.name for p in lsm.registeredAdapters() \
-        if p.provided == IAnalyticsTrackingPlugin])
+    local_plugins = set([p.name for p in lsm.registeredAdapters()
+                        if p.provided == IAnalyticsTrackingPlugin])
 
     values = sorted(list(global_plugins | local_plugins))
     return SimpleVocabulary.fromValues(values)

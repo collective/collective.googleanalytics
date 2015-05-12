@@ -2,6 +2,7 @@ from Products.GenericSetup.browser.utils import AddWithPresettingsViewBase
 
 from collective.googleanalytics.report import AnalyticsReport
 
+
 class AnalyticsReportAddView(AddWithPresettingsViewBase):
     """
     Add view for AnalyticsReport
@@ -10,7 +11,7 @@ class AnalyticsReportAddView(AddWithPresettingsViewBase):
     klass = AnalyticsReport
 
     description = \
-            u'An Analytics Report pulls information from Google Analytics.'
+        u'An Analytics Report pulls information from Google Analytics.'
 
     def getProfileInfos(self):
         return []

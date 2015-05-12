@@ -43,7 +43,7 @@ class AnalyticsReportNodeAdapter(NodeAdapterBase, PropertyManagerHelpers):
         self._initProperties(node)
 
     node = property(_exportNode, _importNode)
-    
+
 
 class AnalyticsToolXMLAdapter(XMLAdapterBase, ObjectManagerHelpers):
     """
@@ -55,7 +55,7 @@ class AnalyticsToolXMLAdapter(XMLAdapterBase, ObjectManagerHelpers):
     _LOGGER_ID = 'collective.googleanalytics'
 
     name = 'analytics'
-    
+
     def _exportNode(self):
         """
         Export the Analytics tool as a DOM node.
@@ -77,7 +77,8 @@ class AnalyticsToolXMLAdapter(XMLAdapterBase, ObjectManagerHelpers):
         self._initObjects(node)
 
         self._logger.info('Analytics tool imported.')
-        
+
+
 def importAnalyticsReports(context):
     """
     Import Analytics tool.
@@ -88,6 +89,7 @@ def importAnalyticsReports(context):
         return
 
     importObjects(tool, '', context)
+
 
 def exportAnalyticsReports(context):
     """
