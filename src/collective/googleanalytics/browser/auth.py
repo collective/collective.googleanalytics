@@ -1,9 +1,7 @@
 from zope.publisher.browser import BrowserPage
 from Products.CMFCore.utils import getToolByName
-from gdata.service import NonAuthSubToken, TokenUpgradeFailed
-import gdata.analytics.service
-import gdata.auth
 from collective.googleanalytics import GoogleAnalyticsMessageFactory as _
+from collective.googleanalytics.browser.controlpanel import get_flow
 
 
 class AnalyticsAuth(BrowserPage):
@@ -13,8 +11,14 @@ class AnalyticsAuth(BrowserPage):
 
     def __call__(self):
         """
-        Gets the token from the URL and takes the appropriate action.
+        [TODO] Tests here. Not sure for these clients.data and clients.accounts
+        For OAuth2:
+            gets the code from URL
+            gets the credentials based on flow and code
+            gets token from credentials
+            takes the appropriate action
         """
+        code = self.context.REQUEST.form.get('code', None)
 
         analytics_tool = getToolByName(self.context, 'portal_analytics')
         plone_utils = getToolByName(self.context, 'plone_utils')
@@ -23,42 +27,26 @@ class AnalyticsAuth(BrowserPage):
         # Check if we are revoking the token.
         if self.request.get('revoke_token', 0):
             analytics_tool.auth_token = None
-            try:
-                clients.data.RevokeAuthSubToken()
-            except NonAuthSubToken:
-                # Authorization already revoked
-                pass
+
+            clients.data = ''
 
             message = _(u'Authorization revoked. You may now reauthorize with \
                 a different Google account.')
             plone_utils.addPortalMessage(message)
 
         # Otherwise, we are setting the token.
-        elif self.request.QUERY_STRING and 'token' in self.request:
-            current_url = '%s?%s' % (
-                self.request.ACTUAL_URL, self.request.QUERY_STRING)
-            single_token = gdata.auth.extract_auth_sub_token_from_url(
-                current_url)
+        elif code is not None:
+            flow = get_flow()
+            credentials = flow.step2_exchange(code)
+            token_response = credentials.token_response
+            access_token = token_response.get('access_token')
 
-            try:
-                session_token = clients.data.upgrade_to_session_token(
-                    single_token)
+            analytics_tool.auth_token = access_token
+            clients.data = access_token
+            clients.accounts = access_token
 
-                # Save a string representation of the token.
-                analytics_tool.auth_token = unicode(
-                    session_token.get_token_string())
-
-                # Set the token on the two servcies using SetAuthSubToken.
-                clients.data.SetAuthSubToken(session_token)
-                clients.accounts.SetAuthSubToken(session_token)
-
-                message = _(u'Authorization succeeded. You may now configure \
-                Google Analytics for Plone.')
-
-            except TokenUpgradeFailed:
-                message = _(u'Authorization failed. Google Analytics for \
-                    Plone received an invalid token.')
-
+            message = _(u'Authorization succeeded. You may now configure \
+            Google Analytics for Plone.')
             plone_utils.addPortalMessage(message)
 
         # Redirect back to the control panel.

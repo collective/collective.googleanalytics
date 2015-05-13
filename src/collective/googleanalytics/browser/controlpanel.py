@@ -8,12 +8,33 @@ from plone.app.controlpanel.form import ControlPanelForm
 from plone.app.controlpanel.widgets import MultiCheckBoxVocabularyWidget
 from plone.fieldsets.fieldsets import FormFieldsets
 
-import gdata.auth
 from collective.googleanalytics import error
 from collective.googleanalytics.interfaces.utility import \
     IAnalyticsReportsAssignment, IAnalyticsTracking, IAnalyticsSettings
 
 from collective.googleanalytics import GoogleAnalyticsMessageFactory as _
+
+from oauth2client import client
+from zope.component.hooks import getSite
+
+
+def get_flow():
+    """
+    Returns the flow used for different steps with OAuth2
+    """
+    site = getSite()
+    portal_url = site.portal_url()
+
+    client_id = 'Paste it here'  # [TODO] Move this in settings
+    client_secret = 'Paste it here'  # [TODO] Move this in settings
+    redirect_uri = '%s/analytics-auth' % portal_url
+
+    flow = client.OAuth2WebServerFlow(
+        client_id=client_id,
+        client_secret=client_secret,
+        scope='https://www.google.com/analytics/feeds/',
+        redirect_uri=redirect_uri)
+    return flow
 
 
 class IAnalyticsControlPanelForm(Interface):
@@ -78,11 +99,9 @@ class AnalyticsControlPanelForm(ControlPanelForm):
         """
         Returns the URL used to retrieve a Google AuthSub token.
         """
-
-        next = '%s/analytics-auth' % self.context.portal_url()
-        scope = 'https://www.google.com/analytics/feeds/'
-        return gdata.auth.GenerateAuthSubUrl(
-            next, scope, secure=False, session=True)
+        flow = get_flow()
+        auth_uri = flow.step1_get_authorize_url()
+        return auth_uri
 
     def account_name(self):
         """

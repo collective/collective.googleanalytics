@@ -39,6 +39,7 @@ setup(name='collective.googleanalytics',
           'setuptools',
           # -*- Extra requirements: -*-
           'gdata>=2.0.17',
+          'google-api-python-client>=1.4.0',
       ],
       extras_require={
           'test': [
