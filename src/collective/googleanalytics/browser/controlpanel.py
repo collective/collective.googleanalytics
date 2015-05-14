@@ -25,8 +25,9 @@ def get_flow():
     site = getSite()
     portal_url = site.portal_url()
 
-    client_id = 'Paste it here'  # [TODO] Move this in settings
-    client_secret = 'Paste it here'  # [TODO] Move this in settings
+    client_id = getattr(site, 'google_analytics_client_id', '')
+    client_secret = getattr(site, 'google_analytics_client_secret', '')
+
     redirect_uri = '%s/analytics-auth' % portal_url
 
     flow = client.OAuth2WebServerFlow(

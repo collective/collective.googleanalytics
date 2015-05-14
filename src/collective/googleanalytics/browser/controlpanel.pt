@@ -112,6 +112,19 @@
                     <li>
                         <span i18n:translate="">Once you have signed into your Google account, click this link
                         to begin the authorization process:</span>
+
+                        <div style="margin: 1em 0;"
+                          tal:define="client_id python:getattr(context, 'google_analytics_client_id', None); client_secret python:getattr(context, 'google_analytics_client_secret', None)">
+                          <p tal:condition="python:client_id and client_secret">
+                            Client ID: <span tal:condition="client_id" tal:content="python:client_id"></span>
+                            <br />Client secret: <span tal:condition="client_secret" tal:content="python:client_secret"></span>
+                          </p>
+                          <p tal:condition="python:client_id is None or client_secret is None">
+                            <span style="color: red; font-weight: bold;">Missing info. Please create google_analytics_client_id and google_analytics_client_secret string properties and set their values.</span>
+                          </p>
+                          <a tal:attributes="href string:${context/portal_url}/manage_propertiesForm" href="">Set or create google_analytics_client_id and google_analytics_client_secret properties</a>
+                        </div>
+
                         <div style="margin: 1em 0;">
                             <a style="font-size:1.3em; font-weight: bold;"
                                 tal:attributes="href view/auth_url" i18n:translate="">Authorize with Google</a>
@@ -121,6 +134,7 @@
                         <span i18n:translate="">Google will ask you if you want to allow this site to access your
                         Google Analytics data. If the URL displayed matches the one below,
                         click the Grant Access button.</span><br />
+
                         <div style="margin: 1em 0;">
                             <strong style="font-size:1.3em;"
                                 tal:content="string:${context/portal_url}/analytics-auth">
