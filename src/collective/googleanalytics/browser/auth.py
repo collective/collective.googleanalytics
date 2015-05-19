@@ -2,9 +2,6 @@ from zope.publisher.browser import BrowserPage
 from Products.CMFCore.utils import getToolByName
 from collective.googleanalytics import GoogleAnalyticsMessageFactory as _
 from collective.googleanalytics.browser.controlpanel import get_flow
-from oauth2client.file import Storage
-from oauth2client.client import flow_from_clientsecrets
-from oauth2client.tools import run
 import gdata.gauth
 
 
