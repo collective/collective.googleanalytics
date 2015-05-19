@@ -98,7 +98,7 @@ class AnalyticsControlPanelForm(ControlPanelForm):
 
     def auth_url(self):
         """
-        Returns the URL used to retrieve a Google AuthSub token.
+        Returns the URL used to retrieve a Google OAuth2 token.
         """
         flow = get_flow()
         auth_uri = flow.step1_get_authorize_url()
