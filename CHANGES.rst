@@ -4,7 +4,9 @@ Changelog
 1.4.5 (unreleased)
 ------------------
 
-- Nothing changed yet.
+- Updated Spanish translations [macagua]
+
+- Added more improvements about i18n [macagua]
 
 
 1.4.4 (2014-10-15)
