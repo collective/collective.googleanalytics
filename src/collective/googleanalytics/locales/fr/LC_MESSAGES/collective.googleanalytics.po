@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2013-10-20 01:28+0000\n"
+"POT-Creation-Date: 2015-06-08 16:18+0000\n"
 "PO-Revision-Date: 2013-05-28 12:05+0200\n"
 "Last-Translator: Thiago Curvelo <tcurvelo@gmail.com>\n"
 "Language-Team: TRT13 <web@trt13.jus.br>\n"
@@ -324,5 +324,9 @@ msgstr "Configurer la manière dont Google Analytics suit les statistiques de ce
 
 #: ./report_templates/noresults.pt:3
 msgid "did not return any results"
+msgstr ""
+
+#: ./browser/controlpanel.pt:80
+msgid "visit Google Analytics"
 msgstr ""
 

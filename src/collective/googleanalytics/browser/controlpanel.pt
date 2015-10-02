@@ -77,7 +77,7 @@
                     <li i18n:translate="">
                         To begin, log into the Google account that you use to access Google
                         Analytics if you have not done so already. To log in, you can
-                        <a href="http://www.google.com/analytics" i18n:name="visit_google_analytics">visit Google Analytics</a>
+                        <a href="http://www.google.com/analytics" i18n:name="visit_google_analytics" i18n:translate="">visit Google Analytics</a>
                         and sign in as usual.
                     </li>
                     <li>
