@@ -8,6 +8,7 @@ from plone.portlets.interfaces import IPortletRenderer
 from collective.googleanalytics.tests.base import FunctionalTestCase
 from collective.googleanalytics.portlets import analyticsportlet
 
+
 class TestPortlet(FunctionalTestCase):
 
     def test_portlet_available_to_correct_roles(self):
@@ -17,7 +18,7 @@ class TestPortlet(FunctionalTestCase):
         """
 
         self.setRoles(['Manager'])
-        
+
         context = self.folder
         request = self.folder.REQUEST
         # Simulate being on the default view.
@@ -26,9 +27,9 @@ class TestPortlet(FunctionalTestCase):
         manager = getUtility(IPortletManager, name='plone.leftcolumn', context=self.portal)
         assignment = analyticsportlet.Assignment()
         renderer = getMultiAdapter((context, request, view, manager, assignment), IPortletRenderer)
-        
+
         self.assertEquals(renderer.available, True)
-        
+
 
 def test_suite():
     suite = unittest.TestSuite()

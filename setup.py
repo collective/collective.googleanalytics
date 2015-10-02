@@ -1,6 +1,6 @@
 from setuptools import setup, find_packages
 
-version = '1.4.5.dev0'
+version = '1.5.0.dev0'
 
 setup(name='collective.googleanalytics',
       version=version,
@@ -38,7 +38,7 @@ setup(name='collective.googleanalytics',
       install_requires=[
           'setuptools',
           # -*- Extra requirements: -*-
-          'gdata>=2.0.17',
+          'gdata>=2.0.18',
       ],
       extras_require={
           'test': [
