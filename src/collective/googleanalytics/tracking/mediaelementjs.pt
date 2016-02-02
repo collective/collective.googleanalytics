@@ -1,0 +1,5 @@
+<script type="text/javascript" tal:content="structure string:
+    /*&lt;![CDATA[*/
+    /*]]&gt;*/
+">
+</script>

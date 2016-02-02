@@ -7,34 +7,41 @@
         name="External links"
         factory=".plugins.AnalyticsExternalLinkPlugin"
         />
-        
+
     <adapter
         for="* zope.publisher.interfaces.IRequest"
         name="E-mail links"
         factory=".plugins.AnalyticsEmailLinkPlugin"
         />
-        
+
     <adapter
         for="* zope.publisher.interfaces.IRequest"
         name="File downloads"
         factory=".plugins.AnalyticsDownloadPlugin"
         />
-        
+
     <adapter
         for="* zope.publisher.interfaces.IRequest"
         name="Comments"
         factory=".plugins.AnalyticsCommentPlugin"
         />
-        
+
     <adapter
         for="* zope.publisher.interfaces.IRequest"
         name="User type"
         factory=".plugins.AnalyticsUserTypePlugin"
         />
+
     <adapter
         for="* zope.publisher.interfaces.IRequest"
         name="Page load time"
         factory=".plugins.AnalyticsPageLoadTimePlugin"
+        />
+
+    <adapter
+        for="* zope.publisher.interfaces.IRequest"
+        name="MediaElement.js HTML5 video playback"
+        factory=".plugins.AnalyticsMediaElementJsPlugin"
         />
 
 </configure>
