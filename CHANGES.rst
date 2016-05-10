@@ -1,12 +1,14 @@
 Changelog
 =========
 
-1.4.5 (unreleased)
+1.5.0 (unreleased)
 ------------------
 
 - Updated Spanish translations [macagua]
 
 - Added more improvements about i18n [macagua]
+
+- Move to OAuth2 credential authentication [frapell]
 
 
 1.4.4 (2014-10-15)
@@ -279,8 +281,8 @@ upgrade step to avoid losing your changes.
 * Update documentation to reflect date range changes.
   [2010-02-10 - yomatters]
 
-* Make date range independent of report and update tests and default reports 
-  to reflect the new reality; add javascript to set the width of the 
+* Make date range independent of report and update tests and default reports
+  to reflect the new reality; add javascript to set the width of the
   visualization based on the width of the container; add categories to reports
   and adjust vocabularies to be category-specific; handle auth token expiration
   error.

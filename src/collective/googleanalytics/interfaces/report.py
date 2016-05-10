@@ -1,10 +1,11 @@
 from zope.interface import Interface, Attribute
 
+
 class IAnalyticsReport(Interface):
     """
     A report that can be used to gather information from Google Analytics.
     """
-    
+
     title = Attribute('Title')
     description = Attribute('Description')
     i18n_domain = Attribute('I18n Domain')
@@ -22,17 +23,18 @@ class IAnalyticsReport(Interface):
     viz_type = Attribute('Visualization Type')
     viz_options = Attribute('Visualization Options')
     body = Attribute('Report Body')
-    
+
     def getPlugins(context, request):
         """
         Returns the plugin adapters for this report.
         """
-    
+
+
 class IAnalyticsReportRenderer(Interface):
     """
     A report that can be used to gather information from Google Analytics.
     """
-    
+
     def __call__():
         """
         Renders the report.
@@ -65,7 +67,7 @@ class IAnalyticsReportRenderer(Interface):
         """
         Returns the evaluated table rows.
         """
-        
+
     def visualization():
         """
         Returns the rendered visualization.
@@ -76,13 +78,13 @@ class IAnalyticsReportRenderer(Interface):
         Returns the value of the given metric across the specified
         dimensions and metrics using the specified aggregation method.
         """
-                    
+
     def metric(metric, specified, aggregate, default):
         """
         Returns the value of the given metric across the specified
         dimensions and metrics using the specified aggregation method.
         """
-        
+
     def possible_dates(dimensions, aggregate):
         """
         Returns a list of dictionaries containing all possible values for

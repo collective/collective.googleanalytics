@@ -1,4 +1,4 @@
-# BBB
+# BBB  # flake8: noqa
 try:
     from zope.browserpage.viewpagetemplatefile import ViewPageTemplateFile
 except:
