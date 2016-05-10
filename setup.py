@@ -1,6 +1,12 @@
 from setuptools import setup, find_packages
+import sys
 
-version = '1.5.0.dev0'
+version = '1.5.dev0'
+
+if sys.version_info[0] == 2 and sys.version_info[1] < 6:
+    requires = ['simplejson']
+else:
+    requires = []
 
 setup(name='collective.googleanalytics',
       version=version,
@@ -19,6 +25,7 @@ setup(name='collective.googleanalytics',
           "Operating System :: OS Independent",
           "Programming Language :: JavaScript",
           "Programming Language :: Python",
+          "Programming Language :: Python :: 2.4",
           "Programming Language :: Python :: 2.6",
           "Programming Language :: Python :: 2.7",
           "Topic :: Internet :: Log Analysis",
@@ -39,7 +46,7 @@ setup(name='collective.googleanalytics',
           'setuptools',
           # -*- Extra requirements: -*-
           'gdata>=2.0.18',
-      ],
+      ] + requires,
       extras_require={
           'test': [
               'mocker',

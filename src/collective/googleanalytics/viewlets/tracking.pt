@@ -16,6 +16,8 @@
         </script>
 
         <tal:block content="structure view/renderPlugins"></tal:block>
+        <script type="text/javascript" tal:content="structure view/renderPageview">
+        </script>
 
     </tal:webproperty>
 </tal:tracking>

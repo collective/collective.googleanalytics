@@ -1,3 +1,5 @@
+import sys
+from urllib import urlencode
 from zope.component import queryMultiAdapter
 from Products.CMFCore.utils import getToolByName
 from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
@@ -15,7 +17,7 @@ class AnalyticsTrackingViewlet(AnalyticsViewlet):
     render = ViewPageTemplateFile('tracking.pt')
 
     def __init__(self, context, request, view, manager):
-        super(AnalyticsViewlet, self).__init__(context, request)
+        super(AnalyticsTrackingViewlet, self).__init__(context, request, view, manager)
         self.analytics_tool = getToolByName(context, "portal_analytics")
         self.membership_tool = getToolByName(context, "portal_membership")
 
@@ -57,3 +59,24 @@ class AnalyticsTrackingViewlet(AnalyticsViewlet):
             if plugin:
                 results.append(plugin())
         return '\n'.join(results)
+
+    def getsearchcat(self):
+        return self.view.__name__
+
+    def renderPageview(self):
+        push_params = ["'_trackPageview'"]
+        exc_info = sys.exc_info()[0]
+        if self.view.__name__.startswith("search"):
+            query = {'q': self.request.get('SearchableText', ''),
+                     'searchcat': self.getsearchcat()}
+            push_params.append("'/searchresult?%s'" % urlencode(query))
+        elif exc_info is not None:
+            if exc_info == NotFound:
+                errorcode = 404
+            else:
+                errorcode = 500
+            push_params.append(
+            ("'/error/%s?page=' + document.location.pathname + "
+             "document.location.search + '&from=' + document.referrer")
+            % errorcode)
+        return "_gaq.push([%s]);" % ', '.join(push_params)

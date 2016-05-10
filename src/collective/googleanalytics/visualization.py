@@ -1,9 +1,14 @@
 from plone.memoize.instance import memoize
-from collective.googleanalytics.utils import json_serialize, js_literal
+from collective.googleanalytics.utils import js_literal
 from string import Template
 import datetime
 import time
 import os
+try:
+    import simplejson as json
+    json    # pyflakes
+except ImportError:
+    import json
 
 
 class AnalyticsReportVisualization(object):
@@ -32,7 +37,7 @@ class AnalyticsReportVisualization(object):
         template_vars = {
             'package_name': self.report.viz_type.lower(),
             'columns': self._getColumns(),
-            'data': json_serialize(self.rows),
+            'data': json.dumps(self.rows),
             'chart_type': self.report.viz_type,
             'id': self.id(),
             'options': self._getOptions()
@@ -83,5 +88,5 @@ class AnalyticsReportVisualization(object):
         if not 'width' in self.options.keys():
             options['width'] = js_literal('container_width')
         if options:
-            return json_serialize(options)
+            return json.dumps(options)
         return 'null'

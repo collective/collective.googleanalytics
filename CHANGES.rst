@@ -1,8 +1,12 @@
 Changelog
 =========
 
-1.5.0 (unreleased)
-------------------
+1.5 (unreleased)
+----------------
+
+- Add virtual page views for search and error pages [tomgross]
+ 
+- Use Python json instead of custom one [tomgross]
 
 - Updated Spanish translations [macagua]
 
@@ -23,6 +27,10 @@ Changelog
 - Prepend "Copy of" if copy&paste a report. [frapell]
 
 - Use SimpleTerm when creating the reports vocabulary. [frapell]
+
+- Crop overlong profile names [tomgross]
+  
+- Pass viewlet view and manager [tomgross]
 
 
 1.4.3 (2013-05-28)

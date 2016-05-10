@@ -59,23 +59,6 @@ def makeDate(date_stamp):
     return datetime.date(year, month, day)
 
 
-def json_serialize(parent):
-    """
-    Given a Python list, tuple or dictionary, return the corresponding
-    json object.
-    """
-    json_parts = []
-    if type(parent) in [list, tuple]:
-        for child in parent:
-            json_parts.append(json_serialize(child))
-        return '[%s]' % ', '.join(json_parts)
-    if type(parent) is dict:
-        for (key, value) in parent.items():
-            json_parts.append('%s: %s' % (json_serialize(key), json_serialize(value)))
-        return '{%s}' % ', '.join(json_parts)
-    return js_value(parent)
-
-
 class js_literal(str):
     """
     Marks a Python string object as a literal so that it is not enclosed
@@ -133,3 +116,4 @@ def unique_list(original):
 
     used = set()
     return [x for x in original if x not in used and not used.add(x)]
+
