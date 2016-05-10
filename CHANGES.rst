@@ -12,6 +12,13 @@ Changelog
 1.4.4 (2014-10-15)
 ------------------
 
+- Added possibility to set the date range of the reports in the analytics
+  control panel. This setting will reflect on the portlets as well.
+  [olimpiurob]
+
+- Added print button and print styling to the controlpanel view
+  [olimpiurob]  
+
 - Added more improvements about i18n [macagua]
 
 - Added Spanish translations [macagua]

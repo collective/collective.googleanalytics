@@ -3,7 +3,9 @@ from Products.CMFCore.utils import getToolByName
 from collective.googleanalytics.tests.base import FunctionalTestCase
 from collective.googleanalytics.report import AnalyticsReport
 import mocker
-from collective.googleanalytics.vocabularies import getProfiles, getWebProperties
+from collective.googleanalytics.vocabularies import getProfiles
+from collective.googleanalytics.vocabularies import getWebProperties
+
 
 class TestInstall(FunctionalTestCase):
 
@@ -40,6 +42,7 @@ class TestInstall(FunctionalTestCase):
         self.assertEqual(report.viz_type, 'Table')
         self.assertNotEqual(report.body, '')
 
+
 class TestReinstall(FunctionalTestCase):
 
     def test_reinstallation_preserves_settings(self):
@@ -55,7 +58,8 @@ class TestReinstall(FunctionalTestCase):
         # Reinstall the product.
         self.setRoles(['Manager'])
         quick_installer = getToolByName(self.portal, "portal_quickinstaller")
-        quick_installer.reinstallProducts(products=['collective.googleanalytics',])
+        quick_installer.reinstallProducts(
+            products=['collective.googleanalytics', ])
 
         # Make sure the properties are still set.
         analytics_tool = getToolByName(self.portal, 'portal_analytics')
@@ -74,7 +78,8 @@ class TestReinstall(FunctionalTestCase):
         # Reinstall the product.
         self.setRoles(['Manager'])
         quick_installer = getToolByName(self.portal, "portal_quickinstaller")
-        quick_installer.reinstallProducts(products=['collective.googleanalytics',])
+        quick_installer.reinstallProducts(
+            products=['collective.googleanalytics', ])
 
         # Make sure the reports are still there.
         analytics_tool = getToolByName(self.portal, 'portal_analytics')
@@ -84,15 +89,19 @@ class TestReinstall(FunctionalTestCase):
         report = analytics_tool.get('bar', None)
         self.assertNotEqual(report, None)
 
+
 class Prop(object):
     def __init__(self, name, value):
         self.name = name
         self.value = value
 
+
 class Entry(object):
     def __init__(self, properties=None):
-        if not properties: properties = []
+        if not properties:
+            properties = []
         self.property = properties
+
 
 class Accounts(object):
     def __init__(self, entry=None):
@@ -100,11 +109,14 @@ class Accounts(object):
             entries = []
         self.entry = entry
 
+
 class DummyTool(object):
     auth_token = 'foo'
     accounts = None
+
     def getAccountsFeed(self, *a, **kw):
         return self.accounts
+
 
 class TestUnicode(FunctionalTestCase):
 
@@ -124,7 +136,7 @@ class TestUnicode(FunctionalTestCase):
             [Entry(
                 [Prop('ga:profileName', u'A - Nantes D\xe9veloppement'),
                  Prop('ga:webPropertyId', 'foo'),
-                 Prop('dxp:tableId', 'foo'),]
+                 Prop('dxp:tableId', 'foo'), ]
             )]
         )
         accounts = getProfiles(analytics_tool)

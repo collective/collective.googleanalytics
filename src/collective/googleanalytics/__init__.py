@@ -6,12 +6,14 @@ from zope.i18nmessageid import MessageFactory
 GoogleAnalyticsMessageFactory = MessageFactory('collective.googleanalytics')
 
 # patch gdata scopes
-gdata.gauth.AUTH_SCOPES['analytics'] += ('https://www.googleapis.com/auth/analytics.readonly',)
+gdata.gauth.AUTH_SCOPES['analytics'] += \
+    ('https://www.googleapis.com/auth/analytics.readonly',)
 
 
 tools = (
     Analytics,
     )
+
 
 def initialize(context):
     """
@@ -19,11 +21,9 @@ def initialize(context):
     """
 
     cmfutils.registerIcon(AnalyticsReport,
-                       'browser/images/chart_bar.gif', globals())
+                          'browser/images/chart_bar.gif', globals())
 
     cmfutils.ToolInit('Google Analytics Tool',
-                   tools=tools,
-                   icon='browser/images/chart_curve.gif',
-                   ).initialize(context)
-    
-
+                      tools=tools,
+                      icon='browser/images/chart_curve.gif',
+                      ).initialize(context)

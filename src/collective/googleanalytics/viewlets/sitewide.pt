@@ -11,7 +11,7 @@
             jq('a#fieldsetlegend-analytics_results').click();
         });
     </script>
-    <script type="text/javascript" tal:content="view/getJavascript"></script>
+    <script type="text/javascript" tal:content="python: view.getJavascript(date_range=request.get('date_range', 'year'))"></script>
 
 </fieldset>
 
