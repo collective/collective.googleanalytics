@@ -8,6 +8,14 @@ Changelog
  
 - Use Python json instead of custom one [tomgross]
 
+- Updated Spanish translations [macagua]
+
+- Added more improvements about i18n [macagua]
+
+
+1.4.4 (2014-10-15)
+------------------
+
 - Added more improvements about i18n [macagua]
 
 - Added Spanish translations [macagua]
