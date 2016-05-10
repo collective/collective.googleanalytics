@@ -1,3 +1,4 @@
+var jq = $$;
 google.load('visualization', '1', {'packages':${visualization_packages}});
 jq(function () {
     jq('#${container_id}').css({
@@ -16,5 +17,5 @@ jq(function () {
 	          'background-image': 'none',
 	          'height': 'auto'
 	      });
-    }); 
+    });
 });

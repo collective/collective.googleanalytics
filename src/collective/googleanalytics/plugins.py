@@ -6,83 +6,85 @@ from collective.googleanalytics.utils import makeDate
 from DateTime import DateTime
 import datetime
 
+
 class AnalyticsBasePlugin(object):
     """
     A plugin for Analytics reports.
     """
-    
+
     implements(IAnalyticsPlugin)
-        
+
     def __init__(self, context, request, report):
         self.context = context
         self.request = request
         self.report = report
-    
+
     name = 'Analytics Base Plugin'
-        
+
     def processDimensionsChoices(self, choices):
         """
         Process the dimensions choices.
         """
 
         pass
-        
+
     def processMetricsChoices(self, choices):
         """
         Process the metrics choices.
         """
 
         pass
-        
+
     def processVisualizationChoices(self, choices):
         """
         Process the visualization choices.
         """
-        
+
         pass
-    
+
     def processCacheArguments(self, cache_args):
         """
         Process the cache arguments.
         """
-        
+
         pass
-    
+
     def processQueryCriteria(self, criteria):
         """
         Process the query criteria.
         """
-        
+
         pass
-    
+
     def processExpressionContext(self, exp_context):
         """
         Process the expression context.
         """
-        
+
         pass
+
 
 class AnalyticsVariableDateRange(AnalyticsBasePlugin):
     """
     A plugin that allows date ranges to be selected dynamically when the report
     is evaluated.
     """
-    
+
     name = 'Variable Date Range'
-            
+
     def __init__(self, context, request, report):
         super(AnalyticsVariableDateRange, self).__init__(context, request, report)
-        
+
         start_date = request.get('start_date', '')
         end_date = request.get('end_date', '')
-        
+
         try:
             self.start_date = makeDate(start_date)
             self.end_date = makeDate(end_date)
         except ValueError:
             date_range = request.get('date_range', 'month')
             self.start_date, self.end_date = self._getDateRange(date_range)
-            
+
     def processCacheArguments(self, cache_args):
         """
         Process the cache arguments.
@@ -90,36 +92,36 @@ class AnalyticsVariableDateRange(AnalyticsBasePlugin):
 
         if self.start_date and self.end_date:
             cache_args.extend([str(self.start_date), str(self.end_date)])
-        
+
     def processDimensionsChoices(self, choices):
         """
         Process the dimensions choices.
         """
 
         choices.extend(['date_range_dimension', 'date_range_sort_dimension'])
-    
+
     def processQueryCriteria(self, criteria):
         """
         Process the query criteria.
         """
-        
+
         if self.start_date and self.end_date:
             criteria.update({
                 'start_date': self.start_date,
                 'end_date': self.end_date,
             })
-            
+
     def processExpressionContext(self, exp_context):
         """
         Process the expression context.
         """
-        
+
         date_context = self._getDateContext()
         exp_context.update(date_context)
-        
+
     def _getDateRange(self, date_range='month'):
         """
-        Given a number of days or a date range keyword, get the 
+        Given a number of days or a date range keyword, get the
         appropriate start and end dates.
         """
         today = datetime.date.today()
@@ -174,6 +176,7 @@ class AnalyticsVariableDateRange(AnalyticsBasePlugin):
             'date_range_sort_dimension': sort_dimension,
         }
 
+
 class AnalyticsDefaultDateRangeChoices(object):
     """
     An adapter to list the possible date ranges for this report, request
@@ -181,7 +184,7 @@ class AnalyticsDefaultDateRangeChoices(object):
     """
 
     implements(IAnalyticsDateRangeChoices)
-    
+
     def __init__(self, context, request, report):
         self.context = context
         self.request = request
@@ -216,26 +219,26 @@ class AnalyticsDefaultDateRangeChoices(object):
 
         return date_ranges
 
+
 class AnalyticsContextualResults(AnalyticsBasePlugin):
     """
     A plugin that allows results of an Analytics report to be specific to the
     requested page.
     """
-    
+
     name = 'Contextual Results'
-    
+
     def __init__(self, context, request, report):
         super(AnalyticsContextualResults, self).__init__(context, request, report)
-        
+
         # Get the relative URL of the request.
         absolute_url = request.get('request_url', request.ACTUAL_URL)
         self.relative_url = absolute_url.replace(request.SERVER_URL, '').strip()
-        
+
         # Remove the trailing slash from the relative URL.
         if self.relative_url.endswith('/') and len(self.relative_url) > 1:
             self.relative_url = self.relative_url[:-1]
 
-    
     def processCacheArguments(self, cache_args):
         """
         Process the cache arguments.
@@ -250,13 +253,13 @@ class AnalyticsContextualResults(AnalyticsBasePlugin):
 
         exp_context['page_url'] = self.relative_url
         url_pattern = '=~^%s/?$' % self.relative_url
-        
+
         # Make sure the regluar expression won't exceed Google's maximum length
-        # of 128 characters (130 with the =~ operator). If so, fall back to an 
+        # of 128 characters (130 with the =~ operator). If so, fall back to an
         # exact match.
         if len(url_pattern) > 130:
             url_pattern = '==%s' % self.relative_url
-            
+
         exp_context['page_filter'] = 'ga:pagePath%s' % url_pattern
         exp_context['nextpage_filter'] = 'ga:nextPagePath%s' % url_pattern
         exp_context['previouspage_filter'] = 'ga:previousPagePath%s' % url_pattern

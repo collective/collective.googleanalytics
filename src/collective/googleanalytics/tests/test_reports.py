@@ -10,6 +10,7 @@ from collective.googleanalytics.interfaces.report import IAnalyticsReportRendere
 from collective.googleanalytics.utils import evaluateTALES, getDate, getTimeDelta, unique_list
 from gdata.analytics import AnalyticsDataFeedFromString
 
+
 class TestReports(FunctionalTestCase):
 
     def test_default_expression_context(self):
@@ -93,6 +94,7 @@ class TestReports(FunctionalTestCase):
             re.sub(whitespace, ' ', results).strip(),
             re.sub(whitespace, ' ', results_js).strip()
         )
+
 
 def test_suite():
     suite = unittest.TestSuite()

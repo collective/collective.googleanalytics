@@ -45,7 +45,7 @@ setup(name='collective.googleanalytics',
       install_requires=[
           'setuptools',
           # -*- Extra requirements: -*-
-          'gdata>=2.0.17',
+          'gdata>=2.0.18',
       ] + requires,
       extras_require={
           'test': [

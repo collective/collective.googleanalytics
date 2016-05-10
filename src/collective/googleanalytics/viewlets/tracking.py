@@ -6,6 +6,7 @@ from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
 from plone.app.layout.analytics.view import AnalyticsViewlet
 from collective.googleanalytics.interfaces.tracking import IAnalyticsTrackingPlugin
 
+
 class AnalyticsTrackingViewlet(AnalyticsViewlet):
     """
     A viewlet that inserts the Google Analytics tracking code
