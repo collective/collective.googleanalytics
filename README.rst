@@ -938,6 +938,7 @@ Development
 -----------
 
 * `Matt Yoder <mattyoder@groundwire.org>`_
+* `Tom Gross <itconsense@gmail.com>`_
 
 Code Review
 -----------
