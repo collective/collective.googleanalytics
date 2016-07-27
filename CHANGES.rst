@@ -1,8 +1,8 @@
 Changelog
 =========
 
-1.5 (unreleased)
-----------------
+1.5.0 (unreleased)
+------------------
 
 - Add virtual page views for search and error pages [tomgross]
  
