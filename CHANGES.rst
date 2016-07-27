@@ -1,7 +1,7 @@
 Changelog
 =========
 
-1.5.0 (unreleased)
+1.5.0 (2016-07-27)
 ------------------
 
 - Add virtual page views for search and error pages [tomgross]
