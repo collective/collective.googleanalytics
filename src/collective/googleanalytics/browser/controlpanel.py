@@ -7,14 +7,16 @@ from zope.interface import implements
 from Products.CMFCore.utils import getToolByName
 from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
 
-from plone.app.controlpanel.form import ControlPanelForm
-from plone.app.controlpanel.widgets import MultiCheckBoxVocabularyWidget
 from plone.fieldsets.fieldsets import FormFieldsets
 
 from gdata.client import RequestError
 import gdata.auth
 import gdata.gauth
 from collective.googleanalytics import error
+from collective.googleanalytics.browser.controlpanel_form import \
+    ControlPanelForm
+from collective.googleanalytics.browser.controlpanel_widgets import \
+    MultiCheckBoxVocabularyWidget
 from collective.googleanalytics.interfaces.utility import \
     IAnalyticsReportsAssignment, IAnalyticsTracking, IAnalyticsSettings
 

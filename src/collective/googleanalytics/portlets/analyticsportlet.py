@@ -4,12 +4,13 @@ from zope.formlib import form
 
 from plone.portlets.interfaces import IPortletDataProvider
 from plone.app.portlets.portlets import base
-from plone.app.controlpanel.widgets import MultiCheckBoxVocabularyWidget
 
 from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
 from Products.CMFCore.utils import getToolByName
 
 from collective.googleanalytics import GoogleAnalyticsMessageFactory as _
+from collective.googleanalytics.browser.controlpanel_widgets import \
+    MultiCheckBoxVocabularyWidget
 
 from collective.googleanalytics.interfaces.loader import IAnalyticsAsyncLoader
 
