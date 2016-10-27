@@ -29,15 +29,6 @@ import gdata.analytics.service
 from gdata.service import RequestError
 from gdata.client import Unauthorized
 
-try:
-    from plone.protect.utils import safeWrite
-except ImportError:
-    try:
-        from plone.protect.auto import safeWrite
-    except ImportError:
-        def safeWrite(obj, request=None):
-            pass
-
 import logging
 logger = logging.getLogger('collective.googleanalytics')
 
@@ -109,7 +100,6 @@ class Analytics(PloneBaseTool, IFAwareObjectManager, OrderedFolder):
         client = None
         if self.is_auth():
             ann = IAnnotations(self)
-            safeWrite(ann)
             client = gdata.analytics.client.AnalyticsClient()
             ann['auth_token'].authorize(client)
         else:
@@ -157,7 +147,6 @@ class Analytics(PloneBaseTool, IFAwareObjectManager, OrderedFolder):
             socket.setdefaulttimeout(GOOGLE_REQUEST_TIMEOUT)
             try:
                 ann = IAnnotations(self)
-                safeWrite(ann)
                 expired = False
                 # Token gets refreshed when a new request is made to Google,
                 # so check before

@@ -1,3 +1,4 @@
+from zope.interface import alsoProvides
 from zope.interface import implements
 from zope.component import getMultiAdapter
 from zope.event import notify
@@ -17,6 +18,7 @@ from plone.app.controlpanel.interfaces import IPloneControlPanelView
 from plone.app.controlpanel.interfaces import IPloneControlPanelForm
 
 from plone.protect import CheckAuthenticator
+from plone.protect.interfaces import IDisableCSRFProtection
 
 
 class ControlPanelView(BrowserView):
@@ -55,3 +57,9 @@ class ControlPanelForm(FieldsetsEditForm):
 
     def _on_save(self, data=None):
         pass
+
+    def __call__(self):
+        request = self.request
+        if request.get('REQUEST_METHOD', '') != 'POST':
+            alsoProvides(request, IDisableCSRFProtection)
+        return super(ControlPanelForm, self).__call__()
