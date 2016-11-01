@@ -27,7 +27,8 @@ logger = logging.getLogger('collective.googleanalytics')
 
 def renderer_cache_key(method, instance):
     analytics_tool = getToolByName(instance.context, 'portal_analytics')
-    cache_interval = analytics_tool.cache_interval
+    analytics_settings = analytics_tool.get_settings()
+    cache_interval = analytics_settings.cache_interval
     cache_interval = (cache_interval > 0 and cache_interval * 60) or 1
     time_key = time.time() // cache_interval
     modification_time = str(instance.report.bobobase_modification_time())

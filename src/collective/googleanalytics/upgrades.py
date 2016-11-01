@@ -1,5 +1,9 @@
-from Products.CMFCore.utils import getToolByName
 
+from Products.CMFCore.utils import getToolByName
+from collective.googleanalytics.interfaces.utility import IAnalyticsSchema
+from plone.registry.interfaces import IRegistry
+from zope.annotation import IAnnotations
+from zope.component import getUtility
 
 def null_upgrade_step(setup_tool):
     """
@@ -171,3 +175,28 @@ def upgrade_10_to_11(setup_tool):
 
     if hasattr(jar, 'foreign_connections'):
         delattr(jar, 'foreign_connections')
+
+
+def upgrade_11_to_12(setup_tool):
+    analytics_tool = getToolByName(setup_tool, 'portal_analytics')
+    registry = getUtility(IRegistry)
+    try:
+        records = registry.forInterface(IAnalyticsSchema)
+    except KeyError:
+        registry.registerInterface(IAnalyticsSchema)
+        records = registry.forInterface(IAnalyticsSchema)
+        for field in IAnalyticsSchema:
+            setattr(records, field,
+                    getattr(analytics_tool, field,
+                            IAnalyticsSchema[field].missing_value))
+
+    if analytics_tool._auth_token is None:
+        ann = IAnnotations(analytics_tool)
+        auth_token = ann.get('auth_token', None)
+        if auth_token is not None:
+            analytics_tool._auth_token = auth_token
+            del ann['auth_token']
+        valid_token = ann.get('valid_token', None)
+        if valid_token is not None:
+            analytics_tool._valid_token = valid_token
+            del ann['valid_token']

@@ -1,5 +1,6 @@
 import sys
 from urllib import urlencode
+from zExceptions import NotFound
 from zope.component import queryMultiAdapter
 from Products.CMFCore.utils import getToolByName
 from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
@@ -18,8 +19,9 @@ class AnalyticsTrackingViewlet(AnalyticsViewlet):
 
     def __init__(self, context, request, view, manager):
         super(AnalyticsTrackingViewlet, self).__init__(context, request, view, manager)
-        self.analytics_tool = getToolByName(context, "portal_analytics")
+        analytics_tool = getToolByName(context, "portal_analytics")
         self.membership_tool = getToolByName(context, "portal_membership")
+        self.analytics_settings = analytics_tool.get_settings()
 
     def available(self):
         """
@@ -29,7 +31,7 @@ class AnalyticsTrackingViewlet(AnalyticsViewlet):
 
         member = self.membership_tool.getAuthenticatedMember()
 
-        for role in self.analytics_tool.tracking_excluded_roles:
+        for role in self.analytics_settings.tracking_excluded_roles:
             if member.has_role(role):
                 return False
         return True
@@ -40,7 +42,7 @@ class AnalyticsTrackingViewlet(AnalyticsViewlet):
         or an empty string if no tracking profile is selected.
         """
 
-        return self.analytics_tool.__dict__.get('tracking_web_property', None)
+        return self.analytics_settings.tracking_web_property
 
     def renderPlugins(self):
         """
@@ -49,7 +51,7 @@ class AnalyticsTrackingViewlet(AnalyticsViewlet):
         """
 
         results = []
-        for plugin_name in self.analytics_tool.tracking_plugin_names:
+        for plugin_name in self.analytics_settings.tracking_plugin_names:
             plugin = queryMultiAdapter(
                 (self.context, self.request),
                 interface=IAnalyticsTrackingPlugin,
