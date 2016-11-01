@@ -7,7 +7,7 @@
     <browser:page
         for="collective.googleanalytics.interfaces.utility.IAnalytics"
         name="analytics-controlpanel"
-        class=".controlpanel.AnalyticsControlPanelForm"
+        class=".controlpanel.AnalyticsControlPanel"
         permission="cmf.ManagePortal"
         layer="..interfaces.browserlayer.IAnalyticsLayer"
         />
