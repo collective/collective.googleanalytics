@@ -36,7 +36,7 @@ class AnalyticsReportsAssignmentForm(group.GroupForm):
     fields = field.Fields(IAnalyticsReportsAssignment)
 
 
-class AnalyticsTrackingForm(group.Groupform):
+class AnalyticsTrackingForm(group.GroupForm):
     fields = field.Fields(IAnalyticsTracking)
     label = _(u'analytics_tracking', default=u'Tracking')
     description = _(u'analytics_tracking_description',
