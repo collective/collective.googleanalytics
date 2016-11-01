@@ -64,6 +64,31 @@ class AnalyticsControlPanelForm(controlpanel.RegistryEditForm):
 
     label = _(u"Google Analytics")
 
+    def extractData(self):
+        """
+        Checks to make sure that tracking code is not duplicated in the site
+        configlet.
+        """
+        data, errors = super(AnalyticsControlPanelForm, self).extractData()
+        tracking_web_property = data.get('tracking_web_property', None)
+        properties_tool = getToolByName(self.context, "portal_properties")
+        snippet = properties_tool.site_properties.webstats_js
+        snippet_analytics = '_gat' in snippet or '_gaq' in snippet
+        if tracking_web_property and snippet_analytics:
+            plone_utils = getToolByName(self.context, 'plone_utils')
+            plone_utils.addPortalMessage(
+                _(u"You have enabled the tracking feature of this product, "
+                  u"but it looks like you still have tracking code in the "
+                  u"Site control panel. Please remove any Google Analytics "
+                  u"tracking code from the Site control panel to avoid "
+                  u"conflicts.'"), 'warning')
+        return data, errors
+
+
+class AnalyticsControlPanel(controlpanel.ControlPanelFormWrapper):
+    form = AnalyticsControlPanelForm
+    index = ViewPageTemplateFile('controlpanel_layout.pt')
+
     def authorized(self):
         """
         Returns True if we have a valid token, or false otherwise.
@@ -101,28 +126,3 @@ class AnalyticsControlPanelForm(controlpanel.RegistryEditForm):
         except RequestError:
             return None
         return res.title.text.split(' ')[-1]
-
-    def extractData(self):
-        """
-        Checks to make sure that tracking code is not duplicated in the site
-        configlet.
-        """
-        data, errors = super(AnalyticsControlPanelForm, self).extractData()
-        tracking_web_property = data.get('tracking_web_property', None)
-        properties_tool = getToolByName(self.context, "portal_properties")
-        snippet = properties_tool.site_properties.webstats_js
-        snippet_analytics = '_gat' in snippet or '_gaq' in snippet
-        if tracking_web_property and snippet_analytics:
-            plone_utils = getToolByName(self.context, 'plone_utils')
-            plone_utils.addPortalMessage(
-                _(u"You have enabled the tracking feature of this product, "
-                  u"but it looks like you still have tracking code in the "
-                  u"Site control panel. Please remove any Google Analytics "
-                  u"tracking code from the Site control panel to avoid "
-                  u"conflicts.'"), 'warning')
-        return data, errors
-
-
-class AnalyticsControlPanel(controlpanel.ControlPanelFormWrapper):
-    form = AnalyticsControlPanelForm
-    index = ViewPageTemplateFile('controlpanel_layout.pt')
