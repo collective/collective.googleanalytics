@@ -179,16 +179,6 @@ def upgrade_10_to_11(setup_tool):
 
 def upgrade_11_to_12(setup_tool):
     analytics_tool = getToolByName(setup_tool, 'portal_analytics')
-    registry = getUtility(IRegistry)
-    try:
-        records = registry.forInterface(IAnalyticsSchema)
-    except KeyError:
-        registry.registerInterface(IAnalyticsSchema)
-        records = registry.forInterface(IAnalyticsSchema)
-        for field in IAnalyticsSchema:
-            setattr(records, field,
-                    getattr(analytics_tool, field,
-                            IAnalyticsSchema[field].missing_value))
 
     if analytics_tool._auth_token is None:
         ann = IAnnotations(analytics_tool)
@@ -200,3 +190,14 @@ def upgrade_11_to_12(setup_tool):
         if valid_token is not None:
             analytics_tool._valid_token = valid_token
             del ann['valid_token']
+
+    registry = getUtility(IRegistry)
+    try:
+        records = registry.forInterface(IAnalyticsSchema)
+    except KeyError:
+        registry.registerInterface(IAnalyticsSchema)
+        records = registry.forInterface(IAnalyticsSchema)
+        for field in IAnalyticsSchema:
+            setattr(records, field,
+                    getattr(analytics_tool, field,
+                            IAnalyticsSchema[field].missing_value))
