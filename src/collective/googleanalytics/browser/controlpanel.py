@@ -125,4 +125,4 @@ class AnalyticsControlPanelForm(controlpanel.RegistryEditForm):
 
 class AnalyticsControlPanel(controlpanel.ControlPanelFormWrapper):
     form = AnalyticsControlPanelForm
-    index = ViewPageTemplateFile('controlpanel.pt')
+    index = ViewPageTemplateFile('controlpanel_layout.pt')
