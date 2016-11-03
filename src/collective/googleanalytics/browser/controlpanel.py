@@ -75,7 +75,7 @@ class AnalyticsControlPanelForm(controlpanel.RegistryEditForm):
         data, errors = super(AnalyticsControlPanelForm, self).extractData()
         tracking_web_property = data.get('tracking_web_property', None)
         registry = getUtility(IRegistry)
-        site_records = registry.forInterface(ISiteSchema)
+        site_records = registry.forInterface(ISiteSchema, prefix='plone')
         snippet = site_records.webstats_js
         snippet_analytics = '_gat' in snippet or '_gaq' in snippet
         if tracking_web_property and snippet_analytics:
