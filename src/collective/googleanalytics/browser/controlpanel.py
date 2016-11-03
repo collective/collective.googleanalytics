@@ -17,6 +17,9 @@ from z3c.form import field
 from z3c.form import group
 
 from plone.app.registry.browser import controlpanel
+from Products.CMFPlone.interfaces import ISiteSchema
+from zope.component import getUtility
+from plone.registry.interfaces import IRegistry
 
 import logging
 logger = logging.getLogger('collective.googleanalytics')
@@ -71,8 +74,9 @@ class AnalyticsControlPanelForm(controlpanel.RegistryEditForm):
         """
         data, errors = super(AnalyticsControlPanelForm, self).extractData()
         tracking_web_property = data.get('tracking_web_property', None)
-        properties_tool = getToolByName(self.context, "portal_properties")
-        snippet = properties_tool.site_properties.webstats_js
+        registry = getUtility(IRegistry)
+        site_records = registry.forInterface(ISiteSchema)
+        snippet = site_records.webstats_js
         snippet_analytics = '_gat' in snippet or '_gaq' in snippet
         if tracking_web_property and snippet_analytics:
             plone_utils = getToolByName(self.context, 'plone_utils')
