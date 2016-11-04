@@ -9,7 +9,6 @@ from App.class_init import InitializeClass
 from OFS.ObjectManager import IFAwareObjectManager
 from OFS.OrderedFolder import OrderedFolder
 from Products.CMFPlone.PloneBaseTool import PloneBaseTool
-from collective.googleanalytics import GoogleAnalyticsMessageFactory as _
 from collective.googleanalytics import error
 from collective.googleanalytics.config import GOOGLE_REQUEST_TIMEOUT
 from collective.googleanalytics.interfaces.report import IAnalyticsReport
@@ -26,6 +25,7 @@ from plone.registry.interfaces import IRegistry
 from time import time
 from zope.annotation.interfaces import IAttributeAnnotatable
 from zope.component import getUtility
+from zope.i18nmessageid import MessageFactory
 from zope.interface import implements
 from zope.schema.fieldproperty import FieldProperty
 
@@ -33,6 +33,7 @@ logger = logging.getLogger('collective.googleanalytics')
 
 DEFAULT_TIMEOUT = socket.getdefaulttimeout()
 
+_ = MessageFactory('collective.googleanalytics')
 
 def account_feed_cachekey(func, instance, feed_path):
     """
