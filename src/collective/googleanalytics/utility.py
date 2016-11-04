@@ -1,42 +1,34 @@
-try:
-    from App.class_init import InitializeClass
-except ImportError:
-    from Globals import InitializeClass
-from AccessControl import ClassSecurityInfo
 
+import gdata.analytics.client
+import gdata.analytics.service
+import gdata.gauth
+import logging
+import socket
+from AccessControl import ClassSecurityInfo
+from App.class_init import InitializeClass
+from OFS.ObjectManager import IFAwareObjectManager
+from OFS.OrderedFolder import OrderedFolder
+from Products.CMFPlone.PloneBaseTool import PloneBaseTool
+from collective.googleanalytics import GoogleAnalyticsMessageFactory as _
+from collective.googleanalytics import error
+from collective.googleanalytics.config import GOOGLE_REQUEST_TIMEOUT
+from collective.googleanalytics.interfaces.report import IAnalyticsReport
+from collective.googleanalytics.interfaces.utility import IAnalytics
+from collective.googleanalytics.interfaces.utility import IAnalyticsSchema
+from datetime import datetime
+from gdata.client import Unauthorized
+from gdata.gauth import OAuth2AccessTokenError
+from gdata.gauth import OAuth2RevokeError
+from gdata.service import RequestError
+from plone.memoize import ram
+from plone.protect.auto import safeWrite
+from plone.registry.interfaces import IRegistry
+from time import time
 from zope.annotation.interfaces import IAttributeAnnotatable
+from zope.component import getUtility
 from zope.interface import implements
 from zope.schema.fieldproperty import FieldProperty
 
-from OFS.ObjectManager import IFAwareObjectManager
-from OFS.OrderedFolder import OrderedFolder
-
-from Products.CMFPlone.PloneBaseTool import PloneBaseTool
-from plone.memoize import ram
-from datetime import datetime
-from time import time
-import socket
-
-from collective.googleanalytics.interfaces.utility import IAnalytics
-from collective.googleanalytics.interfaces.report import IAnalyticsReport
-from collective.googleanalytics import error
-from collective.googleanalytics.config import GOOGLE_REQUEST_TIMEOUT
-
-import gdata.gauth
-import gdata.analytics.client
-import gdata.analytics.service
-from gdata.service import RequestError
-from gdata.client import Unauthorized
-
-from gdata.gauth import OAuth2RevokeError
-from gdata.gauth import OAuth2AccessTokenError
-
-from plone.protect.auto import safeWrite
-from collective.googleanalytics.interfaces.utility import IAnalyticsSchema
-from plone.registry.interfaces import IRegistry
-from zope.component import getUtility
-
-import logging
 logger = logging.getLogger('collective.googleanalytics')
 
 DEFAULT_TIMEOUT = socket.getdefaulttimeout()

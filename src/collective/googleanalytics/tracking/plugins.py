@@ -1,12 +1,13 @@
+
 try:
     import simplejson as json
 except ImportError:
     import json
-from zope.interface import implements
-from collective.googleanalytics.bbb import ViewPageTemplateFile
 from Products.CMFCore.utils import getToolByName
-from collective.googleanalytics.interfaces.tracking import IAnalyticsTrackingPlugin
 from collective.googleanalytics.config import FILE_EXTENSION_CHOICES
+from collective.googleanalytics.interfaces.tracking import IAnalyticsTrackingPlugin
+from zope.browserpage.viewpagetemplatefile import ViewPageTemplateFile
+from zope.interface import implements
 
 
 class AnalyticsBaseTrackingPlugin(object):

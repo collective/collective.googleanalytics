@@ -1,7 +1,8 @@
-from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
+
 from Products.CMFCore.utils import getToolByName
-from plone.app.layout.viewlets import ViewletBase
+from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
 from collective.googleanalytics.interfaces.loader import IAnalyticsAsyncLoader
+from plone.app.layout.viewlets import ViewletBase
 
 
 class SiteWideAnalyticsViewlet(ViewletBase):

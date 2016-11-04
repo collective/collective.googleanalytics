@@ -1,27 +1,28 @@
-try:
-    from App.class_init import InitializeClass
-except ImportError:
-    from Globals import InitializeClass
+
+import datetime
+import logging
+import math
+import sys
+import time
+from App.class_init import InitializeClass
 from AccessControl import ClassSecurityInfo
-from zope.interface import implements
-from bbb import ViewPageTemplateFile
 from Products.CMFCore.Expression import getEngine
 from Products.CMFCore.utils import getToolByName
 from Products.PageTemplates.ZopePageTemplate import ZopePageTemplate
-from plone.memoize.volatile import cache, ATTR, CONTAINER_FACTORY
-from plone.memoize.instance import memoize
-
 from collective.googleanalytics.interfaces.report import IAnalyticsReportRenderer
+from collective.googleanalytics.utils import evaluateTALES
+from collective.googleanalytics.utils import extract_value
+from collective.googleanalytics.utils import getDate
+from collective.googleanalytics.utils import getTimeDelta
+from collective.googleanalytics.utils import unique_list
 from collective.googleanalytics.visualization import AnalyticsReportVisualization
-from collective.googleanalytics.utils import evaluateTALES, extract_value, \
-    unique_list, getDate, getTimeDelta
+from plone.memoize.instance import memoize
+from plone.memoize.volatile import ATTR
+from plone.memoize.volatile import CONTAINER_FACTORY
+from plone.memoize.volatile import cache
+from zope.browserpage.viewpagetemplatefile import ViewPageTemplateFile
+from zope.interface import implements
 
-import datetime
-import math
-import time
-import sys
-
-import logging
 logger = logging.getLogger('collective.googleanalytics')
 
 

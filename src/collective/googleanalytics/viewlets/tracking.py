@@ -1,11 +1,12 @@
+
 import sys
+from Products.CMFCore.utils import getToolByName
+from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
+from collective.googleanalytics.interfaces.tracking import IAnalyticsTrackingPlugin
+from plone.app.layout.analytics.view import AnalyticsViewlet
 from urllib import urlencode
 from zExceptions import NotFound
 from zope.component import queryMultiAdapter
-from Products.CMFCore.utils import getToolByName
-from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
-from plone.app.layout.analytics.view import AnalyticsViewlet
-from collective.googleanalytics.interfaces.tracking import IAnalyticsTrackingPlugin
 
 
 class AnalyticsTrackingViewlet(AnalyticsViewlet):

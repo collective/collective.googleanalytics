@@ -1,8 +1,10 @@
+
 import unittest
 from Products.CMFCore.utils import getToolByName
-from collective.googleanalytics.tests.base import FunctionalTestCase
 from collective.googleanalytics.report import AnalyticsReport
-from collective.googleanalytics.vocabularies import getProfiles, getWebProperties
+from collective.googleanalytics.tests.base import FunctionalTestCase
+from collective.googleanalytics.vocabularies import getProfiles
+from collective.googleanalytics.vocabularies import getWebProperties
 
 
 class TestInstall(FunctionalTestCase):

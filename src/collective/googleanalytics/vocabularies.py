@@ -1,10 +1,11 @@
-from bbb import getSite
-from zope.component import getGlobalSiteManager
-from zope.schema.vocabulary import SimpleVocabulary, SimpleTerm
+
 from Products.CMFCore.utils import getToolByName
-from collective.googleanalytics.interfaces.tracking import IAnalyticsTrackingPlugin
 from collective.googleanalytics import error
+from collective.googleanalytics.interfaces.tracking import IAnalyticsTrackingPlugin
 from gdata.client import RequestError
+from zope.component import getGlobalSiteManager
+from zope.component.hooks import getSite
+from zope.schema.vocabulary import SimpleVocabulary, SimpleTerm
 
 
 def crop(text, length):

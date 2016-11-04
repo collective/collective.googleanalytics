@@ -1,9 +1,9 @@
 
-from zope.publisher.browser import BrowserPage
+import logging
 from Products.CMFCore.utils import getToolByName
 from collective.googleanalytics import GoogleAnalyticsMessageFactory as _
+from zope.publisher.browser import BrowserPage
 
-import logging
 logger = logging.getLogger('collective.googleanalytics')
 
 

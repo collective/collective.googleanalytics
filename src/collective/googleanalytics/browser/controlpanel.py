@@ -1,27 +1,24 @@
 
+import logging
+from Products.CMFCore.utils import getToolByName
+from Products.CMFPlone.interfaces import ISiteSchema
+from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
+from collective.googleanalytics import GoogleAnalyticsMessageFactory as _
+from collective.googleanalytics import error
+from collective.googleanalytics.interfaces.utility import \
+    IAnalyticsReportsAssignment
+from collective.googleanalytics.interfaces.utility import IAnalyticsSchema
+from collective.googleanalytics.interfaces.utility import IAnalyticsSettings
+from collective.googleanalytics.interfaces.utility import IAnalyticsTracking
+from gdata.client import RequestError
+from plone.app.registry.browser import controlpanel
+from plone.registry.interfaces import IRegistry
+from z3c.form import field
+from z3c.form import group
+from zope.component import getUtility
 from zope.interface import Interface
 from zope.interface import implements
 
-from Products.CMFCore.utils import getToolByName
-from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
-
-from gdata.client import RequestError
-from collective.googleanalytics import error
-from collective.googleanalytics.interfaces.utility import \
-    IAnalyticsReportsAssignment, IAnalyticsTracking, IAnalyticsSettings
-from collective.googleanalytics.interfaces.utility import IAnalyticsSchema
-
-from collective.googleanalytics import GoogleAnalyticsMessageFactory as _
-
-from z3c.form import field
-from z3c.form import group
-
-from plone.app.registry.browser import controlpanel
-from Products.CMFPlone.interfaces import ISiteSchema
-from zope.component import getUtility
-from plone.registry.interfaces import IRegistry
-
-import logging
 logger = logging.getLogger('collective.googleanalytics')
 
 
@@ -67,12 +64,14 @@ class AnalyticsControlPanelForm(controlpanel.RegistryEditForm):
 
     label = _(u"Google Analytics")
 
-    def extractData(self):
+    def extractData(self, setErrors=True):
         """
         Checks to make sure that tracking code is not duplicated in the site
         configlet.
         """
-        data, errors = super(AnalyticsControlPanelForm, self).extractData()
+        data, errors = super(AnalyticsControlPanelForm, self).extractData(
+            setErrors=setErrors
+        )
         tracking_web_property = data.get('tracking_web_property', None)
         registry = getUtility(IRegistry)
         site_records = registry.forInterface(ISiteSchema, prefix='plone')

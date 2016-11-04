@@ -1,16 +1,17 @@
-from zope.interface import implements
-from zope.component import getMultiAdapter
-from zope.publisher.browser import BrowserPage
-from bbb import ViewPageTemplateFile
-from plone.memoize.instance import memoize
-from Products.CMFCore.utils import getToolByName
-from collective.googleanalytics.interfaces.loader import IAnalyticsAsyncLoader
-from collective.googleanalytics.interfaces.report import IAnalyticsReportRenderer
-from collective.googleanalytics import error
-from string import Template
+
 import time
 import os
+from Products.CMFCore.utils import getToolByName
 from collective.googleanalytics import GoogleAnalyticsMessageFactory as _
+from collective.googleanalytics import error
+from collective.googleanalytics.interfaces.loader import IAnalyticsAsyncLoader
+from collective.googleanalytics.interfaces.report import IAnalyticsReportRenderer
+from plone.memoize.instance import memoize
+from string import Template
+from zope.browserpage.viewpagetemplatefile import ViewPageTemplateFile
+from zope.component import getMultiAdapter
+from zope.interface import implements
+from zope.publisher.browser import BrowserPage
 
 
 class DefaultAnalyticsAsyncLoader(object):

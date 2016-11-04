@@ -35,7 +35,7 @@
 	<configure package="Products.GenericSetup.browser">
 	
 		<browser:page
-		    for="collective.googleanalytics.bbb.IAdding"
+		    for="zope.browser.interfaces.IAdding"
 		    name="add_analytics_report"
 		    template="addWithPresettings.pt"
 		    class="collective.googleanalytics.browser.report.AnalyticsReportAddView"

@@ -1,6 +1,7 @@
+
+import datetime
 from Products.CMFCore.Expression import Expression
 from zope.tales.tales import CompilerError
-import datetime
 
 
 def getTimeDelta(**kwargs):

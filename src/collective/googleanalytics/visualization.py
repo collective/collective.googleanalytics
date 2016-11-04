@@ -1,14 +1,15 @@
-from plone.memoize.instance import memoize
-from collective.googleanalytics.utils import js_literal
-from string import Template
+
 import datetime
-import time
-import os
 try:
     import simplejson as json
     json    # pyflakes
 except ImportError:
     import json
+import time
+import os
+from collective.googleanalytics.utils import js_literal
+from plone.memoize.instance import memoize
+from string import Template
 
 
 class AnalyticsReportVisualization(object):
