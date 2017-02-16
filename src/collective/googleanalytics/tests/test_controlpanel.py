@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-import unittest2 as unittest
+import unittest
 from collective.googleanalytics.interfaces.browserlayer import IAnalyticsLayer
 from collective.googleanalytics.testing import INTEGRATION_TESTING
 from plone.app.testing import TEST_USER_ID
@@ -55,9 +55,3 @@ class ControlPanelTestCase(unittest.TestCase):
                    for a in self.controlpanel.listActions()]
         self.assertTrue('Analytics' not in actions,
                         'control panel was not removed')
-
-
-def test_suite():
-    suite = unittest.TestSuite()
-    suite.addTest(unittest.makeSuite(ControlPanelTestCase))
-    return suite
