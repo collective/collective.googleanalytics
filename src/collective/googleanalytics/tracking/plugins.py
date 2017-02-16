@@ -54,9 +54,9 @@ class AnalyticsDownloadPlugin(AnalyticsBaseTrackingPlugin):
     """
 
     __call__ = ViewPageTemplateFile('download.pt')
-    
+
     file_extensions = json.dumps(FILE_EXTENSION_CHOICES)
-    
+
 
 class AnalyticsCommentPlugin(AnalyticsBaseTrackingPlugin):
     """

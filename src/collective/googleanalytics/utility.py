@@ -40,6 +40,7 @@ DEFAULT_TIMEOUT = socket.getdefaulttimeout()
 
 _ = MessageFactory('collective.googleanalytics')
 
+
 def account_feed_cachekey(func, instance, feed_path):
     """
     Cache key for the account feed. We only refresh it every ten minutes.

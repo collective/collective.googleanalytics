@@ -257,7 +257,7 @@ class AnalyticsReportRenderer(object):
             if 'ga:year' in date_dimensions:
                 values['ga:year'] = date.year
 
-            if values and not values in results:
+            if values and values not in results:
                 results.append(values)
 
         return aggregate(results)

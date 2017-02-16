@@ -86,8 +86,8 @@ class AnalyticsReport(PropertyManager, SimpleItem):
     )
 
     manage_options = (
-        PropertyManager.manage_options
-        + SimpleItem.manage_options)
+        PropertyManager.manage_options + SimpleItem.manage_options
+    )
 
     def __init__(self, id, **kwargs):
         self.id = id

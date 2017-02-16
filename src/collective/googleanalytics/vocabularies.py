@@ -17,6 +17,7 @@ def crop(text, length):
         text += '...'
     return text
 
+
 def getProfiles(context):
     """
     Return list of Google Analytics profiles and corresponding
@@ -99,14 +100,15 @@ def getWebProperties(context):
                         title = unicode(title, 'utf-8')
                 if prop.name == 'ga:webPropertyId':
                     webPropertyId = prop.value
-            if not webPropertyId in unique_choices.keys():
+            if webPropertyId not in unique_choices:
                 unique_choices.update({webPropertyId: title})
             else:
                 unique_choices[webPropertyId] += ', ' + title
         # After we reverse the terms so that the profile name(s) is now the key, we need
         # to ensure that these keys are unique. So, we pass the resulting list through
         # dict() and then output a list of items.
-        choices = dict([(crop(title, 40), property_id) for (property_id, title) in unique_choices.items()]).items()
+        choices = dict([(crop(_title, 40), property_id)
+                        for (property_id, _title) in unique_choices.items()]).items()
     else:
         choices = [('No profiles available', None)]
     return SimpleVocabulary([SimpleTerm(c[1], c[1], c[0]) for c in choices])

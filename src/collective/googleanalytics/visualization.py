@@ -86,7 +86,7 @@ class AnalyticsReportVisualization(object):
         options = self.options.copy()
         # Set the width of the visualization to the container width if it
         # if not already set.
-        if not 'width' in self.options.keys():
+        if 'width' not in self.options.keys():
             options['width'] = js_literal('container_width')
         if options:
             return json.dumps(options)

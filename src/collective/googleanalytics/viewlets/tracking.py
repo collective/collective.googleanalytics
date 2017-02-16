@@ -79,7 +79,7 @@ class AnalyticsTrackingViewlet(AnalyticsViewlet):
             else:
                 errorcode = 500
             push_params.append(
-            ("'/error/%s?page=' + document.location.pathname + "
-             "document.location.search + '&from=' + document.referrer")
-            % errorcode)
+                ("'/error/%s?page=' + document.location.pathname + "
+                 "document.location.search + '&from=' + document.referrer")
+                % errorcode)
         return "_gaq.push([%s]);" % ', '.join(push_params)

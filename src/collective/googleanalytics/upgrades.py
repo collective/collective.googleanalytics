@@ -5,6 +5,7 @@ from plone.registry.interfaces import IRegistry
 from zope.annotation import IAnnotations
 from zope.component import getUtility
 
+
 def null_upgrade_step(setup_tool):
     """
     This is a null upgrade, use it when nothing happens

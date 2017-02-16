@@ -30,25 +30,28 @@ class IAnalyticsControlPanelForm(Interface):
 
 class AnalyticsReportsAssignmentForm(group.GroupForm):
     label = _(u'analytics_assignment', default=u'Reports')
-    description = _(u'analytics_assignment_description',
-            default=(u'Configure the reports that are displayed in the Google '
-                     u'Analytics control panel.'))
+    description = _(
+        u'analytics_assignment_description',
+        default=(u'Configure the reports that are displayed in the Google '
+                 u'Analytics control panel.'))
     fields = field.Fields(IAnalyticsReportsAssignment)
 
 
 class AnalyticsTrackingForm(group.GroupForm):
     fields = field.Fields(IAnalyticsTracking)
     label = _(u'analytics_tracking', default=u'Tracking')
-    description = _(u'analytics_tracking_description',
-            default=(u'Configure the way Google Analytics tracks statistics '
-                     u'about this site.'))
+    description = _(
+        u'analytics_tracking_description',
+        default=(u'Configure the way Google Analytics tracks statistics '
+                 u'about this site.'))
 
 
 class AnalyticsSettingsForm(group.GroupForm):
     fields = field.Fields(IAnalyticsSettings)
     label = _(u'analytics_settings', default=u'Settings')
-    description = _(u'analytics_settings_description',
-            default=u'Configure the settings of the Google Analytics product.')
+    description = _(
+        u'analytics_settings_description',
+        default=u'Configure the settings of the Google Analytics product.')
 
 
 class AnalyticsControlPanelForm(controlpanel.RegistryEditForm):

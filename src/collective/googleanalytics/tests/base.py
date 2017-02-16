@@ -6,7 +6,6 @@ from Products.PloneTestCase.layer import onsetup
 from Testing import ZopeTestCase as ztc
 
 
-
 @onsetup
 def setup_product():
     """Set up additional products and ZCML required to test this product.

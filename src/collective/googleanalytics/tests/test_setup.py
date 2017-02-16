@@ -163,7 +163,7 @@ class TestUnicode(FunctionalTestCase):
             [Entry(
                 [Prop('ga:profileName', u'A - Nantes D\xe9veloppement a very long profile name and continuing'),
                  Prop('ga:webPropertyId', 'foo'),
-                 Prop('dxp:tableId', 'foo'),]
+                 Prop('dxp:tableId', 'foo')]
             )]
         )
         accounts = getProfiles(analytics_tool)

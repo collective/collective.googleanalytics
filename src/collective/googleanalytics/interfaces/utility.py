@@ -68,8 +68,8 @@ class IAnalyticsSettings(Interface):
     )
 
 
-class IAnalyticsSchema(IAnalyticsReportsAssignment, IAnalyticsTracking,
-        IAnalyticsSettings):
+class IAnalyticsSchema(
+        IAnalyticsReportsAssignment, IAnalyticsTracking, IAnalyticsSettings):
     """
     """
 

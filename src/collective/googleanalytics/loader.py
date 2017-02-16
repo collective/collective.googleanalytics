@@ -41,7 +41,7 @@ class DefaultAnalyticsAsyncLoader(object):
                 report = analytics_tool[report_id]
                 reports.append(report_id)
                 package = report.viz_type.lower()
-                if not package in packages and not package == 'none':
+                if package not in packages and not package == 'none':
                     packages.append(package)
             except KeyError:
                 continue
