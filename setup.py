@@ -45,6 +45,7 @@ setup(name='collective.googleanalytics',
           'gdata>=2.0.18',
           'plone.fieldsets',
           'plone.app.form',
+          'plone.api',
       ] + requires,
       extras_require={
           'test': [

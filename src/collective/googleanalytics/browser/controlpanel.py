@@ -1,7 +1,11 @@
 
 import logging
 from Products.CMFCore.utils import getToolByName
-from Products.CMFPlone.interfaces import ISiteSchema
+try:
+    from Products.CMFPlone.interfaces import ISiteSchema
+    HAS_PLONE5 = True
+except ImportError:
+    HAS_PLONE5 = False
 from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
 from collective.googleanalytics import GoogleAnalyticsMessageFactory as _
 from collective.googleanalytics import error
@@ -12,6 +16,7 @@ from collective.googleanalytics.interfaces.utility import IAnalyticsSettings
 from collective.googleanalytics.interfaces.utility import IAnalyticsTracking
 from gdata.client import RequestError
 from plone.app.registry.browser import controlpanel
+from plone import api
 from plone.registry.interfaces import IRegistry
 from z3c.form import field
 from z3c.form import group
@@ -76,18 +81,21 @@ class AnalyticsControlPanelForm(controlpanel.RegistryEditForm):
             setErrors=setErrors
         )
         tracking_web_property = data.get('tracking_web_property', None)
-        registry = getUtility(IRegistry)
-        site_records = registry.forInterface(ISiteSchema, prefix='plone')
-        snippet = site_records.webstats_js
+        if HAS_PLONE5:
+            registry = getUtility(IRegistry)
+            site_records = registry.forInterface(ISiteSchema, prefix='plone')
+            snippet = site_records.webstats_js
+        else:   # Plone 4 stores the analytics script in the properties
+            properties_tool = api.portal.get_tool(name="portal_properties")
+            snippet = properties_tool.site_properties.webstats_js
         snippet_analytics = '_gat' in snippet or '_gaq' in snippet
         if tracking_web_property and snippet_analytics:
-            plone_utils = getToolByName(self.context, 'plone_utils')
-            plone_utils.addPortalMessage(
+            api.portal.show_message(
                 _(u"You have enabled the tracking feature of this product, "
                   u"but it looks like you still have tracking code in the "
                   u"Site control panel. Please remove any Google Analytics "
                   u"tracking code from the Site control panel to avoid "
-                  u"conflicts.'"), 'warning')
+                  u"conflicts.'"), self.request, type='warning')
         return data, errors
 
 
