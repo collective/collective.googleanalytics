@@ -20,7 +20,12 @@ from gdata.gauth import OAuth2AccessTokenError
 from gdata.gauth import OAuth2RevokeError
 from gdata.service import RequestError
 from plone.memoize import ram
-from plone.protect.auto import safeWrite
+try:
+    from plone.protect.auto import safeWrite
+except ImportError:
+    # older Plone versions (< 5.0) don't support this, so we provide a stub
+    def safeWrite(obj):
+        pass
 from plone.registry.interfaces import IRegistry
 from time import time
 from zope.annotation.interfaces import IAttributeAnnotatable
