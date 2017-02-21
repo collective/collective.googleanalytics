@@ -4,7 +4,8 @@ Changelog
 1.5.1 (unreleased)
 ------------------
 
-- Nothing changed yet.
+- Plone 5 compatibility
+  [enfold-josh, tomgross]
 
 
 1.5.0 (2016-07-27)
