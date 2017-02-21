@@ -1,5 +1,5 @@
-from Products.GenericSetup.browser.utils import AddWithPresettingsViewBase
 
+from Products.GenericSetup.browser.utils import AddWithPresettingsViewBase
 from collective.googleanalytics.report import AnalyticsReport
 
 

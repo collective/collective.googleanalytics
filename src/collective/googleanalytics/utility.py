@@ -1,38 +1,44 @@
-try:
-    from App.class_init import InitializeClass
-except ImportError:
-    from Globals import InitializeClass
-from AccessControl import ClassSecurityInfo
 
-from zope.annotation import IAnnotations
+import gdata.analytics.client
+import gdata.analytics.service
+import gdata.gauth
+import logging
+import socket
+from AccessControl import ClassSecurityInfo
+from App.class_init import InitializeClass
+from OFS.ObjectManager import IFAwareObjectManager
+from OFS.OrderedFolder import OrderedFolder
+from Products.CMFPlone.PloneBaseTool import PloneBaseTool
+from collective.googleanalytics import error
+from collective.googleanalytics.config import GOOGLE_REQUEST_TIMEOUT
+from collective.googleanalytics.interfaces.report import IAnalyticsReport
+from collective.googleanalytics.interfaces.utility import IAnalytics
+from collective.googleanalytics.interfaces.utility import IAnalyticsSchema
+from datetime import datetime
+from gdata.client import Unauthorized
+from gdata.gauth import OAuth2AccessTokenError
+from gdata.gauth import OAuth2RevokeError
+from gdata.service import RequestError
+from plone.memoize import ram
+try:
+    from plone.protect.auto import safeWrite
+except ImportError:
+    # older Plone versions (< 5.0) don't support this, so we provide a stub
+    def safeWrite(obj):
+        pass
+from plone.registry.interfaces import IRegistry
+from time import time
 from zope.annotation.interfaces import IAttributeAnnotatable
+from zope.component import getUtility
+from zope.i18nmessageid import MessageFactory
 from zope.interface import implements
 from zope.schema.fieldproperty import FieldProperty
 
-from OFS.ObjectManager import IFAwareObjectManager
-from OFS.OrderedFolder import OrderedFolder
-
-from Products.CMFPlone.PloneBaseTool import PloneBaseTool
-from plone.memoize import ram
-from datetime import datetime
-from time import time
-import socket
-
-from collective.googleanalytics.interfaces.utility import IAnalytics
-from collective.googleanalytics.interfaces.report import IAnalyticsReport
-from collective.googleanalytics import error
-from collective.googleanalytics.config import GOOGLE_REQUEST_TIMEOUT
-
-import gdata.gauth
-import gdata.analytics.client
-import gdata.analytics.service
-from gdata.service import RequestError
-from gdata.client import Unauthorized
-
-import logging
 logger = logging.getLogger('collective.googleanalytics')
 
 DEFAULT_TIMEOUT = socket.getdefaulttimeout()
+
+_ = MessageFactory('collective.googleanalytics')
 
 
 def account_feed_cachekey(func, instance, feed_path):
@@ -86,6 +92,11 @@ class Analytics(PloneBaseTool, IFAwareObjectManager, OrderedFolder):
     security.declarePrivate('_v_temp_clients')
     _v_temp_clients = None
 
+    security.declarePrivate('_auth_token')
+    _auth_token = None
+    security.declarePrivate('_valid_token')
+    _valid_token = None
+
     security.declarePrivate('_getAuthenticatedClient')
     security.declarePrivate('is_auth')
     security.declarePrivate('makeClientRequest')
@@ -99,17 +110,15 @@ class Analytics(PloneBaseTool, IFAwareObjectManager, OrderedFolder):
         """
         client = None
         if self.is_auth():
-            ann = IAnnotations(self)
             client = gdata.analytics.client.AnalyticsClient()
-            ann['auth_token'].authorize(client)
+            self._auth_token.authorize(client)
         else:
             raise error.BadAuthenticationError, 'You need to authorize with Google'
 
         return client
 
     def is_auth(self):
-        ann = IAnnotations(self)
-        valid_token = ann.get('valid_token', None)
+        valid_token = self._valid_token
         if valid_token:
             return True
         return False
@@ -120,6 +129,7 @@ class Analytics(PloneBaseTool, IFAwareObjectManager, OrderedFolder):
         We need this wrapper method so that we can intelligently handle errors.
         """
 
+        safeWrite(self)
         # XXX: Have to use v2.4. gdata 2.0.18 doesn't yet support v3 for
         #      analytics
         feed_url = 'https://www.googleapis.com/analytics/v2.4/' + feed
@@ -146,19 +156,17 @@ class Analytics(PloneBaseTool, IFAwareObjectManager, OrderedFolder):
         try:
             socket.setdefaulttimeout(GOOGLE_REQUEST_TIMEOUT)
             try:
-                ann = IAnnotations(self)
                 expired = False
                 # Token gets refreshed when a new request is made to Google,
                 # so check before
-                if ann['auth_token'].token_expiry < datetime.now():
+                if self._auth_token.token_expiry < datetime.now():
                     logger.debug("This access token expired, will try to "
                                  "refresh it.")
                     expired = True
                 result = query_method(feed_url, *args, **kwargs)
                 if expired:
                     logger.debug("Token was refreshed successfuly. New expire "
-                                 "date: %s" % ann['auth_token'].token_expiry)
-                    IAnnotations(self)['auth_token'] = ann['auth_token']
+                                 "date: %s" % self._auth_token.token_expiry)
                 return result
             except (Unauthorized, RequestError), e:
                 if hasattr(e, 'reason'):
@@ -167,8 +175,9 @@ class Analytics(PloneBaseTool, IFAwareObjectManager, OrderedFolder):
                     reason = e[0]['reason']
                 if 'Token invalid' in reason or reason in ('Forbidden', 'Unauthorized'):
                     # Reset the stored auth token.
-                    self.auth_token = None
-                    self.__dict__['reports_profile'] = None
+                    self._auth_token = None
+                    settings = self.get_settings()
+                    settings.reports_profile = None
                     raise error.BadAuthenticationError, 'You need to authorize with Google'
                 else:
                     raise
@@ -206,5 +215,87 @@ class Analytics(PloneBaseTool, IFAwareObjectManager, OrderedFolder):
         feed = 'management/' + feed_path
         res = self.makeClientRequest(feed)
         return res
+
+    def revoke_token(self):
+        logger.debug("Trying to revoke token")
+        try:
+            oauth2_token = self._auth_token
+            if oauth2_token:
+                oauth2_token.revoke()
+                logger.debug("Token revoked successfuly")
+        except OAuth2RevokeError:
+            # Authorization already revoked
+            logger.debug("Token was already revoked")
+            pass
+        except socket.gaierror:
+            logger.debug("There was a connection issue, could not revoke "
+                         "token.")
+            raise error.RequestTimedOutError, (
+                'You may not have internet access. Please try again '
+                'later.'
+            )
+
+        self._auth_token = None
+        self._valid_token = False
+
+    def set_token(self, code):
+        logger.debug(
+            "Received callback from Google with code '%s' " % code
+        )
+        oauth2_token = self._auth_token
+        try:
+            oauth2_token.get_access_token(code)
+            logger.debug(
+                "Code was valid, got '%s' as access_token and '%s' as "
+                "refresh_token. Token will expire on '%s'" %
+                (oauth2_token.access_token,
+                 oauth2_token.refresh_token,
+                 oauth2_token.token_expiry))
+            message = _(u'Authorization succeeded. You may now configure '
+                        u'Google Analytics for Plone.')
+            self._valid_token = True
+
+        except OAuth2AccessTokenError:
+            logger.debug("Code was invalid, could not get tokens")
+            self._auth_token = None
+            self._valid_token = False
+            message = _(u'Authorization failed. Google Analytics for '
+                        u'Plone received an invalid token.')
+        return message
+
+    def auth_url(self, key, secret):
+        """
+        Returns the URL used to retrieve a Google OAuth2 token.
+        """
+        safeWrite(self)
+        auth_url = None
+        if key and secret:
+            next = '%s/analytics-auth' % self.context.portal_url()
+
+            oauth2_token = gdata.gauth.OAuth2Token(
+                client_id=key,
+                client_secret=secret,
+                scope="https://www.googleapis.com/auth/analytics",
+                user_agent='collective-googleanalytics',
+            )
+            logger.debug(u"Created new OAuth2 token with id: '%s' and secret:"
+                         u" '%s'" % (key, secret))
+
+            oauth2_token.redirect_uri = next
+            self._auth_token = oauth2_token
+
+            auth_url = oauth2_token.generate_authorize_url(
+                redirect_uri=next,
+                approval_prompt='force'
+            )
+
+            logger.debug(u"Auth URL: %s" % auth_url)
+
+        return auth_url
+
+    def get_settings(self):
+        registry = getUtility(IRegistry)
+        records = registry.forInterface(IAnalyticsSchema)
+        return records
 
 InitializeClass(Analytics)

@@ -1,18 +1,16 @@
-from zope.component import adapts
 
+from Products.CMFCore.utils import getToolByName
 from Products.GenericSetup.interfaces import ISetupEnviron
-from Products.GenericSetup.utils import exportObjects
 from Products.GenericSetup.utils import I18NURI
-from Products.GenericSetup.utils import importObjects
 from Products.GenericSetup.utils import NodeAdapterBase
 from Products.GenericSetup.utils import ObjectManagerHelpers
 from Products.GenericSetup.utils import PropertyManagerHelpers
 from Products.GenericSetup.utils import XMLAdapterBase
-
-from Products.CMFCore.utils import getToolByName
-
-from collective.googleanalytics.interfaces.utility import IAnalytics
+from Products.GenericSetup.utils import exportObjects
+from Products.GenericSetup.utils import importObjects
 from collective.googleanalytics.interfaces.report import IAnalyticsReport
+from collective.googleanalytics.interfaces.utility import IAnalytics
+from zope.component import adapts
 
 
 class AnalyticsReportNodeAdapter(NodeAdapterBase, PropertyManagerHelpers):

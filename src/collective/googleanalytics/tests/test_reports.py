@@ -1,14 +1,18 @@
-import unittest
+
 import datetime
 import os
 import re
+import unittest
+from Products.CMFCore.utils import getToolByName
+from collective.googleanalytics.interfaces.report import IAnalyticsReportRenderer
+from collective.googleanalytics.tests.base import FunctionalTestCase
+from collective.googleanalytics.utils import evaluateTALES
+from collective.googleanalytics.utils import getDate
+from collective.googleanalytics.utils import getTimeDelta
+from collective.googleanalytics.utils import unique_list
+from gdata.analytics import AnalyticsDataFeedFromString
 from string import Template
 from zope.component import getMultiAdapter
-from Products.CMFCore.utils import getToolByName
-from collective.googleanalytics.tests.base import FunctionalTestCase
-from collective.googleanalytics.interfaces.report import IAnalyticsReportRenderer
-from collective.googleanalytics.utils import evaluateTALES, getDate, getTimeDelta, unique_list
-from gdata.analytics import AnalyticsDataFeedFromString
 
 
 class TestReports(FunctionalTestCase):

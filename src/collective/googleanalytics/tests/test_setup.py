@@ -1,8 +1,10 @@
+
 import unittest
 from Products.CMFCore.utils import getToolByName
-from collective.googleanalytics.tests.base import FunctionalTestCase
 from collective.googleanalytics.report import AnalyticsReport
-from collective.googleanalytics.vocabularies import getProfiles, getWebProperties
+from collective.googleanalytics.tests.base import FunctionalTestCase
+from collective.googleanalytics.vocabularies import getProfiles
+from collective.googleanalytics.vocabularies import getWebProperties
 
 
 class TestInstall(FunctionalTestCase):
@@ -161,7 +163,7 @@ class TestUnicode(FunctionalTestCase):
             [Entry(
                 [Prop('ga:profileName', u'A - Nantes D\xe9veloppement a very long profile name and continuing'),
                  Prop('ga:webPropertyId', 'foo'),
-                 Prop('dxp:tableId', 'foo'),]
+                 Prop('dxp:tableId', 'foo')]
             )]
         )
         accounts = getProfiles(analytics_tool)

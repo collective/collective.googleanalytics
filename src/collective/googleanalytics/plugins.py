@@ -1,10 +1,12 @@
+
+import datetime
+from DateTime import DateTime
+from collective.googleanalytics.interfaces.plugins import \
+    IAnalyticsDateRangeChoices
+from collective.googleanalytics.interfaces.plugins import IAnalyticsPlugin
+from collective.googleanalytics.utils import makeDate
 from zope.interface import implements
 from zope.component import getMultiAdapter
-from collective.googleanalytics.interfaces.plugins import IAnalyticsPlugin, \
-    IAnalyticsDateRangeChoices
-from collective.googleanalytics.utils import makeDate
-from DateTime import DateTime
-import datetime
 
 
 class AnalyticsBasePlugin(object):

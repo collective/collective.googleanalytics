@@ -1,7 +1,8 @@
-from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
+
 from Products.CMFCore.utils import getToolByName
-from plone.app.layout.viewlets import ViewletBase
+from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
 from collective.googleanalytics.interfaces.loader import IAnalyticsAsyncLoader
+from plone.app.layout.viewlets import ViewletBase
 
 
 class SiteWideAnalyticsViewlet(ViewletBase):
@@ -17,16 +18,17 @@ class SiteWideAnalyticsViewlet(ViewletBase):
         Initialize the viewlet.
         """
         super(SiteWideAnalyticsViewlet, self).update()
-        self.analytics_tool = getToolByName(self.context, 'portal_analytics', None)
+        analytics_tool = getToolByName(self.context, 'portal_analytics', None)
         self.async_loader = IAnalyticsAsyncLoader(self.context)
+        self.analytics_settings = analytics_tool.get_settings()
 
     def available(self):
         """
         Returns True if there are site-wide reports selected.
         """
 
-        profile = getattr(self.analytics_tool, 'reports_profile', None)
-        reports = getattr(self.analytics_tool, 'reports', None)
+        profile = getattr(self.analytics_settings, 'reports_profile', None)
+        reports = getattr(self.analytics_settings, 'reports', None)
         if reports and profile:
             return True
         return False
@@ -43,6 +45,6 @@ class SiteWideAnalyticsViewlet(ViewletBase):
         Returns a list of AnalyticsReportResults objects for the selected reports.
         """
 
-        profile = getattr(self.analytics_tool, 'reports_profile', None)
-        reports = getattr(self.analytics_tool, 'reports', None)
+        profile = getattr(self.analytics_settings, 'reports_profile', None)
+        reports = getattr(self.analytics_settings, 'reports', None)
         return self.async_loader.getJavascript(reports, profile)

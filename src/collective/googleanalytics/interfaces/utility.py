@@ -1,6 +1,7 @@
-from zope.interface import Interface
-from zope import schema
+
 from collective.googleanalytics.interfaces import GoogleAnalyticsMessageFactory as _
+from zope import schema
+from zope.interface import Interface
 
 
 class IAnalyticsTracking(Interface):
@@ -65,6 +66,12 @@ class IAnalyticsSettings(Interface):
         default=60,
         required=True
     )
+
+
+class IAnalyticsSchema(
+        IAnalyticsReportsAssignment, IAnalyticsTracking, IAnalyticsSettings):
+    """
+    """
 
 
 class IAnalytics(

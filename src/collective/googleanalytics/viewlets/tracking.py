@@ -1,10 +1,12 @@
+
 import sys
-from urllib import urlencode
-from zope.component import queryMultiAdapter
 from Products.CMFCore.utils import getToolByName
 from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
-from plone.app.layout.analytics.view import AnalyticsViewlet
 from collective.googleanalytics.interfaces.tracking import IAnalyticsTrackingPlugin
+from plone.app.layout.analytics.view import AnalyticsViewlet
+from urllib import urlencode
+from zExceptions import NotFound
+from zope.component import queryMultiAdapter
 
 
 class AnalyticsTrackingViewlet(AnalyticsViewlet):
@@ -18,8 +20,9 @@ class AnalyticsTrackingViewlet(AnalyticsViewlet):
 
     def __init__(self, context, request, view, manager):
         super(AnalyticsTrackingViewlet, self).__init__(context, request, view, manager)
-        self.analytics_tool = getToolByName(context, "portal_analytics")
+        analytics_tool = getToolByName(context, "portal_analytics")
         self.membership_tool = getToolByName(context, "portal_membership")
+        self.analytics_settings = analytics_tool.get_settings()
 
     def available(self):
         """
@@ -29,7 +32,7 @@ class AnalyticsTrackingViewlet(AnalyticsViewlet):
 
         member = self.membership_tool.getAuthenticatedMember()
 
-        for role in self.analytics_tool.tracking_excluded_roles:
+        for role in self.analytics_settings.tracking_excluded_roles:
             if member.has_role(role):
                 return False
         return True
@@ -40,7 +43,7 @@ class AnalyticsTrackingViewlet(AnalyticsViewlet):
         or an empty string if no tracking profile is selected.
         """
 
-        return self.analytics_tool.__dict__.get('tracking_web_property', None)
+        return self.analytics_settings.tracking_web_property
 
     def renderPlugins(self):
         """
@@ -49,7 +52,7 @@ class AnalyticsTrackingViewlet(AnalyticsViewlet):
         """
 
         results = []
-        for plugin_name in self.analytics_tool.tracking_plugin_names:
+        for plugin_name in self.analytics_settings.tracking_plugin_names:
             plugin = queryMultiAdapter(
                 (self.context, self.request),
                 interface=IAnalyticsTrackingPlugin,
@@ -76,7 +79,7 @@ class AnalyticsTrackingViewlet(AnalyticsViewlet):
             else:
                 errorcode = 500
             push_params.append(
-            ("'/error/%s?page=' + document.location.pathname + "
-             "document.location.search + '&from=' + document.referrer")
-            % errorcode)
+                ("'/error/%s?page=' + document.location.pathname + "
+                 "document.location.search + '&from=' + document.referrer")
+                % errorcode)
         return "_gaq.push([%s]);" % ', '.join(push_params)

@@ -1,19 +1,17 @@
-try:
-    from App.class_init import InitializeClass
-except ImportError:
-    from Globals import InitializeClass
-from AccessControl import ClassSecurityInfo
 
-from zope.interface import implements
-from zope.component import queryMultiAdapter
-from bbb import getSite
-from zope.component import getGlobalSiteManager
+from AccessControl import ClassSecurityInfo
+from App.class_init import InitializeClass
 from OFS.PropertyManager import PropertyManager
 from OFS.SimpleItem import SimpleItem
-from collective.googleanalytics.interfaces.report import IAnalyticsReport
+from zope.component import getGlobalSiteManager
+from zope.component import queryMultiAdapter
+from zope.component.hooks import getSite
+from zope.interface import implements
+from collective.googleanalytics.config import DIMENSIONS_CHOICES
+from collective.googleanalytics.config import METRICS_CHOICES
+from collective.googleanalytics.config import VISUALIZATION_CHOICES
 from collective.googleanalytics.interfaces.plugins import IAnalyticsPlugin
-from collective.googleanalytics.config import METRICS_CHOICES, \
-    DIMENSIONS_CHOICES, VISUALIZATION_CHOICES
+from collective.googleanalytics.interfaces.report import IAnalyticsReport
 
 
 class AnalyticsReport(PropertyManager, SimpleItem):
@@ -88,8 +86,8 @@ class AnalyticsReport(PropertyManager, SimpleItem):
     )
 
     manage_options = (
-        PropertyManager.manage_options
-        + SimpleItem.manage_options)
+        PropertyManager.manage_options + SimpleItem.manage_options
+    )
 
     def __init__(self, id, **kwargs):
         self.id = id

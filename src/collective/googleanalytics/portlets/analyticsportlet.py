@@ -1,17 +1,12 @@
-from zope.interface import implements
-from zope import schema
-from zope.formlib import form
 
-from plone.portlets.interfaces import IPortletDataProvider
-from plone.app.portlets.portlets import base
-from plone.app.controlpanel.widgets import MultiCheckBoxVocabularyWidget
-
-from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
 from Products.CMFCore.utils import getToolByName
-
+from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
 from collective.googleanalytics import GoogleAnalyticsMessageFactory as _
-
 from collective.googleanalytics.interfaces.loader import IAnalyticsAsyncLoader
+from plone.app.portlets.portlets import base
+from plone.portlets.interfaces import IPortletDataProvider
+from zope import schema
+from zope.interface import implements
 
 
 class IAnalyticsPortlet(IPortletDataProvider):
@@ -120,8 +115,10 @@ class AddForm(base.AddForm):
     zope.formlib which fields to display. The create() method actually
     constructs the assignment that is being added.
     """
-    form_fields = form.Fields(IAnalyticsPortlet)
-    form_fields['reports'].custom_widget = MultiCheckBoxVocabularyWidget
+    schema = IAnalyticsPortlet
+
+    label = _(u'Add Analytics Portlet')
+    description = _(u'')
 
     def create(self, data):
         return Assignment(**data)
@@ -133,5 +130,7 @@ class EditForm(base.EditForm):
     This is registered with configure.zcml. The form_fields variable tells
     zope.formlib which fields to display.
     """
-    form_fields = form.Fields(IAnalyticsPortlet)
-    form_fields['reports'].custom_widget = MultiCheckBoxVocabularyWidget
+    schema = IAnalyticsPortlet
+
+    label = _(u'Add Analytics Portlet')
+    description = _(u'')

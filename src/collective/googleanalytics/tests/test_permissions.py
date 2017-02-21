@@ -1,12 +1,12 @@
+
 import unittest
 from Acquisition import aq_inner
-from zope.component import getUtility, getMultiAdapter
-
+from collective.googleanalytics.portlets import analyticsportlet
+from collective.googleanalytics.tests.base import FunctionalTestCase
 from plone.portlets.interfaces import IPortletManager
 from plone.portlets.interfaces import IPortletRenderer
-
-from collective.googleanalytics.tests.base import FunctionalTestCase
-from collective.googleanalytics.portlets import analyticsportlet
+from zope.component import getMultiAdapter
+from zope.component import getUtility
 
 
 class TestPortlet(FunctionalTestCase):

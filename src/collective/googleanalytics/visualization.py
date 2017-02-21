@@ -1,14 +1,15 @@
-from plone.memoize.instance import memoize
-from collective.googleanalytics.utils import js_literal
-from string import Template
+
 import datetime
-import time
-import os
 try:
     import simplejson as json
     json    # pyflakes
 except ImportError:
     import json
+import time
+import os
+from collective.googleanalytics.utils import js_literal
+from plone.memoize.instance import memoize
+from string import Template
 
 
 class AnalyticsReportVisualization(object):
@@ -85,7 +86,7 @@ class AnalyticsReportVisualization(object):
         options = self.options.copy()
         # Set the width of the visualization to the container width if it
         # if not already set.
-        if not 'width' in self.options.keys():
+        if 'width' not in self.options.keys():
             options['width'] = js_literal('container_width')
         if options:
             return json.dumps(options)

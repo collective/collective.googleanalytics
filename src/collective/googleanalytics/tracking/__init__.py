@@ -1,1 +1,2 @@
-from collective.googleanalytics.tracking.plugins import AnalyticsBaseTrackingPlugin  #flake8: noqa
+from collective.googleanalytics.tracking.plugins import AnalyticsBaseTrackingPlugin  # flake8: noqa
+AnalyticsBaseTrackingPlugin   # pyflakes
