@@ -4,7 +4,8 @@ Changelog
 1.6.1 (unreleased)
 ------------------
 
-- Nothing changed yet.
+- Plone 5.1 compatibility
+  [alecm]
 
 
 1.6.0 (2017-02-21)
