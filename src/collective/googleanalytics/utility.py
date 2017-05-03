@@ -19,6 +19,7 @@ from gdata.client import Unauthorized
 from gdata.gauth import OAuth2AccessTokenError
 from gdata.gauth import OAuth2RevokeError
 from gdata.service import RequestError
+from plone import api
 from plone.memoize import ram
 try:
     from plone.protect.auto import safeWrite
@@ -270,7 +271,7 @@ class Analytics(PloneBaseTool, IFAwareObjectManager, OrderedFolder):
         safeWrite(self)
         auth_url = None
         if key and secret:
-            next = '%s/analytics-auth' % self.context.portal_url()
+            next = '%s/analytics-auth' % api.portal.get().absolute_url()
 
             oauth2_token = gdata.gauth.OAuth2Token(
                 client_id=key,
