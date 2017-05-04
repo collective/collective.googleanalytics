@@ -1,12 +1,12 @@
 <script type="text/javascript" tal:content="structure string:
     /*&lt;![CDATA[*/
-    jq(function() {
+    jQuery(function($) {
         var extensions = ${view/file_extensions};
-        var extensionsPattern = new RegExp('\\.((' + extensions.join(')|(') + '))$$', 'g');
-        jq('a').filter(function () {
+        var extensionsPattern = new RegExp('\\.((' + extensions.join(')|(') + '))$', 'g');
+        $('a').filter(function () {
             return this.href.match(extensionsPattern) || this.href.match(/\/at_download\//g);
         }).click(function () {
-            _gaq.push(['_trackEvent', 'File', 'Download', jq(this).attr('href')]);
+            _gaq.push(['_trackEvent', 'File', 'Download', $(this).attr('href')]);
         });
     });
     /*]]&gt;*/

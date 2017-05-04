@@ -1,8 +1,8 @@
 <script type="text/javascript" tal:content="structure string:
     /*&lt;![CDATA[*/
-    jq(function() {
-        jq('a[href^=&quot;mailto&quot;]').click(function () {
-            var email = jq(this).attr('href').replace('mailto:', '');
+    jQuery(function($) {
+        $('a[href^=&quot;mailto&quot;]').click(function () {
+            var email = $(this).attr('href').replace('mailto:', '');
             _gaq.push(['_trackEvent', 'External', 'E-mail', email]);
         });
     });

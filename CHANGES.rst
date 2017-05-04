@@ -4,6 +4,9 @@ Changelog
 1.6.1 (unreleased)
 ------------------
 
+- Use jQuery global instead of jq.
+  [davisagli]
+
 - Plone 5.1 compatibility
   [alecm]
 

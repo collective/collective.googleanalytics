@@ -1,12 +1,12 @@
 <div id="${id}"></div>
 <script type="text/javascript" charset="utf-8">
-	jq(function () {
+	jQuery(function ($$) {
 	    var draw_visualization = function () {
 	        var data = new google.visualization.DataTable();
 	        ${columns}
 	        data.addRows(${data});
 
-	        var container_width = getAnalyticsContainerWidth(jq('#${id}'));
+	        var container_width = getAnalyticsContainerWidth($$('#${id}'));
 
 	        var chart = new google.visualization.${chart_type}(document.getElementById('${id}'));
 	        chart.draw(data, ${options});

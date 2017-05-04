@@ -5,10 +5,10 @@
     <div tal:attributes="id view/getContainerId;" 
         class="analytics-async-container"></div>
     <script type="text/javascript">
-        jq(function () {
+        jQuery(function () {
             // The results tab needs to be displayed initially so that the
             // visualizations load correctly.
-            jq('a#fieldsetlegend-analytics_results').click();
+            jQuery('a#fieldsetlegend-analytics_results').click();
         });
     </script>
     <script type="text/javascript" tal:content="view/getJavascript"></script>
