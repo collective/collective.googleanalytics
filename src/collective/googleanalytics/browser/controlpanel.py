@@ -88,6 +88,7 @@ class AnalyticsControlPanelForm(controlpanel.RegistryEditForm):
         else:   # Plone 4 stores the analytics script in the properties
             properties_tool = api.portal.get_tool(name="portal_properties")
             snippet = properties_tool.site_properties.webstats_js
+        snippet = snippet or ''
         snippet_analytics = '_gat' in snippet or '_gaq' in snippet
         if tracking_web_property and snippet_analytics:
             api.portal.show_message(
