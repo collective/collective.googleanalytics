@@ -68,18 +68,14 @@ class AnalyticsTrackingViewlet(AnalyticsViewlet):
 
     def renderPageview(self):
         push_params = ["'_trackPageview'"]
-        exc_info = sys.exc_info()[0]
-        if self.view.__name__.startswith("search"):
-            query = {'q': self.request.get('SearchableText', ''),
-                     'searchcat': self.getsearchcat()}
-            push_params.append("'/searchresult?%s'" % urlencode(query))
-        elif exc_info is not None:
-            if exc_info == NotFound:
-                errorcode = 404
-            else:
-                errorcode = 500
+        status = self.request.response.getStatus()
+        if status >= 400:
             push_params.append(
                 ("'/error/%s?page=' + document.location.pathname + "
                  "document.location.search + '&from=' + document.referrer")
-                % errorcode)
+                % status)
+        elif self.view.__name__.startswith("search"):
+            query = {'q': self.request.get('SearchableText', ''),
+                     'searchcat': self.getsearchcat()}
+            push_params.append("'/searchresult?%s'" % urlencode(query))
         return "_gaq.push([%s]);" % ', '.join(push_params)

@@ -4,6 +4,11 @@ Changelog
 1.6.1 (unreleased)
 ------------------
 
+- Log virtual error page views based on HTTP response status
+  rather than Python exc_info (which is set even for handled
+  exceptions).
+  [davisagli]
+
 - Use jQuery global instead of jq.
   [davisagli]
 
