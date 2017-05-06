@@ -3,6 +3,8 @@ import logging
 from Products.CMFCore.utils import getToolByName
 from collective.googleanalytics import GoogleAnalyticsMessageFactory as _
 from zope.publisher.browser import BrowserPage
+from plone.protect.interfaces import IDisableCSRFProtection
+from zope.interface import alsoProvides
 
 logger = logging.getLogger('collective.googleanalytics')
 
@@ -16,6 +18,7 @@ class AnalyticsAuth(BrowserPage):
         """
         Gets the token from the URL and takes the appropriate action.
         """
+        alsoProvides(self.request, IDisableCSRFProtection)
 
         analytics_tool = getToolByName(self.context, 'portal_analytics')
         plone_utils = getToolByName(self.context, 'plone_utils')
