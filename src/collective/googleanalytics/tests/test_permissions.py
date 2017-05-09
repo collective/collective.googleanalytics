@@ -29,9 +29,3 @@ class TestPortlet(FunctionalTestCase):
         renderer = getMultiAdapter((context, request, view, manager, assignment), IPortletRenderer)
 
         self.assertEquals(renderer.available, True)
-
-
-def test_suite():
-    suite = unittest.TestSuite()
-    suite.addTest(unittest.makeSuite(TestPortlet))
-    return suite

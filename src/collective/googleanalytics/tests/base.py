@@ -10,7 +10,10 @@ class TestCase(unittest.TestCase):
 
     layer = INTEGRATION_TESTING
 
-class FunctionalTestCase(unittest.TestCase):
+    def setUp(self):
+        self.portal = self.layer['portal']
+
+class FunctionalTestCase(TestCase):
     """Test case class used for functional (doc-)tests
     """
 

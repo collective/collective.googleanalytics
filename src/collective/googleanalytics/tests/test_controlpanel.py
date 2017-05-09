@@ -2,7 +2,7 @@
 
 import unittest
 from collective.googleanalytics.interfaces.browserlayer import IAnalyticsLayer
-from collective.googleanalytics.testing import INTEGRATION_TESTING
+from collective.googleanalytics.test import INTEGRATION_TESTING
 from plone.app.testing import TEST_USER_ID
 from plone.app.testing import logout
 from plone.app.testing import setRoles

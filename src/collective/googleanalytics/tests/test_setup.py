@@ -176,11 +176,3 @@ class TestUnicode(FunctionalTestCase):
             props.by_value['foo'].title,
             u'A - Nantes D\xe9veloppement a very long ...'
         )
-
-
-def test_suite():
-    suite = unittest.TestSuite()
-    suite.addTest(unittest.makeSuite(TestInstall))
-    suite.addTest(unittest.makeSuite(TestReinstall))
-    suite.addTest(unittest.makeSuite(TestUnicode))
-    return suite

@@ -98,9 +98,3 @@ class TestReports(FunctionalTestCase):
             re.sub(whitespace, ' ', results).strip(),
             re.sub(whitespace, ' ', results_js).strip()
         )
-
-
-def test_suite():
-    suite = unittest.TestSuite()
-    suite.addTest(unittest.makeSuite(TestReports))
-    return suite
