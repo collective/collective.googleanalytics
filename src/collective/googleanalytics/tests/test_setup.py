@@ -1,6 +1,8 @@
 
 import unittest
 from Products.CMFCore.utils import getToolByName
+from plone.app.testing import TEST_USER_ID
+from plone.app.testing import setRoles
 from collective.googleanalytics.report import AnalyticsReport
 from collective.googleanalytics.tests.base import FunctionalTestCase
 from collective.googleanalytics.vocabularies import getProfiles
@@ -56,7 +58,7 @@ class TestReinstall(FunctionalTestCase):
         analytics_tool.cache_interval = 100
 
         # Reinstall the product.
-        self.setRoles(['Manager'])
+        setRoles(self.portal, TEST_USER_ID, ['Manager'])
         quick_installer = getToolByName(self.portal, "portal_quickinstaller")
         quick_installer.reinstallProducts(
             products=['collective.googleanalytics', ]
@@ -77,7 +79,7 @@ class TestReinstall(FunctionalTestCase):
         analytics_tool['bar'] = AnalyticsReport('bar')
 
         # Reinstall the product.
-        self.setRoles(['Manager'])
+        setRoles(self.portal, TEST_USER_ID, ['Manager'])
         quick_installer = getToolByName(self.portal, "portal_quickinstaller")
         quick_installer.reinstallProducts(
             products=['collective.googleanalytics', ]
@@ -125,14 +127,14 @@ class DummyTool(object):
 
 class TestUnicode(FunctionalTestCase):
 
-    def afterSetUp(self):
-        FunctionalTestCase.afterSetUp(self)
+    def setUp(self):
+        FunctionalTestCase.setUp(self)
         self.oldtool = getToolByName(self.portal, 'portal_analytics')
         self.portal.portal_analytics = DummyTool()
 
-    def beforeTearDown(self):
+    def tearDown(self):
         self.portal.portal_analytics = self.oldtool
-        FunctionalTestCase.beforeTearDown(self)
+        FunctionalTestCase.tearDown(self)
 
     def test_cga_unicode_problems(self):
         # fails with unicode error with c.googleanalytics <= 1.4.1

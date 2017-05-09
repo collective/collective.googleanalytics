@@ -5,7 +5,7 @@ b.sh
 sys/
 *minitage*
 *~
-*.pyc
+*.py[co]
 *.swp
 *.tmp*
 *.mo
@@ -28,7 +28,7 @@ develop-eggs/
 downloads/
 eggs/
 include/
-lib/
+/lib*
 fake-eggs/
 parts/
 dist/
@@ -38,3 +38,4 @@ var/
 
 # OSX
 .DS_Store
+pip-selfcheck.json
