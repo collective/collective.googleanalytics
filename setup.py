@@ -3,10 +3,6 @@ import sys
 
 version = '1.6.1.dev0'
 
-if sys.version_info[0] == 2 and sys.version_info[1] < 6:
-    requires = ['simplejson']
-else:
-    requires = []
 
 setup(name='collective.googleanalytics',
       version=version,
@@ -41,16 +37,12 @@ setup(name='collective.googleanalytics',
       zip_safe=False,
       install_requires=[
           'setuptools',
-          # -*- Extra requirements: -*-
           'gdata>=2.0.18',
-          'plone.fieldsets',
           'plone.api',
-      ] + requires,
+      ],
       extras_require={
           'test': [
-              'mocker',
               'plone.app.testing',
-              'Products.PloneTestCase',
           ],
       },
       entry_points="""

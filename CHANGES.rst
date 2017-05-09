@@ -15,6 +15,11 @@ Changelog
 - Plone 5.1 compatibility
   [alecm]
 
+- Port to plone.app.testing
+  [tomgross]
+
+- Remove unused egg dependencies
+  [tomgross]
 
 1.6.0 (2017-02-21)
 ------------------
