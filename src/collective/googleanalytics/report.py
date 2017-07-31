@@ -6,7 +6,7 @@ from OFS.SimpleItem import SimpleItem
 from zope.component import getGlobalSiteManager
 from zope.component import queryMultiAdapter
 from zope.component.hooks import getSite
-from zope.interface import implements
+from zope.interface import implementer
 from collective.googleanalytics.config import DIMENSIONS_CHOICES
 from collective.googleanalytics.config import METRICS_CHOICES
 from collective.googleanalytics.config import VISUALIZATION_CHOICES
@@ -14,13 +14,12 @@ from collective.googleanalytics.interfaces.plugins import IAnalyticsPlugin
 from collective.googleanalytics.interfaces.report import IAnalyticsReport
 
 
+@implementer(IAnalyticsReport)
 class AnalyticsReport(PropertyManager, SimpleItem):
     """
     A Google Analytics report. The AnalyticsReport object defines all of the parameters
     used to query Google and format the result into a report.
     """
-
-    implements(IAnalyticsReport)
 
     i18n_domain = 'collective.googleanalytics'
 

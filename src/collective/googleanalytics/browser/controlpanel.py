@@ -22,7 +22,7 @@ from z3c.form import field
 from z3c.form import group
 from zope.component import getUtility
 from zope.interface import Interface
-from zope.interface import implements
+from zope.interface import implementer
 
 logger = logging.getLogger('collective.googleanalytics')
 
@@ -59,12 +59,12 @@ class AnalyticsSettingsForm(group.GroupForm):
         default=u'Configure the settings of the Google Analytics product.')
 
 
+@implementer(IAnalyticsControlPanelForm)
 class AnalyticsControlPanelForm(controlpanel.RegistryEditForm):
     """
     Google Analytics Control Panel Form
     """
 
-    implements(IAnalyticsControlPanelForm)
     schema = IAnalyticsSchema
 
     groups = (AnalyticsTrackingForm, AnalyticsReportsAssignmentForm,

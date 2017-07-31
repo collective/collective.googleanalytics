@@ -32,7 +32,7 @@ from time import time
 from zope.annotation.interfaces import IAttributeAnnotatable
 from zope.component import getUtility
 from zope.i18nmessageid import MessageFactory
-from zope.interface import implements
+from zope.interface import implementer
 from zope.schema.fieldproperty import FieldProperty
 
 logger = logging.getLogger('collective.googleanalytics')
@@ -52,12 +52,11 @@ def account_feed_cachekey(func, instance, feed_path):
     return hash((time() // cache_interval, feed_path))
 
 
+@implementer(IAnalytics, IAttributeAnnotatable)
 class Analytics(PloneBaseTool, IFAwareObjectManager, OrderedFolder):
     """
     Analytics utility
     """
-
-    implements(IAnalytics, IAttributeAnnotatable)
 
     security = ClassSecurityInfo()
 

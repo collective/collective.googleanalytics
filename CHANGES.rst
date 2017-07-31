@@ -21,6 +21,9 @@ Changelog
 - Remove unused egg dependencies
   [tomgross]
 
+- implements -> implementer
+  [tomgross]
+
 1.6.0 (2017-02-21)
 ------------------
 
