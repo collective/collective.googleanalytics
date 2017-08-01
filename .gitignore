@@ -35,6 +35,7 @@ dist/
 var/
 .coverage
 /htmlcov/
+*.log
 
 # OSX
 .DS_Store
