@@ -6,7 +6,7 @@ from collective.googleanalytics.interfaces.loader import IAnalyticsAsyncLoader
 from plone.app.portlets.portlets import base
 from plone.portlets.interfaces import IPortletDataProvider
 from zope import schema
-from zope.interface import implements
+from zope.interface import implementer
 
 
 class IAnalyticsPortlet(IPortletDataProvider):
@@ -40,14 +40,13 @@ class IAnalyticsPortlet(IPortletDataProvider):
     )
 
 
+@implementer(IAnalyticsPortlet)
 class Assignment(base.Assignment):
     """Portlet assignment.
 
     This is what is actually managed through the portlets UI and associated
     with columns.
     """
-
-    implements(IAnalyticsPortlet)
 
     def __init__(self, portlet_title=u'Google Analytics', profile=u"", reports=u""):
         self.portlet_title = portlet_title

@@ -5,16 +5,15 @@ from collective.googleanalytics.interfaces.plugins import \
     IAnalyticsDateRangeChoices
 from collective.googleanalytics.interfaces.plugins import IAnalyticsPlugin
 from collective.googleanalytics.utils import makeDate
-from zope.interface import implements
+from zope.interface import implementer
 from zope.component import getMultiAdapter
 
 
+@implementer(IAnalyticsPlugin)
 class AnalyticsBasePlugin(object):
     """
     A plugin for Analytics reports.
     """
-
-    implements(IAnalyticsPlugin)
 
     def __init__(self, context, request, report):
         self.context = context
@@ -179,13 +178,12 @@ class AnalyticsVariableDateRange(AnalyticsBasePlugin):
         }
 
 
+@implementer(IAnalyticsDateRangeChoices)
 class AnalyticsDefaultDateRangeChoices(object):
     """
     An adapter to list the possible date ranges for this report, request
     and content.
     """
-
-    implements(IAnalyticsDateRangeChoices)
 
     def __init__(self, context, request, report):
         self.context = context

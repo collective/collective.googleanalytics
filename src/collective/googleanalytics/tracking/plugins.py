@@ -7,15 +7,14 @@ from Products.CMFCore.utils import getToolByName
 from collective.googleanalytics.config import FILE_EXTENSION_CHOICES
 from collective.googleanalytics.interfaces.tracking import IAnalyticsTrackingPlugin
 from zope.browserpage.viewpagetemplatefile import ViewPageTemplateFile
-from zope.interface import implements
+from zope.interface import implementer
 
 
+@implementer(IAnalyticsTrackingPlugin)
 class AnalyticsBaseTrackingPlugin(object):
     """
     Base plugin for tracking information in Google Analytics.
     """
-
-    implements(IAnalyticsTrackingPlugin)
 
     def __init__(self, context, request):
         self.context = context

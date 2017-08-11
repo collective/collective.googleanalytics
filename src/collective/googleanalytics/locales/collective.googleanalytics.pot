@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2015-06-08 16:18+0000\n"
+"POT-Creation-Date: 2017-08-01 18:56+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI +ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -14,375 +14,403 @@ msgstr ""
 "Preferred-Encodings: utf-8 latin1\n"
 "Domain: DOMAIN\n"
 
-#: collective/googleanalytics/browser/controlpanel.pt:92
+#: ./portlets/analyticsportlet.py:120
+msgid ""
+msgstr ""
+
+#: ./browser/controlpanel_layout.pt:68
 msgid "Access your project, and go to APIs & auth entry"
 msgstr ""
 
-#: collective/googleanalytics/report_templates/error.pt:2
+#: ./portlets/analyticsportlet.py:119
+msgid "Add Analytics Portlet"
+msgstr ""
+
+#: ./report_templates/error.pt:2
 msgid "An error occurred while rendering"
 msgstr ""
 
-#: collective/googleanalytics/browser/auth.py:82
-msgid "Authorization failed. Google Analytics for                     Plone received an invalid token."
+#: ./utility.py:262
+msgid "Authorization failed. Google Analytics for Plone received an invalid token."
 msgstr ""
 
-#: collective/googleanalytics/browser/controlpanel.pt:79
+#: ./browser/controlpanel_layout.pt:55
 msgid "Authorization required"
 msgstr ""
 
-#: collective/googleanalytics/browser/auth.py:54
+#: ./browser/auth.py:29
 msgid "Authorization revoked. You may now reauthorize with                 a different Google account."
 msgstr ""
 
-#: collective/googleanalytics/browser/auth.py:74
-msgid "Authorization succeeded. You may now configure                 Google Analytics for Plone."
+#: ./utility.py:254
+msgid "Authorization succeeded. You may now configure Google Analytics for Plone."
 msgstr ""
 
-#: collective/googleanalytics/browser/controlpanel.pt:74
+#: ./browser/controlpanel_layout.pt:50
 msgid "Authorize with Google"
 msgstr ""
 
-#: collective/googleanalytics/browser/controlpanel.pt:55
+#: ./browser/controlpanel_layout.pt:31
 msgid "Authorized:"
 msgstr ""
 
-#: collective/googleanalytics/browser/controlpanel.pt:80
+#: ./browser/controlpanel_layout.pt:56
 msgid "Before you can use Google Analytics for Plone, you need to authorize this site to access your Google Analytics account. Follow the steps below to complete the authorization process."
 msgstr ""
 
-#: collective/googleanalytics/interfaces/utility.py:62
+#: ./interfaces/utility.py:63
 msgid "Cache interval"
 msgstr ""
 
-#: collective/googleanalytics/interfaces/utility.py:14
-#: collective/googleanalytics/portlets/analyticsportlet.py:35
+#: ./interfaces/utility.py:15
+#: ./portlets/analyticsportlet.py:30
 msgid "Choose the Web property profile from Google Analytics."
 msgstr ""
 
-#: collective/googleanalytics/interfaces/utility.py:51
-#: collective/googleanalytics/portlets/analyticsportlet.py:43
+#: ./interfaces/utility.py:52
+#: ./portlets/analyticsportlet.py:38
 msgid "Choose the reports to display."
 msgstr ""
 
-#: collective/googleanalytics/interfaces/utility.py:30
+#: ./interfaces/utility.py:31
 msgid "Choose the roles that should be excluded from tracking."
 msgstr ""
 
-#: collective/googleanalytics/interfaces/utility.py:22
+#: ./interfaces/utility.py:23
 msgid "Choose which tracking plugins to use."
 msgstr ""
 
-#: collective/googleanalytics/browser/controlpanel.pt:124
+#: ./browser/controlpanel_layout.pt:100
 msgid "Click \"Create Client ID\""
 msgstr ""
 
-#: collective/googleanalytics/browser/controlpanel.pt:141
+#: ./browser/controlpanel_layout.pt:117
 msgid "Click the \"Credentials\" menu entry under \"APIs & auth\""
 msgstr ""
 
-#: collective/googleanalytics/browser/controlpanel.pt:98
+#: ./browser/controlpanel_layout.pt:74
 msgid "Click the \"Credentials\" menu entry under \"APIs & auth\", and click \"Create new client ID\""
 msgstr ""
 
-#: collective/googleanalytics/browser/controlpanel.pt:148
+#: ./browser/controlpanel_layout.pt:124
 msgid "Client ID"
 msgstr ""
 
-#: collective/googleanalytics/browser/controlpanel.pt:150
+#: ./browser/controlpanel_layout.pt:126
 msgid "Client secret"
 msgstr ""
 
-#: collective/googleanalytics/profiles/default/analytics.xml
-#: collective/googleanalytics/profiles/upgrade_10a2_10a3/analytics.xml
+#: ./configure.zcml:103
+msgid "Configuration changes for the upgrade from 1.0a2 to 1.0a3."
+msgstr ""
+
+#: ./configure.zcml:111
+msgid "Configuration changes for the upgrade from 1.0a4 to 1.0b1."
+msgstr ""
+
+#: ./configure.zcml:119
+msgid "Configuration changes for the upgrade from 1.0b3 to 1.0."
+msgstr ""
+
+#: ./profiles/default/analytics.xml
+#: ./profiles/upgrade_10a2_10a3/analytics.xml
 msgid "Displays a table of the top five next pages."
 msgstr ""
 
-#: collective/googleanalytics/profiles/default/analytics.xml
-#: collective/googleanalytics/profiles/upgrade_10a2_10a3/analytics.xml
+#: ./profiles/default/analytics.xml
+#: ./profiles/upgrade_10a2_10a3/analytics.xml
 msgid "Displays a table of the top five previous pages."
 msgstr ""
 
-#: collective/googleanalytics/profiles/default/analytics.xml
+#: ./profiles/default/analytics.xml
 msgid "Displays a table of the top pages by number of page views for this month."
 msgstr ""
 
-#: collective/googleanalytics/profiles/default/analytics.xml
+#: ./profiles/default/analytics.xml
 msgid "Displays a table of the top source domains by number of visits."
 msgstr ""
 
-#: collective/googleanalytics/profiles/default/analytics.xml
-#: collective/googleanalytics/profiles/upgrade_10a2_10a3/analytics.xml
+#: ./profiles/default/analytics.xml
+#: ./profiles/upgrade_10a2_10a3/analytics.xml
 msgid "Displays a table of the top source domains for this page."
 msgstr ""
 
-#: collective/googleanalytics/profiles/default/analytics.xml
-#: collective/googleanalytics/profiles/upgrade_10a2_10a3/analytics.xml
+#: ./profiles/default/analytics.xml
+#: ./profiles/upgrade_10a2_10a3/analytics.xml
 msgid "Displays a table of the top ten keywords."
 msgstr ""
 
-#: collective/googleanalytics/profiles/default/analytics.xml
-#: collective/googleanalytics/profiles/upgrade_10a2_10a3/analytics.xml
+#: ./profiles/default/analytics.xml
+#: ./profiles/upgrade_10a2_10a3/analytics.xml
 msgid "Displays the average time on page for the last 30 days as a sparkline."
 msgstr ""
 
-#: collective/googleanalytics/profiles/default/analytics.xml
-#: collective/googleanalytics/profiles/upgrade_10a2_10a3/analytics.xml
+#: ./profiles/default/analytics.xml
+#: ./profiles/upgrade_10a2_10a3/analytics.xml
 msgid "Displays the average time on site as a line graph."
 msgstr ""
 
-#: collective/googleanalytics/profiles/default/analytics.xml
-#: collective/googleanalytics/profiles/upgrade_10a2_10a3/analytics.xml
+#: ./profiles/default/analytics.xml
+#: ./profiles/upgrade_10a2_10a3/analytics.xml
 msgid "Displays the number of page views as a sparkline."
 msgstr ""
 
-#: collective/googleanalytics/profiles/default/analytics.xml
-#: collective/googleanalytics/profiles/upgrade_10a2_10a3/analytics.xml
+#: ./profiles/default/analytics.xml
+#: ./profiles/upgrade_10a2_10a3/analytics.xml
 msgid "Displays the number of site page views as a line graph."
 msgstr ""
 
-#: collective/googleanalytics/profiles/default/analytics.xml
-#: collective/googleanalytics/profiles/upgrade_10a2_10a3/analytics.xml
+#: ./profiles/default/analytics.xml
+#: ./profiles/upgrade_10a2_10a3/analytics.xml
 msgid "Displays the number of site unique visitors as a line graph."
 msgstr ""
 
-#: collective/googleanalytics/profiles/default/analytics.xml
+#: ./profiles/default/analytics.xml
 msgid "Displays the number of site visits as a line graph."
 msgstr ""
 
-#: collective/googleanalytics/browser/controlpanel.pt:144
+#: ./browser/controlpanel_layout.pt:120
 msgid "Enter below"
 msgstr ""
 
-#: collective/googleanalytics/interfaces/utility.py:63
+#: ./interfaces/utility.py:64
 msgid "Enter the number of minutes for which account             information and report results should be cached."
 msgstr ""
 
-#: collective/googleanalytics/portlets/analyticsportlet.py:27
+#: ./portlets/analyticsportlet.py:22
 msgid "Enter the title of the portlet."
 msgstr ""
 
-#: collective/googleanalytics/interfaces/utility.py:27
+#: ./interfaces/utility.py:28
 msgid "Excluded Roles"
 msgstr ""
 
-#: collective/googleanalytics/browser/controlpanel.pt:152
+#: ./browser/controlpanel_layout.pt:128
 msgid "Generate Authentication URL"
 msgstr ""
 
-#: collective/googleanalytics/browser/controlpanel.pt:88
+#: ./browser/controlpanel_layout.pt:64
 msgid "Go to the ${google_developers_console} and create a Project, if you haven't already."
 msgstr ""
 
-#: collective/googleanalytics/browser/controlpanel.pt:131
+#: ./browser/controlpanel_layout.pt:107
 msgid "Go to the ${google_developers_console} and go to your Project."
 msgstr ""
 
-#: collective/googleanalytics/browser/controlpanel.py:67
-#: collective/googleanalytics/profiles/default/controlpanel.xml
+#: ./browser/controlpanel.py:73
+#: ./configure.zcml:95
+#: ./profiles/default/controlpanel.xml
 msgid "Google Analytics"
 msgstr ""
 
-#: collective/googleanalytics/browser/controlpanel.py:68
-msgid "Google Analytics Settings"
-msgstr ""
-
-#: collective/googleanalytics/loader_templates/badauth.pt:3
+#: ./loader_templates/badauth.pt:3
 msgid "Google Analytics control panel"
 msgstr ""
 
-#: collective/googleanalytics/browser/controlpanel.pt:128
+#: ./browser/controlpanel_layout.pt:104
 msgid "If you already have your Project and OAuth credentials, follow these steps"
 msgstr ""
 
-#: collective/googleanalytics/browser/controlpanel.pt:85
+#: ./browser/controlpanel_layout.pt:61
 msgid "If you haven't created a project and obtained an OAuth key and secret from Google, follow these steps."
 msgstr ""
 
-#: collective/googleanalytics/loader.py:110
+#: ./loader.py:110
 msgid "Last 30 Days"
 msgstr ""
 
-#: collective/googleanalytics/browser/controlpanel.pt:95
+#: ./browser/controlpanel_layout.pt:71
 msgid "Make sure \"Analytics API\" is enabled"
 msgstr ""
 
-#: collective/googleanalytics/browser/controlpanel.pt:121
+#: ./browser/controlpanel_layout.pt:97
 msgid "Make sure to also include \"http\" and \"https\", if needed."
 msgstr ""
 
-#: collective/googleanalytics/browser/controlpanel.pt:111
+#: ./browser/controlpanel_layout.pt:87
 msgid "Make sure you include \"http\" and \"https\", if needed."
 msgstr ""
 
-#: collective/googleanalytics/portlets/analyticsportlet.pt:17
+#: ./portlets/analyticsportlet.pt:17
 msgid "More analytics"
 msgstr ""
 
-#: collective/googleanalytics/profiles/default/analytics.xml
-#: collective/googleanalytics/profiles/upgrade_10a2_10a3/analytics.xml
+#: ./profiles/default/analytics.xml
+#: ./profiles/upgrade_10a2_10a3/analytics.xml
 msgid "Page Views: Sparkline"
 msgstr ""
 
-#: collective/googleanalytics/interfaces/utility.py:19
+#: ./interfaces/utility.py:20
 msgid "Plugins"
 msgstr ""
 
-#: collective/googleanalytics/portlets/analyticsportlet.py:33
+#: ./portlets/analyticsportlet.py:28
 msgid "Profile"
 msgstr ""
 
-#: collective/googleanalytics/interfaces/utility.py:79
+#: ./interfaces/utility.py:86
 msgid "Report Categories"
 msgstr ""
 
-#: collective/googleanalytics/interfaces/utility.py:48
-#: collective/googleanalytics/portlets/analyticsportlet.py:40
+#: ./interfaces/utility.py:49
+#: ./portlets/analyticsportlet.py:35
 msgid "Reports"
 msgstr ""
 
-#: collective/googleanalytics/interfaces/utility.py:41
+#: ./interfaces/utility.py:42
 msgid "Reports Profile"
 msgstr ""
 
-#: collective/googleanalytics/viewlets/sitewide.pt:3
+#: ./viewlets/sitewide.pt:3
 msgid "Results"
 msgstr ""
 
-#: collective/googleanalytics/browser/controlpanel.pt:57
+#: ./browser/controlpanel_layout.pt:33
 msgid "Revoke access"
 msgstr ""
 
-#: collective/googleanalytics/profiles/default/analytics.xml
-#: collective/googleanalytics/profiles/upgrade_10a2_10a3/analytics.xml
+#: ./profiles/default/analytics.xml
+#: ./profiles/upgrade_10a2_10a3/analytics.xml
 msgid "Site Page Views: Line Chart"
 msgstr ""
 
-#: collective/googleanalytics/profiles/default/analytics.xml
-#: collective/googleanalytics/profiles/upgrade_10a2_10a3/analytics.xml
+#: ./profiles/default/analytics.xml
+#: ./profiles/upgrade_10a2_10a3/analytics.xml
 msgid "Site Unique Visitors: Line Chart"
 msgstr ""
 
-#: collective/googleanalytics/profiles/default/analytics.xml
+#: ./profiles/default/analytics.xml
 msgid "Site Visits: Line Chart"
 msgstr ""
 
-#: collective/googleanalytics/report_templates/noresults.pt:2
+#: ./report_templates/noresults.pt:2
 msgid "The report"
 msgstr ""
 
-#: collective/googleanalytics/loader_templates/timedout.pt:1
+#: ./loader_templates/timedout.pt:1
 msgid "The request to Google Analytics timed out. Please try again later."
 msgstr ""
 
-#: collective/googleanalytics/profiles/default/analytics.xml
-#: collective/googleanalytics/profiles/upgrade_10a2_10a3/analytics.xml
+#: ./profiles/default/analytics.xml
+#: ./profiles/upgrade_10a2_10a3/analytics.xml
 msgid "Time on Page: Sparkline"
 msgstr ""
 
-#: collective/googleanalytics/profiles/default/analytics.xml
-#: collective/googleanalytics/profiles/upgrade_10a2_10a3/analytics.xml
+#: ./profiles/default/analytics.xml
+#: ./profiles/upgrade_10a2_10a3/analytics.xml
 msgid "Time on Site: Line Chart"
 msgstr ""
 
-#: collective/googleanalytics/portlets/analyticsportlet.py:26
+#: ./portlets/analyticsportlet.py:21
 msgid "Title"
 msgstr ""
 
-#: collective/googleanalytics/profiles/default/analytics.xml
-#: collective/googleanalytics/profiles/upgrade_10a2_10a3/analytics.xml
+#: ./configure.zcml:95
+msgid "Tools to pull statistics from Google Analytics."
+msgstr ""
+
+#: ./profiles/default/analytics.xml
+#: ./profiles/upgrade_10a2_10a3/analytics.xml
 msgid "Top 10 Keywords: Table"
 msgstr ""
 
-#: collective/googleanalytics/profiles/default/analytics.xml
-#: collective/googleanalytics/profiles/upgrade_10a2_10a3/analytics.xml
+#: ./profiles/default/analytics.xml
+#: ./profiles/upgrade_10a2_10a3/analytics.xml
 msgid "Top 10 Page Sources: Table"
 msgstr ""
 
-#: collective/googleanalytics/profiles/default/analytics.xml
-#: collective/googleanalytics/profiles/upgrade_10a2_10a3/analytics.xml
+#: ./profiles/default/analytics.xml
+#: ./profiles/upgrade_10a2_10a3/analytics.xml
 msgid "Top 5 Next Pages: Table"
 msgstr ""
 
-#: collective/googleanalytics/profiles/default/analytics.xml
+#: ./profiles/default/analytics.xml
 msgid "Top 5 Pages: Table"
 msgstr ""
 
-#: collective/googleanalytics/profiles/default/analytics.xml
-#: collective/googleanalytics/profiles/upgrade_10a2_10a3/analytics.xml
+#: ./profiles/default/analytics.xml
+#: ./profiles/upgrade_10a2_10a3/analytics.xml
 msgid "Top 5 Previous Pages: Table"
 msgstr ""
 
-#: collective/googleanalytics/profiles/default/analytics.xml
+#: ./profiles/default/analytics.xml
 msgid "Top 5 Sources: Table"
 msgstr ""
 
-#: collective/googleanalytics/interfaces/utility.py:12
+#: ./interfaces/utility.py:13
 msgid "Tracking Profile"
 msgstr ""
 
-#: collective/googleanalytics/browser/controlpanel.pt:101
+#: ./browser/controlpanel_layout.pt:77
 msgid "Under \"Application type\" choose \"Web application\""
 msgstr ""
 
-#: collective/googleanalytics/browser/controlpanel.pt:104
+#: ./browser/controlpanel_layout.pt:80
 msgid "Under \"Authorized JavaScript origins\" add your domains, such as:"
 msgstr ""
 
-#: collective/googleanalytics/browser/controlpanel.pt:114
+#: ./browser/controlpanel_layout.pt:90
 msgid "Under \"Authorized redirect URI\" add this URL:"
 msgstr ""
 
-#: collective/googleanalytics/browser/controlpanel.pt:37
+#: ./configure.zcml:103
+msgid "Upgrade profile for Google Analytics from 1.0a2 to 1.0a3"
+msgstr ""
+
+#: ./configure.zcml:111
+msgid "Upgrade profile for Google Analytics from 1.0a4 to 1.0b1"
+msgstr ""
+
+#: ./configure.zcml:119
+msgid "Upgrade profile for Google Analytics from 1.0b3 to 1.0"
+msgstr ""
+
+#: ./browser/controlpanel_layout.pt:19
 msgid "Visit Google Analytics"
 msgstr ""
 
-#: collective/googleanalytics/browser/controlpanel.pt:72
+#: ./browser/controlpanel_layout.pt:48
 msgid "You can now"
 msgstr ""
 
-#: collective/googleanalytics/browser/controlpanel.py:142
+#: ./browser/controlpanel.py:95
 msgid "You have enabled the tracking feature of this product, but it looks like you still have tracking code in the Site control panel. Please remove any Google Analytics tracking code from the Site control panel to avoid conflicts.'"
 msgstr ""
 
-#: collective/googleanalytics/loader_templates/badauth.pt:2
+#: ./loader_templates/badauth.pt:2
 msgid "You need to authorize with Google in the"
 msgstr ""
 
 #. Default: "Reports"
-#: collective/googleanalytics/browser/controlpanel.py:43
+#: ./browser/controlpanel.py:37
 msgid "analytics_assignment"
 msgstr ""
 
 #. Default: "Configure the reports that are displayed in the Google Analytics control panel."
-#: collective/googleanalytics/browser/controlpanel.py:44
+#: ./browser/controlpanel.py:38
 msgid "analytics_assignment_description"
 msgstr ""
 
 #. Default: "Settings"
-#: collective/googleanalytics/browser/controlpanel.py:60
+#: ./browser/controlpanel.py:56
 msgid "analytics_settings"
 msgstr ""
 
 #. Default: "Configure the settings of the Google Analytics product."
-#: collective/googleanalytics/browser/controlpanel.py:61
+#: ./browser/controlpanel.py:57
 msgid "analytics_settings_description"
 msgstr ""
 
 #. Default: "Tracking"
-#: collective/googleanalytics/browser/controlpanel.py:51
+#: ./browser/controlpanel.py:47
 msgid "analytics_tracking"
 msgstr ""
 
 #. Default: "Configure the way Google Analytics tracks statistics about this site."
-#: collective/googleanalytics/browser/controlpanel.py:52
+#: ./browser/controlpanel.py:48
 msgid "analytics_tracking_description"
 msgstr ""
 
-#: collective/googleanalytics/report_templates/noresults.pt:3
+#: ./report_templates/noresults.pt:3
 msgid "did not return any results"
 msgstr ""
-
-#: ./browser/controlpanel.pt:80
-msgid "visit Google Analytics"
-msgstr ""
-

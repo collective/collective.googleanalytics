@@ -21,7 +21,7 @@ from plone.memoize.volatile import ATTR
 from plone.memoize.volatile import CONTAINER_FACTORY
 from plone.memoize.volatile import cache
 from zope.browserpage.viewpagetemplatefile import ViewPageTemplateFile
-from zope.interface import implements
+from zope.interface import implementer
 
 logger = logging.getLogger('collective.googleanalytics')
 
@@ -46,13 +46,12 @@ def renderer_cache_storage(method, instance):
     return instance.report.__dict__.setdefault(ATTR, CONTAINER_FACTORY())
 
 
+@implementer(IAnalyticsReportRenderer)
 class AnalyticsReportRenderer(object):
     """
     The renderer for an Analytics report. It is a multiadapter on the context,
     the request and the report.
     """
-
-    implements(IAnalyticsReportRenderer)
 
     security = ClassSecurityInfo()
 

@@ -10,13 +10,12 @@ from plone.memoize.instance import memoize
 from string import Template
 from zope.browserpage.viewpagetemplatefile import ViewPageTemplateFile
 from zope.component import getMultiAdapter
-from zope.interface import implements
+from zope.interface import implementer
 from zope.publisher.browser import BrowserPage
 
 
+@implementer(IAnalyticsAsyncLoader)
 class DefaultAnalyticsAsyncLoader(object):
-
-    implements(IAnalyticsAsyncLoader)
 
     def __init__(self, context):
         self.context = context
