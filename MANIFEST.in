@@ -1,4 +1,4 @@
-include *.rst *cfg *.py
+include *.rst *cfg *.py *.txt
 
 recursive-include src *
 recursive-include docs *

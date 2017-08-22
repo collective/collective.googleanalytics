@@ -40,3 +40,4 @@ var/
 # OSX
 .DS_Store
 pip-selfcheck.json
+.idea
