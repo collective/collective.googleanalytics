@@ -1,7 +1,7 @@
 Changelog
 =========
 
-1.6.1 (unreleased)
+1.6.1 (2017-08-22)
 ------------------
 
 - Log virtual error page views based on HTTP response status
