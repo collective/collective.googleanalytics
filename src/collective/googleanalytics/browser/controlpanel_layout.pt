@@ -10,7 +10,7 @@
 <div metal:fill-slot="prefs_configlet_main">
 
     <a id="setup-link" class="link-parent"
-       tal:attributes="href view/control_panel_url"
+       tal:attributes="href view/control_panel_url|string:$portal_url/@@overview-controlpanel"
        i18n:translate="">
         Site Setup
     </a>
