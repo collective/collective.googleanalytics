@@ -1,12 +1,14 @@
-
-import sys
+# -*- coding: utf-8 -*-
+from collective.googleanalytics.interfaces.tracking import IAnalyticsTrackingPlugin
+from plone import api
+from plone.app.layout.analytics.view import AnalyticsViewlet
 from Products.CMFCore.utils import getToolByName
 from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
-from collective.googleanalytics.interfaces.tracking import IAnalyticsTrackingPlugin
-from plone.app.layout.analytics.view import AnalyticsViewlet
 from urllib import urlencode
 from zExceptions import NotFound
 from zope.component import queryMultiAdapter
+
+import sys
 
 
 class AnalyticsTrackingViewlet(AnalyticsViewlet):
@@ -20,8 +22,7 @@ class AnalyticsTrackingViewlet(AnalyticsViewlet):
 
     def __init__(self, context, request, view, manager):
         super(AnalyticsTrackingViewlet, self).__init__(context, request, view, manager)
-        analytics_tool = getToolByName(context, "portal_analytics")
-        self.membership_tool = getToolByName(context, "portal_membership")
+        analytics_tool = api.portal.get_tool(name="portal_analytics")
         self.analytics_settings = analytics_tool.get_settings()
 
     def available(self):
@@ -30,7 +31,7 @@ class AnalyticsTrackingViewlet(AnalyticsViewlet):
         of the user and the selections for excluded roles in the configlet.
         """
 
-        member = self.membership_tool.getAuthenticatedMember()
+        member = api.user.get_current()
 
         for role in self.analytics_settings.tracking_excluded_roles:
             if member.has_role(role):

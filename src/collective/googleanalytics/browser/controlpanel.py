@@ -1,11 +1,7 @@
 
 import logging
 from Products.CMFCore.utils import getToolByName
-try:
-    from Products.CMFPlone.interfaces import ISiteSchema
-    HAS_PLONE5 = True
-except ImportError:
-    HAS_PLONE5 = False
+from Products.CMFPlone.interfaces import ISiteSchema
 from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
 from collective.googleanalytics import GoogleAnalyticsMessageFactory as _
 from collective.googleanalytics import error
@@ -14,7 +10,6 @@ from collective.googleanalytics.interfaces.utility import \
 from collective.googleanalytics.interfaces.utility import IAnalyticsSchema
 from collective.googleanalytics.interfaces.utility import IAnalyticsSettings
 from collective.googleanalytics.interfaces.utility import IAnalyticsTracking
-from gdata.client import RequestError
 from plone.app.registry.browser import controlpanel
 from plone import api
 from plone.registry.interfaces import IRegistry
@@ -23,6 +18,7 @@ from z3c.form import group
 from zope.component import getUtility
 from zope.interface import Interface
 from zope.interface import implementer
+from googleapiclient.http import HttpError
 
 logger = logging.getLogger('collective.googleanalytics')
 
@@ -78,16 +74,9 @@ class AnalyticsControlPanelForm(controlpanel.RegistryEditForm):
         configlet.
         """
         data, errors = super(AnalyticsControlPanelForm, self).extractData(
-            setErrors=setErrors
-        )
+            setErrors=setErrors)
         tracking_web_property = data.get('tracking_web_property', None)
-        if HAS_PLONE5:
-            registry = getUtility(IRegistry)
-            site_records = registry.forInterface(ISiteSchema, prefix='plone')
-            snippet = site_records.webstats_js
-        else:   # Plone 4 stores the analytics script in the properties
-            properties_tool = api.portal.get_tool(name="portal_properties")
-            snippet = properties_tool.site_properties.webstats_js
+        snippet = api.portal.get_registry_record('plone.webstats_js')
         snippet = snippet or ''
         snippet_analytics = '_gat' in snippet or '_gaq' in snippet
         if tracking_web_property and snippet_analytics:
@@ -104,40 +93,24 @@ class AnalyticsControlPanel(controlpanel.ControlPanelFormWrapper):
     form = AnalyticsControlPanelForm
     index = ViewPageTemplateFile('controlpanel_layout.pt')
 
+    @property
+    def tool(self):
+        return api.portal.get_tool(name='portal_analytics')
+
     def authorized(self):
         """
         Returns True if we have a valid token, or false otherwise.
         """
-        analytics_tool = getToolByName(self.context, 'portal_analytics')
-        return analytics_tool.is_auth()
-
-    def auth_url(self):
-        """
-        Returns the URL used to retrieve a Google OAuth2 token.
-        """
-        key = self.request.get('consumer_key', '')
-        secret = self.request.get('consumer_secret', '')
-        auth_url = None
-        if key and secret:
-
-            analytics_tool = getToolByName(self.context, 'portal_analytics')
-            auth_url = analytics_tool.auth_url(key, secret)
-
-        return auth_url
+        return self.tool.is_auth()
 
     def account_name(self):
         """
         Returns the account name for the currently authorized account.
         """
-
-        analytics_tool = getToolByName(self.context, 'portal_analytics')
-
+        service = self.tool.ga_service()
         try:
-            res = analytics_tool.getAccountsFeed('accounts')
-        except error.BadAuthenticationError:
-            return None
-        except error.RequestTimedOutError:
-            return None
-        except RequestError:
-            return None
-        return res.title.text.split(' ')[-1]
+            accounts = service.management().accounts().list().execute()
+        except HttpError:
+            logger.warn('Could not authenticate!')
+            return ''
+        return accounts['username']

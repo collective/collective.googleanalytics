@@ -1,4 +1,4 @@
-
+# -*- coding: utf-8 -*-
 import datetime
 import os
 import re
@@ -10,7 +10,6 @@ from collective.googleanalytics.utils import evaluateTALES
 from collective.googleanalytics.utils import getDate
 from collective.googleanalytics.utils import getTimeDelta
 from collective.googleanalytics.utils import unique_list
-from gdata.analytics import AnalyticsDataFeedFromString
 from string import Template
 from zope.component import getMultiAdapter
 
@@ -66,14 +65,14 @@ class TestReports(FunctionalTestCase):
         request.set('end_date', '20100430')
 
         # Load the example feed data from a file.
-        feed_xml_file = os.path.join(os.path.dirname(__file__), 'data_feed.xml')
-        feed_xml = open(feed_xml_file).read()
-        feed = AnalyticsDataFeedFromString(feed_xml)
+        #feed_xml_file = os.path.join(os.path.dirname(__file__), 'data_feed.xml')
+        #feed_xml = open(feed_xml_file).read()
+        #feed = AnalyticsDataFeedFromString(feed_xml)
 
-        renderer = getMultiAdapter(
-            (context, request, report),
-            interface=IAnalyticsReportRenderer
-        )
+        #renderer = getMultiAdapter(
+        #    (context, request, report),
+        #    interface=IAnalyticsReportRenderer
+        #)
 
         # Set the test data feed.
         renderer._data_feed = feed

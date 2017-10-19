@@ -9,6 +9,12 @@ class IAnalyticsTracking(Interface):
     Tracking settings for Google Analytics.
     """
 
+    service_account = schema.Text(
+        title=_(u"JSON Service Accoutn"),
+        description=_(u"Service Account downloaded from Google."),
+        required=True
+    )
+
     tracking_web_property = schema.Choice(
         title=_(u"Tracking Profile"),
         vocabulary='collective.googleanalytics.WebProperties',

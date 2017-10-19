@@ -1,23 +1,20 @@
 <tal:tracking condition="view/available">
-    <tal:webproperty define="web_property view/getTrackingWebProperty;"
-        condition="web_property">
+  <tal:web_property
+      define="web_property view/getTrackingWebProperty;"
+      condition="web_property">
 
-        <script type="text/javascript"
-            tal:content="string:
-            var _gaq = _gaq || [];
-            _gaq.push(['_setAccount', '${web_property}']);
-            _gaq.push(['_trackPageview']);
-            (function() {
-                var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-                ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-                var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-            })();
-            ">
-        </script>
+    <script async src='https://www.googletagmanager.com/gtag/js?id=UA-XXXXXX-1'
+      tal:attributes="src string:https://www.googletagmanager.com/gtag/js?id=${web_property}">
+    </script>
+    <script tal:content="string:
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', '${web_property}');">
+    </script>"
 
-        <tal:block content="structure view/renderPlugins"></tal:block>
-        <script type="text/javascript" tal:content="structure view/renderPageview">
-        </script>
-
-    </tal:webproperty>
+    <tal:block content="structure view/renderPlugins"></tal:block>
+    <script type="text/javascript" tal:content="structure view/renderPageview">
+    </script>
+  </tal:web_property>
 </tal:tracking>

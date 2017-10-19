@@ -41,3 +41,4 @@ var/
 .DS_Store
 pip-selfcheck.json
 .idea
+/share

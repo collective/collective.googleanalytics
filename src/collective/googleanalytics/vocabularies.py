@@ -1,11 +1,16 @@
-
-from Products.CMFCore.utils import getToolByName
+# -*- coding: utf-8 -*-
 from collective.googleanalytics import error
 from collective.googleanalytics.interfaces.tracking import IAnalyticsTrackingPlugin
-from gdata.client import RequestError
-from zope.component import getGlobalSiteManager
+from googleapiclient.http import HttpError
+from plone import api
 from zope.component.hooks import getSite
+from zope.component import getGlobalSiteManager
 from zope.schema.vocabulary import SimpleVocabulary, SimpleTerm
+
+import logging
+
+
+logger = logging.getLogger('collective.googleanalytics')
 
 
 def crop(text, length):
@@ -24,41 +29,36 @@ def getProfiles(context):
     account IDs (e.g. ga:30481).
     """
 
-    analytics_tool = getToolByName(getSite(), 'portal_analytics')
+    analytics_tool = api.portal.get_tool(name='portal_analytics')
     # short circuit if user hasn't authorized yet
     if not analytics_tool.is_auth():
         return SimpleVocabulary([])
 
+    service = analytics_tool.ga_service()
     try:
-        accounts = analytics_tool.getAccountsFeed('accounts/~all/webproperties/~all/profiles')
-    except error.BadAuthenticationError:
-        choices = [('Please authorize with Google in the Google Analytics \
-            control panel.', None)]
-        return SimpleVocabulary.fromItems(choices)
-    except error.RequestTimedOutError:
-        choices = [('The request to Google Analytics timed out. Please try \
-            again later.', None)]
-        return SimpleVocabulary.fromItems(choices)
-    except RequestError:
-        choices = [('Request to Google Analytics errored, you might need to '
-                    'authenticate again.', None)]
-        return SimpleVocabulary.fromItems(choices)
-    if accounts:
-        unique_choices = {}
-        for entry in accounts.entry:
-            for prop in entry.property:
-                if prop.name == 'ga:profileName':
-                    title = prop.value
-                    if not isinstance(title, unicode):
-                        title = unicode(title, 'utf-8')
-                    title = crop(title, 40)
-                if prop.name == 'dxp:tableId':
-                    tableId = prop.value
-            unique_choices.update({title: tableId})
-        choices = unique_choices.items()
-    else:
-        choices = [('No profiles available', None)]
-    return SimpleVocabulary([SimpleTerm(c[1], c[1], c[0]) for c in choices])
+        accounts = service.management().accounts().list().execute()
+    except HttpError:
+        logger.warn('Could not authenticate!')
+        return SimpleVocabulary([])
+
+    choices = []
+    if accounts.get('items'):
+      firstAccountId = accounts.get('items')[0].get('id')
+      webproperties = service.management().webproperties().list(
+          accountId=firstAccountId).execute()
+
+      if webproperties.get('items'):
+        firstWebpropertyId = webproperties.get('items')[0].get('id')
+        profiles = service.management().profiles().list(
+            accountId=firstAccountId,
+            webPropertyId=firstWebpropertyId).execute()
+
+        if profiles.get('items'):
+          choices = profiles.get('items')
+
+    return SimpleVocabulary([
+        SimpleTerm(c['webPropertyId'], c['webPropertyId'], c['name'])
+        for c in choices])
 
 
 def getWebProperties(context):
@@ -67,7 +67,7 @@ def getWebProperties(context):
     IDs (e.g. UA-30481-22).
     """
 
-    analytics_tool = getToolByName(getSite(), 'portal_analytics')
+    analytics_tool = api.portal.get_tool(name='portal_analytics')
     # short circuit if user hasn't authorized yet
     if not analytics_tool.is_auth():
         return SimpleVocabulary([])
@@ -119,7 +119,7 @@ def getReports(context, category=None):
     Return list of Google Analytics reports.
     """
 
-    analytics_tool = getToolByName(getSite(), 'portal_analytics')
+    analytics_tool = api.portal.get_tool(name='portal_analytics')
     reports = analytics_tool.getReports(category=category)
     choices = []
     if reports:
@@ -147,8 +147,7 @@ def getRoles(context):
     """
     Return a list of user roles.
     """
-
-    pmemb = getToolByName(getSite(), 'portal_membership')
+    pmemb = api.portal.get_tool(name='portal_membership')
     roles = [role for role in pmemb.getPortalRoles() if role != 'Owner']
     return SimpleVocabulary.fromValues(roles)
 

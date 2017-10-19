@@ -1,4 +1,7 @@
 GOOGLE_REQUEST_TIMEOUT = 15.07
+SCOPES = ['https://www.googleapis.com/auth/analytics.readonly']
+SERVICE = 'analytics'
+VERSION = 'v4'
 
 METRICS_CHOICES = (
     "ga:adClicks",

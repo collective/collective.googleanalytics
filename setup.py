@@ -37,7 +37,7 @@ setup(name='collective.googleanalytics',
       zip_safe=False,
       install_requires=[
           'setuptools',
-          'gdata>=2.0.18',
+          'google-api-python-client',
           'plone.api',
       ],
       extras_require={
