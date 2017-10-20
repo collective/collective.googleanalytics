@@ -107,10 +107,6 @@ class AnalyticsControlPanel(controlpanel.ControlPanelFormWrapper):
         """
         Returns the account name for the currently authorized account.
         """
-        service = self.tool.ga_service()
-        try:
-            accounts = service.management().accounts().list().execute()
-        except HttpError:
-            logger.warn('Could not authenticate!')
-            return ''
-        return accounts['username']
+        accounts = self.tool.get_accounts()
+        if accounts:
+            return accounts['username']

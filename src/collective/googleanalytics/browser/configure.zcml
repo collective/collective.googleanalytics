@@ -11,14 +11,6 @@
         permission="cmf.ManagePortal"
         layer="..interfaces.browserlayer.IAnalyticsLayer"
         />
-        
-    <browser:page
-        for="Products.CMFPlone.interfaces.IPloneSiteRoot"
-        name="analytics-auth"
-        class=".auth.AnalyticsAuth"
-        permission="cmf.ManagePortal"
-        layer="..interfaces.browserlayer.IAnalyticsLayer"
-        />
 
 	<browser:resourceDirectory
 		name="analytics_images"
@@ -30,18 +22,15 @@
         file="analytics_config.js"
         layer="..interfaces.browserlayer.IAnalyticsLayer"
         />
-    
 
-	<configure package="Products.GenericSetup.browser">
-	
-		<browser:page
-		    for="zope.browser.interfaces.IAdding"
-		    name="add_analytics_report"
-		    template="addWithPresettings.pt"
-		    class="collective.googleanalytics.browser.report.AnalyticsReportAddView"
-		    permission="collective.googleanalytics.ManageAnalyticsReports"
-		    />
-
+    <configure package="Products.GenericSetup.browser">
+    <browser:page
+		for="zope.browser.interfaces.IAdding"
+		name="add_analytics_report"
+		template="addWithPresettings.pt"
+		class="collective.googleanalytics.browser.report.AnalyticsReportAddView"
+		permission="collective.googleanalytics.ManageAnalyticsReports"
+		/>
 	</configure>
 
 </configure>

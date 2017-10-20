@@ -34,27 +34,25 @@ def getProfiles(context):
     if not analytics_tool.is_auth():
         return SimpleVocabulary([])
 
-    service = analytics_tool.ga_service()
-    try:
-        accounts = service.management().accounts().list().execute()
-    except HttpError:
-        logger.warn('Could not authenticate!')
+    accounts = analytics_tool.get_accounts()
+    if not accounts:
         return SimpleVocabulary([])
 
     choices = []
     if accounts.get('items'):
-      firstAccountId = accounts.get('items')[0].get('id')
-      webproperties = service.management().webproperties().list(
-          accountId=firstAccountId).execute()
+        service = analytics_tool.ga_service()
+        firstAccountId = accounts.get('items')[0].get('id')
+        webproperties = service.management().webproperties().list(
+            accountId=firstAccountId).execute()
 
-      if webproperties.get('items'):
-        firstWebpropertyId = webproperties.get('items')[0].get('id')
-        profiles = service.management().profiles().list(
-            accountId=firstAccountId,
-            webPropertyId=firstWebpropertyId).execute()
+        if webproperties.get('items'):
+            firstWebpropertyId = webproperties.get('items')[0].get('id')
+            profiles = service.management().profiles().list(
+                accountId=firstAccountId,
+                webPropertyId=firstWebpropertyId).execute()
 
-        if profiles.get('items'):
-          choices = profiles.get('items')
+            if profiles.get('items'):
+                choices = profiles.get('items')
 
     return SimpleVocabulary([
         SimpleTerm(c['webPropertyId'], c['webPropertyId'], c['name'])
@@ -72,43 +70,23 @@ def getWebProperties(context):
     if not analytics_tool.is_auth():
         return SimpleVocabulary([])
 
-    try:
-        accounts = analytics_tool.getAccountsFeed('accounts/~all/webproperties/~all/profiles')
-    except error.BadAuthenticationError:
-        choices = [('Please authorize with Google in the Google Analytics \
-            control panel.', None)]
-        return SimpleVocabulary.fromItems(choices)
-    except error.RequestTimedOutError:
-        choices = [('The request to Google Analytics timed out. Please try \
-            again later.', None)]
-        return SimpleVocabulary.fromItems(choices)
-    except RequestError:
-        choices = [('Request to Google Analytics errored, you might need to '
-                    'authenticate again.', None)]
-        return SimpleVocabulary.fromItems(choices)
-    if accounts:
-        unique_choices = {}
-        # In vocabularies, both the terms and the values must be unique. Since
-        # there can be more than one profile for a given web property, we create a list
-        # of all the profiles for each property. (Ideally we would use the URL for the
-        # web property, but Google doesn't expose it through the Analytics API.)
-        for entry in accounts.entry:
-            for prop in entry.property:
-                if prop.name == 'ga:profileName':
-                    title = prop.value
-                    if not isinstance(title, unicode):
-                        title = unicode(title, 'utf-8')
-                if prop.name == 'ga:webPropertyId':
-                    webPropertyId = prop.value
-            if webPropertyId not in unique_choices:
-                unique_choices.update({webPropertyId: title})
-            else:
-                unique_choices[webPropertyId] += ', ' + title
-        # After we reverse the terms so that the profile name(s) is now the key, we need
-        # to ensure that these keys are unique. So, we pass the resulting list through
-        # dict() and then output a list of items.
-        choices = dict([(crop(_title, 40), property_id)
-                        for (property_id, _title) in unique_choices.items()]).items()
+    accounts = analytics_tool.get_accounts()
+    if not accounts:
+        return SimpleVocabulary([])
+
+    account_items = accounts.get('items')
+    unique_choices = {}
+    if account_items:
+        service = analytics_tool.ga_service()
+        for account in account_items:
+            webprops = service.management().webproperties().list(
+                    accountId=account['id']).execute()
+            for webprop in webprops['items']:
+                if webprop['id'] not in unique_choices:
+                    unique_choices[webprop['id']] = webprop['name']
+
+        choices = {crop(_title, 40): property_id
+            for property_id, _title in unique_choices.items()}.items()
     else:
         choices = [('No profiles available', None)]
     return SimpleVocabulary([SimpleTerm(c[1], c[1], c[0]) for c in choices])

@@ -38,6 +38,8 @@ setup(name='collective.googleanalytics',
       install_requires=[
           'setuptools',
           'google-api-python-client',
+          'google-auth-httplib2',
+          'google-auth',
           'plone.api',
       ],
       extras_require={
