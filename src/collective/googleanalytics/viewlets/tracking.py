@@ -1,14 +1,9 @@
 # -*- coding: utf-8 -*-
 from collective.googleanalytics.interfaces.tracking import IAnalyticsTrackingPlugin
+from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
 from plone import api
 from plone.app.layout.analytics.view import AnalyticsViewlet
-from Products.CMFCore.utils import getToolByName
-from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
-from urllib import urlencode
-from zExceptions import NotFound
 from zope.component import queryMultiAdapter
-
-import sys
 
 
 class AnalyticsTrackingViewlet(AnalyticsViewlet):
@@ -30,9 +25,7 @@ class AnalyticsTrackingViewlet(AnalyticsViewlet):
         Checks to see whether the viewlet should be rendered based on the role
         of the user and the selections for excluded roles in the configlet.
         """
-
         member = api.user.get_current()
-
         for role in self.analytics_settings.tracking_excluded_roles:
             if member.has_role(role):
                 return False
@@ -43,15 +36,13 @@ class AnalyticsTrackingViewlet(AnalyticsViewlet):
         Returns the Google web property ID for the selected tracking profile,
         or an empty string if no tracking profile is selected.
         """
-
         return self.analytics_settings.tracking_web_property
 
-    def renderPlugins(self):
+    def ga_events(self):
         """
         Render each of the selected tracking plugins for the current context
         and request.
         """
-
         results = []
         for plugin_name in self.analytics_settings.tracking_plugin_names:
             plugin = queryMultiAdapter(
@@ -61,22 +52,20 @@ class AnalyticsTrackingViewlet(AnalyticsViewlet):
                 default=None,
             )
             if plugin:
+                plugin.set_view(self.view)
                 results.append(plugin())
+        status = self.request.response.getStatus()
+        if status >= 400:
+            results.append('')  # XXX
+            #    ("'/error/%s?page=' + document.location.pathname + "
+            #     "document.location.search + '&from=' + document.referrer")
+            #    % status)
+        elif self.view.__name__.startswith("search"):
+            results.append('')   # XXX
+            # query = {'q': self.request.get('SearchableText', ''),
+            #         'searchcat': self.getsearchcat()}
+            # results.append("'/searchresult?%s'" % urlencode(query))
         return '\n'.join(results)
 
     def getsearchcat(self):
         return self.view.__name__
-
-    def renderPageview(self):
-        push_params = ["'_trackPageview'"]
-        status = self.request.response.getStatus()
-        if status >= 400:
-            push_params.append(
-                ("'/error/%s?page=' + document.location.pathname + "
-                 "document.location.search + '&from=' + document.referrer")
-                % status)
-        elif self.view.__name__.startswith("search"):
-            query = {'q': self.request.get('SearchableText', ''),
-                     'searchcat': self.getsearchcat()}
-            push_params.append("'/searchresult?%s'" % urlencode(query))
-        return "_gaq.push([%s]);" % ', '.join(push_params)

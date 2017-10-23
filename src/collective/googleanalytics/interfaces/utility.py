@@ -1,5 +1,5 @@
-
-from collective.googleanalytics.interfaces import GoogleAnalyticsMessageFactory as _
+# -*- coding: utf-8 -*-
+from collective.googleanalytics.interfaces import _
 from zope import schema
 from zope.interface import Interface
 

@@ -1,10 +1,7 @@
 
 import logging
-from Products.CMFCore.utils import getToolByName
-from Products.CMFPlone.interfaces import ISiteSchema
 from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
-from collective.googleanalytics import GoogleAnalyticsMessageFactory as _
-from collective.googleanalytics import error
+from collective.googleanalytics.interfaces import _
 from collective.googleanalytics.interfaces.utility import \
     IAnalyticsReportsAssignment
 from collective.googleanalytics.interfaces.utility import IAnalyticsSchema
@@ -12,13 +9,11 @@ from collective.googleanalytics.interfaces.utility import IAnalyticsSettings
 from collective.googleanalytics.interfaces.utility import IAnalyticsTracking
 from plone.app.registry.browser import controlpanel
 from plone import api
-from plone.registry.interfaces import IRegistry
 from z3c.form import field
 from z3c.form import group
-from zope.component import getUtility
 from zope.interface import Interface
 from zope.interface import implementer
-from googleapiclient.http import HttpError
+
 
 logger = logging.getLogger('collective.googleanalytics')
 

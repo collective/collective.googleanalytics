@@ -1,7 +1,5 @@
 # -*- coding: utf-8 -*-
-from collective.googleanalytics import error
 from collective.googleanalytics.interfaces.tracking import IAnalyticsTrackingPlugin
-from googleapiclient.http import HttpError
 from plone import api
 from zope.component.hooks import getSite
 from zope.component import getGlobalSiteManager
@@ -40,17 +38,14 @@ def getProfiles(context):
 
     choices = []
     if accounts.get('items'):
-        service = analytics_tool.ga_service()
         firstAccountId = accounts.get('items')[0].get('id')
-        webproperties = service.management().webproperties().list(
-            accountId=firstAccountId).execute()
+        webproperties = analytics_tool.ga_request('webproperties', slice='management', accountId=firstAccountId)
 
         if webproperties.get('items'):
             firstWebpropertyId = webproperties.get('items')[0].get('id')
-            profiles = service.management().profiles().list(
-                accountId=firstAccountId,
-                webPropertyId=firstWebpropertyId).execute()
-
+            profiles = analytics_tool.ga_request(
+                'profiles', slice='management', accountId=firstAccountId,
+                webPropertyId=firstWebpropertyId)
             if profiles.get('items'):
                 choices = profiles.get('items')
 
@@ -80,13 +75,13 @@ def getWebProperties(context):
         service = analytics_tool.ga_service()
         for account in account_items:
             webprops = service.management().webproperties().list(
-                    accountId=account['id']).execute()
+                accountId=account['id']).execute()
             for webprop in webprops['items']:
                 if webprop['id'] not in unique_choices:
                     unique_choices[webprop['id']] = webprop['name']
 
         choices = {crop(_title, 40): property_id
-            for property_id, _title in unique_choices.items()}.items()
+                   for property_id, _title in unique_choices.items()}.items()
     else:
         choices = [('No profiles available', None)]
     return SimpleVocabulary([SimpleTerm(c[1], c[1], c[0]) for c in choices])

@@ -1,5 +1,5 @@
-from collective.googleanalytics.testing import INTEGRATION_TESTING
 from collective.googleanalytics.testing import FUNCTIONAL_TESTING
+from collective.googleanalytics.testing import INTEGRATION_TESTING
 
 import unittest
 
@@ -12,6 +12,7 @@ class TestCase(unittest.TestCase):
 
     def setUp(self):
         self.portal = self.layer['portal']
+
 
 class FunctionalTestCase(TestCase):
     """Test case class used for functional (doc-)tests

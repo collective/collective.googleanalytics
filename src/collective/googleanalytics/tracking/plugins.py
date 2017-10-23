@@ -1,13 +1,10 @@
-
-try:
-    import simplejson as json
-except ImportError:
-    import json
-from Products.CMFCore.utils import getToolByName
 from collective.googleanalytics.config import FILE_EXTENSION_CHOICES
 from collective.googleanalytics.interfaces.tracking import IAnalyticsTrackingPlugin
+from plone import api
 from zope.browserpage.viewpagetemplatefile import ViewPageTemplateFile
 from zope.interface import implementer
+
+import json
 
 
 @implementer(IAnalyticsTrackingPlugin)
@@ -16,15 +13,19 @@ class AnalyticsBaseTrackingPlugin(object):
     Base plugin for tracking information in Google Analytics.
     """
 
+    view = None
+
     def __init__(self, context, request):
         self.context = context
         self.request = request
+
+    def set_view(self, view):
+        self.view = view
 
     def relative_url(self):
         """
         Returns the relative URL of the request.
         """
-
         relative_url = self.request.ACTUAL_URL.replace(self.request.SERVER_URL, '').strip()
         if relative_url.endswith('/') and len(relative_url) > 1:
             return relative_url[:-1]
@@ -76,11 +77,7 @@ class AnalyticsUserTypePlugin(AnalyticsBaseTrackingPlugin):
         """
         Returns Member if the user is logged or Visitor otherwise.
         """
-
-        membership = getToolByName(self.context, 'portal_membership')
-        if membership.isAnonymousUser():
-            return 'Visitor'
-        return 'Member'
+        return api.user.is_anonymous() and 'Visitor' or 'Member'
 
 
 class AnalyticsPageLoadTimePlugin(AnalyticsBaseTrackingPlugin):

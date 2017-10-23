@@ -2,10 +2,6 @@
 from Products.CMFCore import utils as cmfutils
 from collective.googleanalytics.utility import Analytics
 from collective.googleanalytics.report import AnalyticsReport
-from zope.i18nmessageid import MessageFactory
-
-
-GoogleAnalyticsMessageFactory = MessageFactory('collective.googleanalytics')
 
 
 tools = (Analytics, )

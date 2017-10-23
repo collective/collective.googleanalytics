@@ -1,9 +1,10 @@
-
+# -*- coding: utf-8 -*-
 import datetime
 import logging
 import math
-import sys
 import time
+from plone import api
+from ZODB.POSException import ConflictError
 from App.class_init import InitializeClass
 from AccessControl import ClassSecurityInfo
 from Products.CMFCore.Expression import getEngine
@@ -99,10 +100,10 @@ class AnalyticsReportRenderer(object):
             pt = ZopePageTemplate(id='__collective_googleanalytics__')
             pt.pt_edit(self.report.body, 'text/html')
             return pt.__of__(self.context).pt_render(extra_context=tal_context)
+        except ConflictError:
+            raise
         except Exception:
             logger.exception('Error while rendering %r' % self.report.id)
-            error_log = getToolByName(self.context, 'error_log')
-            error_log.raising(sys.exc_info())
             return self.error()
 
     @memoize
@@ -111,7 +112,6 @@ class AnalyticsReportRenderer(object):
         Returns a list of Google Analytics profiles for which the report
         is being evaluated.
         """
-
         return self.request.get('profile_ids', '').split(',')
 
     @memoize
@@ -119,7 +119,6 @@ class AnalyticsReportRenderer(object):
         """
         Returns the evaluated query criteria.
         """
-
         expressions = {
             'dimensions': list(self.report.dimensions),
             'metrics': list(self.report.metrics),
@@ -145,7 +144,6 @@ class AnalyticsReportRenderer(object):
         dimensions and metrics for each entry in the data feed returned
         by Google.
         """
-
         results = []
         for entry in self._getDataFeed().entry:
             results.append(dict([extract_value(row) for row in entry.dimension + entry.metric]))
@@ -197,7 +195,6 @@ class AnalyticsReportRenderer(object):
         """
         Returns the rendered visualization.
         """
-
         return self._getVisualization().render()
 
     def dimension(self, dimension, specified={}, aggregate=unique_list, default=[]):
@@ -205,7 +202,6 @@ class AnalyticsReportRenderer(object):
         Returns the value of the given metric across the specified
         dimensions and metrics using the specified aggregation method.
         """
-
         return self._getValue(dimension, specified, aggregate, default)
 
     def metric(self, metric, specified={}, aggregate=sum, default=0):
@@ -286,18 +282,19 @@ class AnalyticsReportRenderer(object):
         """
         Returns a Google Analytics data feed.
         """
-
         if self._data_feed:
             return self._data_feed
 
-        analytics_tool = getToolByName(self.context, 'portal_analytics')
+        analytics_tool = api.portal.get_tool(name='portal_analytics')
         query_args = self._getQueryArguments()
         logger.debug("Querying Google for report '%s' on context '%s'. "
                      "Arguments: %s" %
                      (self.report.id, self.context.id, query_args))
-        data_feed = analytics_tool.makeClientRequest('data', **query_args)
-
-        return data_feed
+        service = analytics_tool.ga_service()
+        if service:
+            service.data()  # XXX
+        else:
+            logger.error('Error getting service')
 
     @memoize
     def _getVisualization(self):

@@ -5,7 +5,7 @@
     };
     jQuery(function() {
         jQuery('a:external').click(function(){
-          _gaq.push(['_trackEvent', 'External', 'Link', jQuery(this).attr('href')]);
+          gtag('event', 'External', {'event_category': 'Link', 'event_label': jQuery(this).attr('href'))});
         });
     });
     /*]]&gt;*/

@@ -1,7 +1,7 @@
 
 from Products.CMFCore.utils import getToolByName
 from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
-from collective.googleanalytics import GoogleAnalyticsMessageFactory as _
+from collective.googleanalytics.interfaces import _
 from collective.googleanalytics.interfaces.loader import IAnalyticsAsyncLoader
 from plone.app.portlets.portlets import base
 from plone.portlets.interfaces import IPortletDataProvider

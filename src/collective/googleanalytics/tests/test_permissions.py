@@ -1,5 +1,4 @@
-
-import unittest
+# -*- coding: utf-8 -*-
 from Acquisition import aq_inner
 from collective.googleanalytics.portlets import analyticsportlet
 from collective.googleanalytics.tests.base import FunctionalTestCase

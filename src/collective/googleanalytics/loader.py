@@ -2,8 +2,8 @@
 import time
 import os
 from Products.CMFCore.utils import getToolByName
-from collective.googleanalytics import GoogleAnalyticsMessageFactory as _
 from collective.googleanalytics import error
+from collective.googleanalytics.interfaces import _
 from collective.googleanalytics.interfaces.loader import IAnalyticsAsyncLoader
 from collective.googleanalytics.interfaces.report import IAnalyticsReportRenderer
 from plone.memoize.instance import memoize

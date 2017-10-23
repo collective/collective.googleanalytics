@@ -1,10 +1,6 @@
 
 import datetime
-try:
-    import simplejson as json
-    json    # pyflakes
-except ImportError:
-    import json
+import json
 import time
 import os
 from collective.googleanalytics.utils import js_literal

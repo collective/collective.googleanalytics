@@ -10,11 +10,9 @@
         window.dataLayer = window.dataLayer || [];
         function gtag(){dataLayer.push(arguments);}
         gtag('js', new Date());
-        gtag('config', '${web_property}');">
-    </script>"
-
-    <tal:block content="structure view/renderPlugins"></tal:block>
-    <script type="text/javascript" tal:content="structure view/renderPageview">
+        gtag('config', '${web_property}');
+        ${view/ga_events}
+">
     </script>
   </tal:web_property>
 </tal:tracking>
