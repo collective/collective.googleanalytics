@@ -4,7 +4,8 @@ Changelog
 1.7 (unreleased)
 ----------------
 
-- Nothing changed yet.
+- Fix rendering exception if no view name is available.
+  [instification]
 
 
 1.6.1 (2017-08-22)
