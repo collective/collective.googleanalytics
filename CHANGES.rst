@@ -7,6 +7,9 @@ Changelog
 - Added dynamic download link that is created from ajax.
   [ivanteoh]
 
+- Fix rendering exception if no view name is available.
+  [instification]
+
 
 1.6.1 (2017-08-22)
 ------------------
