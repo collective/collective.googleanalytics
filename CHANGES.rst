@@ -4,7 +4,8 @@ Changelog
 1.7 (unreleased)
 ----------------
 
-- Nothing changed yet.
+- Ensure download handler works even on links loaded from AJAX such as the quicksearch.
+  [ivanteoh]
 
 
 1.6.1 (2017-08-22)

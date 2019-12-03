@@ -3,10 +3,10 @@
     jQuery(function($) {
         var extensions = ${view/file_extensions};
         var extensionsPattern = new RegExp('\\.((' + extensions.join(')|(') + '))$', 'g');
-        $('a').filter(function () {
-            return this.href.match(extensionsPattern) || this.href.match(/\/at_download\//g);
-        }).click(function () {
-            _gaq.push(['_trackEvent', 'File', 'Download', $(this).attr('href')]);
+        $('body').delegate('a', 'click', function() {
+            if ($(this).attr('href').match(extensionsPattern) ||  $(this).attr('href').match(/\/at_download\//g)) {
+                _gaq.push(['_trackEvent', 'File', 'Download', $(this).attr('href')]);
+            }
         });
     });
     /*]]&gt;*/
