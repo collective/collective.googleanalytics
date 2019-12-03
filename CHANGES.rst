@@ -4,7 +4,7 @@ Changelog
 1.7 (unreleased)
 ----------------
 
-- Added dynamic download link that is created from ajax.
+- Ensure download handler works even on links loaded from AJAX such as the quicksearch.
   [ivanteoh]
 
 
