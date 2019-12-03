@@ -35,7 +35,7 @@ before_install:
     unzip chromedriver_linux64.zip -d webdriver;
     export PATH=$PATH:$(pwd)/webdriver;
   - mkdir -p $HOME/{eggs,downloads}
-  - ./bootstrap.sh test-$PLONE_VERSION.x.cfg
+  - ./bootstrap.sh test-$PLONE_VERSION.cfg
 install:
   - bin/buildout -N -t 20 -c test-$PLONE_VERSION.x.cfg
   - pip install zest.pocompile
