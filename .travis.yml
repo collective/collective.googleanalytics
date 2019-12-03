@@ -40,7 +40,7 @@ before_install:
   - mkdir -p $HOME/{eggs,downloads}
   - ./bootstrap.sh test-$PLONE_VERSION.cfg
 install:
-  - bin/buildout -N -t 20 -c test-$PLONE_VERSION.x.cfg
+  - bin/buildout -N -t 20 -c test-$PLONE_VERSION.cfg
   - pip install zest.pocompile
   - pocompile src
 before_script:
