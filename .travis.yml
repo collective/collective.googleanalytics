@@ -34,16 +34,10 @@ before_install:
     wget https://chromedriver.storage.googleapis.com/2.40/chromedriver_linux64.zip;
     unzip chromedriver_linux64.zip -d webdriver;
     export PATH=$PATH:$(pwd)/webdriver;
-  - mkdir -p $HOME/buildout-cache/{eggs,downloads}
-  - mkdir $HOME/.buildout
-  - echo "[buildout]" > $HOME/.buildout/default.cfg
-  - echo "download-cache = $HOME/buildout-cache/downloads" >> $HOME/.buildout/default.cfg
-  - echo "eggs-directory = $HOME/buildout-cache/eggs" >> $HOME/.buildout/default.cfg
-  - pip install zc.buildout
-  - cp test-$PLONE_VERSION.cfg buildout.cfg
+  - mkdir -p $HOME/{eggs,downloads}
+  - ./bootstrap.sh test-$PLONE_VERSION.x.cfg
 install:
-  - buildout -N annotate
-  - buildout -N
+  - bin/buildout -N -t 20 -c test-$PLONE_VERSION.x.cfg
   - pip install zest.pocompile
   - pocompile src
 before_script:
