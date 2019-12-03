@@ -2,7 +2,6 @@
 import datetime
 import os
 import re
-import unittest
 from Products.CMFCore.utils import getToolByName
 from collective.googleanalytics.interfaces.report import IAnalyticsReportRenderer
 from collective.googleanalytics.tests.base import FunctionalTestCase
