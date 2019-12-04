@@ -43,10 +43,6 @@ install:
   - bin/buildout -N -t 20 -c test-$PLONE_VERSION.cfg
   - pip install zest.pocompile
   - pocompile src
-before_script:
-  - 'export DISPLAY=:99.0'
-  - Xvfb :99 -screen 0 1024x768x24 > /dev/null 2>&1 &
-  - sleep 3
 script:
 # Run code-analysis, except on Python 3.6, which mysteriously fails to find zc.buildout.
   - python --version 2> /dev/stdout | grep 3.6 || bin/code-analysis
