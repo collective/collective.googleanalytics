@@ -1,5 +1,4 @@
 
-import unittest
 from Products.CMFCore.utils import getToolByName
 from plone.app.testing import TEST_USER_ID
 from plone.app.testing import setRoles
