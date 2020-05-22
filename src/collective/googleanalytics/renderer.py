@@ -347,4 +347,5 @@ class AnalyticsReportRenderer(object):
             return default
         return aggregate(values)
 
+
 InitializeClass(AnalyticsReportRenderer)

@@ -20,11 +20,13 @@ class Fixture(PloneSandboxLayer):
         # Install into Plone site using portal_setup
         self.applyProfile(portal, 'collective.googleanalytics:default')
 
+
 FIXTURE = Fixture()
 INTEGRATION_TESTING = IntegrationTesting(
     bases=(FIXTURE,),
     name='collective.googleanalytics:Integration',
 )
+
 
 FUNCTIONAL_TESTING = FunctionalTesting(
     bases=(FIXTURE, ZSERVER_FIXTURE),

@@ -334,4 +334,5 @@ class Analytics(PloneBaseTool, IFAwareObjectManager, OrderedFolder):
         records = registry.forInterface(IAnalyticsSchema)
         return records
 
+
 InitializeClass(Analytics)
