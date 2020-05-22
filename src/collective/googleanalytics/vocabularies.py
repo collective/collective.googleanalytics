@@ -30,7 +30,7 @@ def getProfiles(context):
         return SimpleVocabulary([])
 
     try:
-        accounts = analytics_tool.getAccountsFeed('accounts/~all/webproperties/~all/profiles')
+        accounts = analytics_tool.getAccounts()
     except error.BadAuthenticationError:
         choices = [('Please authorize with Google in the Google Analytics \
             control panel.', None)]
@@ -45,15 +45,10 @@ def getProfiles(context):
         return SimpleVocabulary.fromItems(choices)
     if accounts:
         unique_choices = {}
-        for entry in accounts.entry:
-            for prop in entry.property:
-                if prop.name == 'ga:profileName':
-                    title = prop.value
-                    if not isinstance(title, unicode):
-                        title = unicode(title, 'utf-8')
-                    title = crop(title, 40)
-                if prop.name == 'dxp:tableId':
-                    tableId = prop.value
+        for entry in accounts:
+            title = entry.get('name')
+            title = crop(title, 40)
+            tableId = entry.get('tableId')
             unique_choices.update({title: tableId})
         choices = unique_choices.items()
     else:
@@ -73,7 +68,7 @@ def getWebProperties(context):
         return SimpleVocabulary([])
 
     try:
-        accounts = analytics_tool.getAccountsFeed('accounts/~all/webproperties/~all/profiles')
+        webproperties = analytics_tool.getWebProperties()
     except error.BadAuthenticationError:
         choices = [('Please authorize with Google in the Google Analytics \
             control panel.', None)]
@@ -86,20 +81,15 @@ def getWebProperties(context):
         choices = [('Request to Google Analytics errored, you might need to '
                     'authenticate again.', None)]
         return SimpleVocabulary.fromItems(choices)
-    if accounts:
+    if webproperties:
         unique_choices = {}
         # In vocabularies, both the terms and the values must be unique. Since
         # there can be more than one profile for a given web property, we create a list
         # of all the profiles for each property. (Ideally we would use the URL for the
         # web property, but Google doesn't expose it through the Analytics API.)
-        for entry in accounts.entry:
-            for prop in entry.property:
-                if prop.name == 'ga:profileName':
-                    title = prop.value
-                    if not isinstance(title, unicode):
-                        title = unicode(title, 'utf-8')
-                if prop.name == 'ga:webPropertyId':
-                    webPropertyId = prop.value
+        for entry in webproperties:
+            title = entry['name']
+            webPropertyId = entry['id']
             if webPropertyId not in unique_choices:
                 unique_choices.update({webPropertyId: title})
             else:

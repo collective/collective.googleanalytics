@@ -10,15 +10,15 @@ from OFS.ObjectManager import IFAwareObjectManager
 from OFS.OrderedFolder import OrderedFolder
 from Products.CMFPlone.PloneBaseTool import PloneBaseTool
 from collective.googleanalytics import error
-from collective.googleanalytics.config import GOOGLE_REQUEST_TIMEOUT
+# from collective.googleanalytics.config import GOOGLE_REQUEST_TIMEOUT
 from collective.googleanalytics.interfaces.report import IAnalyticsReport
 from collective.googleanalytics.interfaces.utility import IAnalytics
 from collective.googleanalytics.interfaces.utility import IAnalyticsSchema
-from datetime import datetime
-from gdata.client import Unauthorized
+# from datetime import datetime
+# from gdata.client import Unauthorized
 from gdata.gauth import OAuth2AccessTokenError
 from gdata.gauth import OAuth2RevokeError
-from gdata.service import RequestError
+# from gdata.service import RequestError
 from plone import api
 from plone.memoize import ram
 try:
@@ -34,6 +34,9 @@ from zope.component import getUtility
 from zope.i18nmessageid import MessageFactory
 from zope.interface import implementer
 from zope.schema.fieldproperty import FieldProperty
+from apiclient.discovery import build
+# from oauth2client.service_account import ServiceAccountCredentials
+from google.oauth2.credentials import Credentials
 
 logger = logging.getLogger('collective.googleanalytics')
 
@@ -42,14 +45,14 @@ DEFAULT_TIMEOUT = socket.getdefaulttimeout()
 _ = MessageFactory('collective.googleanalytics')
 
 
-def account_feed_cachekey(func, instance, feed_path):
+def account_feed_cachekey(func, instance):
     """
     Cache key for the account feed. We only refresh it every ten minutes.
     """
 
     cache_interval = instance.cache_interval
     cache_interval = (cache_interval > 0 and cache_interval * 60) or 1
-    return hash((time() // cache_interval, feed_path))
+    return hash((time() // cache_interval))
 
 
 @implementer(IAnalytics, IAttributeAnnotatable)
@@ -123,70 +126,86 @@ class Analytics(PloneBaseTool, IFAwareObjectManager, OrderedFolder):
             return True
         return False
 
-    def makeClientRequest(self, feed, *args, **kwargs):
-        """
-        Get the authenticated client object and make the specified request.
-        We need this wrapper method so that we can intelligently handle errors.
-        """
+    def getService(self):
 
-        safeWrite(self)
-        # XXX: Have to use v2.4. gdata 2.0.18 doesn't yet support v3 for
-        #      analytics
-        feed_url = 'https://www.googleapis.com/analytics/v2.4/' + feed
-        client = self._getAuthenticatedClient()
+        if not self.is_auth():
+            raise error.BadAuthenticationError, 'You need to authorize with Google'
 
-        if feed.startswith('management'):
-            query_method = client.get_management_feed
-        if feed.startswith('data'):
-            query_method = client.get_data_feed
+        credentials = Credentials(
+            token=self._auth_token.access_token,
+            refresh_token=self._auth_token.refresh_token,
+            token_uri=self._auth_token.token_uri,
+            client_id=self._auth_token.client_id,
+            client_secret=self._auth_token.client_secret,
+        )
 
-        # Workaround for the lack of timeout handling in gdata. This approach comes
-        # from collective.twitterportlet. See:
-        # https://svn.plone.org/svn/collective/collective.twitterportlet/
-        timeout = socket.getdefaulttimeout()
+        service = build('analytics', 'v3', credentials=credentials)
+        return service
 
-        # If the current timeout is set to GOOGLE_REQUEST_TIMEOUT, then another
-        # thread has called this method before we had a chance to reset the
-        # default timeout. In that case, we fall back to the system default
-        # timeout value.
-        if timeout == GOOGLE_REQUEST_TIMEOUT:
-            timeout = DEFAULT_TIMEOUT
-            logger.warning('Conflict while setting socket timeout.')
+    # def makeClientRequest(self, feed, *args, **kwargs):
+    #     """
+    #     Get the authenticated client object and make the specified request.
+    #     We need this wrapper method so that we can intelligently handle errors.
+    #     """
 
-        try:
-            socket.setdefaulttimeout(GOOGLE_REQUEST_TIMEOUT)
-            try:
-                expired = False
-                # Token gets refreshed when a new request is made to Google,
-                # so check before
-                if self._auth_token.token_expiry < datetime.now():
-                    logger.debug("This access token expired, will try to "
-                                 "refresh it.")
-                    expired = True
-                result = query_method(feed_url, *args, **kwargs)
-                if expired:
-                    logger.debug("Token was refreshed successfuly. New expire "
-                                 "date: %s" % self._auth_token.token_expiry)
-                return result
-            except (Unauthorized, RequestError), e:
-                if hasattr(e, 'reason'):
-                    reason = e.reason
-                else:
-                    reason = e[0]['reason']
-                if 'Token invalid' in reason or reason in ('Forbidden', 'Unauthorized'):
-                    # Reset the stored auth token.
-                    self._auth_token = None
-                    settings = self.get_settings()
-                    settings.reports_profile = None
-                    raise error.BadAuthenticationError, 'You need to authorize with Google'
-                else:
-                    raise
-            except (socket.sslerror, socket.timeout):
-                raise error.RequestTimedOutError, 'The request to Google timed out'
-            except socket.gaierror:
-                raise error.RequestTimedOutError, 'You may not have internet access. Please try again later.'
-        finally:
-            socket.setdefaulttimeout(timeout)
+    #     safeWrite(self)
+    #     # XXX: Have to use v2.4. gdata 2.0.18 doesn't yet support v3 for
+    #     #      analytics
+    #     feed_url = 'https://www.googleapis.com/analytics/v2.4/' + feed
+    #     client = self._getAuthenticatedClient()
+
+    #     if feed.startswith('management'):
+    #         query_method = client.get_management_feed
+    #     if feed.startswith('data'):
+    #         query_method = client.get_data_feed
+
+    #     # Workaround for the lack of timeout handling in gdata. This approach comes
+    #     # from collective.twitterportlet. See:
+    #     # https://svn.plone.org/svn/collective/collective.twitterportlet/
+    #     timeout = socket.getdefaulttimeout()
+
+    #     # If the current timeout is set to GOOGLE_REQUEST_TIMEOUT, then another
+    #     # thread has called this method before we had a chance to reset the
+    #     # default timeout. In that case, we fall back to the system default
+    #     # timeout value.
+    #     if timeout == GOOGLE_REQUEST_TIMEOUT:
+    #         timeout = DEFAULT_TIMEOUT
+    #         logger.warning('Conflict while setting socket timeout.')
+
+    #     try:
+    #         socket.setdefaulttimeout(GOOGLE_REQUEST_TIMEOUT)
+    #         try:
+    #             expired = False
+    #             # Token gets refreshed when a new request is made to Google,
+    #             # so check before
+    #             if self._auth_token.token_expiry < datetime.now():
+    #                 logger.debug("This access token expired, will try to "
+    #                              "refresh it.")
+    #                 expired = True
+    #             result = query_method(feed_url, *args, **kwargs)
+    #             if expired:
+    #                 logger.debug("Token was refreshed successfuly. New expire "
+    #                              "date: %s" % self._auth_token.token_expiry)
+    #             return result
+    #         except (Unauthorized, RequestError), e:
+    #             if hasattr(e, 'reason'):
+    #                 reason = e.reason
+    #             else:
+    #                 reason = e[0]['reason']
+    #             if 'Token invalid' in reason or reason in ('Forbidden', 'Unauthorized'):
+    #                 # Reset the stored auth token.
+    #                 self._auth_token = None
+    #                 settings = self.get_settings()
+    #                 settings.reports_profile = None
+    #                 raise error.BadAuthenticationError, 'You need to authorize with Google'
+    #             else:
+    #                 raise
+    #         except (socket.sslerror, socket.timeout):
+    #             raise error.RequestTimedOutError, 'The request to Google timed out'
+    #         except socket.gaierror:
+    #             raise error.RequestTimedOutError, 'You may not have internet access. Please try again later.'
+    #     finally:
+    #         socket.setdefaulttimeout(timeout)
 
     def getReports(self, category=None):
         """
@@ -208,13 +227,30 @@ class Analytics(PloneBaseTool, IFAwareObjectManager, OrderedFolder):
         return self.report_categories
 
     @ram.cache(account_feed_cachekey)
-    def getAccountsFeed(self, feed_path):
+    def getAccounts(self):
         """
         Returns the list of accounts.
         """
-        feed = 'management/' + feed_path
-        res = self.makeClientRequest(feed)
-        return res
+        service = self.getService()
+        accounts = service.management().accounts().list().execute()
+        return accounts.get('items', [])
+
+    @ram.cache(account_feed_cachekey)
+    def getAccountId(self):
+        """
+        Returns the list of accounts.
+        """
+        accounts = self.getAccounts()
+        return accounts[0].get('id') if accounts else None
+
+    @ram.cache(account_feed_cachekey)
+    def getWebProperties(self):
+        account = self.getAccountId()
+        if account is None:
+            return []
+        service = self.getService()
+        properties = service.management().webproperties().list(accountId=account).execute().get('items', [])
+        return properties
 
     def revoke_token(self):
         logger.debug("Trying to revoke token")

@@ -19,6 +19,12 @@
         name="File downloads"
         factory=".plugins.AnalyticsDownloadPlugin"
         />
+
+    <adapter
+        for="* zope.publisher.interfaces.IRequest"
+        name="File downloads (Server-side)"
+        factory=".plugins.AnalyticsDownloadServerSidePlugin"
+        />
         
     <adapter
         for="* zope.publisher.interfaces.IRequest"
@@ -36,5 +42,32 @@
         name="Page load time"
         factory=".plugins.AnalyticsPageLoadTimePlugin"
         />
+
+
+  <!-- <browser:page
+      name="download"
+      for="*"
+      layer="collective.googleanalytics.interfaces.browserlayer.IAnalyticsLayer"
+      class=".tracking.check_download"
+      permission="zope2.View"
+      />
+
+  <browser:page
+      name="display-file"
+      for="*"
+      layer="collective.googleanalytics.interfaces.browserlayer.IAnalyticsLayer"
+      class=".tracking.check_download"
+      permission="zope2.View"
+      /> -->
+
+    <subscriber
+        for="ZPublisher.pubevents.PubSuccess"
+        handler=".plugins.on_download"
+        />
+    <subscriber
+        for="zope.publisher.interfaces.IEndRequestEvent"
+        handler=".plugins.on_after_download"
+        /> 
+
 
 </configure>
