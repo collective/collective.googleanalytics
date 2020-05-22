@@ -19,6 +19,12 @@
         name="File downloads"
         factory=".plugins.AnalyticsDownloadPlugin"
         />
+
+    <adapter
+        for="* zope.publisher.interfaces.IRequest"
+        name="File downloads (Server-side)"
+        factory=".plugins.AnalyticsDownloadServerSidePlugin"
+        />
         
     <adapter
         for="* zope.publisher.interfaces.IRequest"
@@ -37,4 +43,12 @@
         factory=".plugins.AnalyticsPageLoadTimePlugin"
         />
 
+    <subscriber
+        for="ZPublisher.pubevents.PubSuccess"
+        handler=".plugins.on_download"
+        />
+    <subscriber
+        for="zope.publisher.interfaces.IEndRequestEvent"
+        handler=".plugins.on_after_download"
+        /> 
 </configure>
