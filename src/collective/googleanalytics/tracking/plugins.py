@@ -8,6 +8,9 @@ from collective.googleanalytics.config import FILE_EXTENSION_CHOICES
 from collective.googleanalytics.interfaces.tracking import IAnalyticsTrackingPlugin
 from zope.browserpage.viewpagetemplatefile import ViewPageTemplateFile
 from zope.interface import implementer
+from pyga.requests import Tracker, Page, Session, Visitor
+from zope.site.hooks import getSite
+from zope.annotation.interfaces import IAnnotations
 
 
 @implementer(IAnalyticsTrackingPlugin)
@@ -57,6 +60,17 @@ class AnalyticsDownloadPlugin(AnalyticsBaseTrackingPlugin):
     file_extensions = json.dumps(FILE_EXTENSION_CHOICES)
 
 
+class AnalyticsDownloadServerSidePlugin(AnalyticsBaseTrackingPlugin):
+    """
+    Performs virtual page views on the serverside to track actual downloads instead of clicks on downloads
+    esp on deep linked files
+    WARNING: Caching may prevent tracking.
+    """
+    def __call__(self):
+        # It's serverside so no JS to load
+        return ""
+
+
 class AnalyticsCommentPlugin(AnalyticsBaseTrackingPlugin):
     """
     A tracking plugin to track posting of comments.
@@ -89,3 +103,63 @@ class AnalyticsPageLoadTimePlugin(AnalyticsBaseTrackingPlugin):
     """
 
     __call__ = ViewPageTemplateFile('pageloadtime.pt')
+
+
+# Special hooks for registeringa virtual page view for downloads
+def on_download(event):
+    if event.request is None or event.request.response is None or 'content-disposition' not in event.request.response.headers:
+        return
+    # TODO: do we need to look at content-type header also?
+
+    context = getSite()
+    analytics_tool = getToolByName(context, "portal_analytics")
+    membership_tool = getToolByName(context, "portal_membership")
+    analytics_settings = analytics_tool.get_settings()
+    if 'File downloads (Server-side)' not in analytics_settings.tracking_plugin_names:
+        return
+
+    member = membership_tool.getAuthenticatedMember()
+    for role in analytics_settings.tracking_excluded_roles:
+        if member.has_role(role):
+            return
+
+    web_property = analytics_settings.tracking_web_property
+    annotations = IAnnotations(event.request)
+    annotations['web_property'] = web_property
+
+
+def on_after_download(event):
+    annotations = IAnnotations(event.request)
+    web_property = annotations.get('web_property', None)
+    if web_property is None:
+        return
+
+    # TODO: Ideally should be done in a seperate thread so doesn't slow accepting the next request
+
+    tracker = Tracker(web_property, event.request.HTTP_HOST)
+    visitor = Visitor()
+    visitor.ip_address = get_ip(event.request)
+    session = Session()
+    utmb = event.request.cookies.get('__utmb')
+    if utmb:
+        session.extract_from_utmb(utmb)
+    page = Page(event.request.PATH_INFO)
+    # TODO: set title from content-disposition
+    tracker.track_pageview(page, session, visitor)
+
+
+def get_ip(request):
+    """ Extract the client IP address from the HTTP request in a proxy-compatible way.
+
+    @return: IP address as a string or None if not available
+    """
+    if "HTTP_X_FORWARDED_FOR" in request.environ:
+        # Virtual host
+        ip = request.environ["HTTP_X_FORWARDED_FOR"]
+    elif "HTTP_HOST" in request.environ:
+        # Non-virtualhost
+        ip = request.environ["REMOTE_ADDR"]
+    else:
+        # Unit test code?
+        ip = None
+    return ip

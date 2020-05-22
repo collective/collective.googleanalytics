@@ -39,6 +39,7 @@ setup(name='collective.googleanalytics',
           'setuptools',
           'gdata>=2.0.18',
           'plone.api',
+          'pyga',
       ],
       extras_require={
           'test': [
