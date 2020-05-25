@@ -130,7 +130,7 @@ class AnalyticsControlPanel(controlpanel.ControlPanelFormWrapper):
         analytics_tool = getToolByName(self.context, 'portal_analytics')
 
         try:
-            return analytics_tool.getAccounts()[0]['name']
+            return analytics_tool.makeClientRequest('accounts')[0]['name']
             # return res.title.text.split(' ')[-1]
         except error.BadAuthenticationError:
             return None

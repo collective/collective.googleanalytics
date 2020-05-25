@@ -88,15 +88,14 @@ def js_value(value):
     return str(value)
 
 
-def extract_value(column):
+def extract_value(name, value):
     """
     Returns a tuple containing the dimension or metric name and value value
     for an entry from a Google Analytics data feed.
     """
-    value = column.value
-    if column.name == 'ga:date':
-        value = makeDate(column)
-    elif column.name in ['ga:day', 'ga:week', 'ga:month', 'ga:year']:
+    if name == 'ga:date':
+        value = makeDate(value)
+    elif name in ['ga:day', 'ga:week', 'ga:month', 'ga:year']:
         value = int(value)
     else:
         try:
@@ -106,7 +105,7 @@ def extract_value(column):
                 value = float(value)
             except ValueError:
                 pass
-    return (column.name, value)
+    return (name, value)
 
 
 def unique_list(original):

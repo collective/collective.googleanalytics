@@ -30,7 +30,7 @@ def getProfiles(context):
         return SimpleVocabulary([])
 
     try:
-        accounts = analytics_tool.getAccounts()
+        profiles = analytics_tool.makeCachedRequest('profiles')
     except error.BadAuthenticationError:
         choices = [('Please authorize with Google in the Google Analytics \
             control panel.', None)]
@@ -43,12 +43,12 @@ def getProfiles(context):
         choices = [('Request to Google Analytics errored, you might need to '
                     'authenticate again.', None)]
         return SimpleVocabulary.fromItems(choices)
-    if accounts:
+    if profiles:
         unique_choices = {}
-        for entry in accounts:
+        for entry in profiles:
             title = entry.get('name')
             title = crop(title, 40)
-            tableId = entry.get('tableId')
+            tableId = entry.get('id')
             unique_choices.update({title: tableId})
         choices = unique_choices.items()
     else:
@@ -68,7 +68,7 @@ def getWebProperties(context):
         return SimpleVocabulary([])
 
     try:
-        webproperties = analytics_tool.getWebProperties()
+        webproperties = analytics_tool.makeCachedRequest('webproperties')
     except error.BadAuthenticationError:
         choices = [('Please authorize with Google in the Google Analytics \
             control panel.', None)]

@@ -47,14 +47,14 @@ SCOPES = ["https://www.googleapis.com/auth/analytics.readonly"]
 _ = MessageFactory('collective.googleanalytics')
 
 
-def account_feed_cachekey(func, instance):
+def account_feed_cachekey(func, instance, api_request):
     """
     Cache key for the account feed. We only refresh it every ten minutes.
     """
 
     cache_interval = instance.cache_interval
     cache_interval = (cache_interval > 0 and cache_interval * 60) or 1
-    return hash((time() // cache_interval))
+    return hash((time() // cache_interval, api_request))
 
 
 @implementer(IAnalytics, IAttributeAnnotatable)
@@ -127,7 +127,7 @@ class Analytics(PloneBaseTool, IFAwareObjectManager, OrderedFolder):
             self._update_credentials(creds)
             self._auth_token = None
         elif 'token' in self._state:
-            CRED_ARGS = ['token', 'refresh_token', 'token_uri', 'client_id', 'client_secred']
+            CRED_ARGS = ['token', 'refresh_token', 'token_uri', 'client_id', 'client_secret']
             creds = Credentials(**{key: value for key, value in self._state.items() if key in CRED_ARGS})
         else:
             creds = None
@@ -148,25 +148,16 @@ class Analytics(PloneBaseTool, IFAwareObjectManager, OrderedFolder):
         self._state = self._state
 
     @security.private
-    def _getService(self):
-
-        if not self.is_auth():
-            raise error.BadAuthenticationError, 'You need to authorize with Google'
-        creds = self._get_credentials()
-
-        if creds and creds.expired and creds.refresh_token:
-            logger.debug("This access token expired, will try to "
-                         "refresh it.")
-            creds.refresh(Request())
-            logger.debug("Token was refreshed successfuly. New expire "
-                         "date: %s" % self._auth_token.token_expiry)
-            self._update_credentials(creds)
-
-        service = build('analytics', 'v3', credentials=creds)
-        return service
+    @ram.cache(account_feed_cachekey)
+    def makeCachedRequest(self, api_request):
+        """
+        Returns the list of accounts.
+        """
+        res = self.makeClientRequest(api_request)
+        return res.get('items', [])
 
     @security.private
-    def makeClientRequest(self, api_request):
+    def makeClientRequest(self, api_request, **query_args):
         """
         Get the authenticated client object and make the specified request.
         We need this wrapper method so that we can intelligently handle errors.
@@ -187,26 +178,41 @@ class Analytics(PloneBaseTool, IFAwareObjectManager, OrderedFolder):
         #     timeout = DEFAULT_TIMEOUT
         #     logger.warning('Conflict while setting socket timeout.')
 
+        if not self.is_auth():
+            raise error.BadAuthenticationError, 'You need to authorize with Google'
+        creds = self._get_credentials()
+
+        if creds and creds.expired and creds.refresh_token:
+            logger.debug("This access token expired, will try to "
+                         "refresh it.")
+            creds.refresh(Request())
+            logger.debug("Token was refreshed successfuly. New expire "
+                         "date: %s" % self._auth_token.token_expiry)
+            self._update_credentials(creds)
+
+        service = build('analytics', 'v3', credentials=creds)
+
         try:
             # socket.setdefaulttimeout(GOOGLE_REQUEST_TIMEOUT)
             try:
-
-                # Token gets refreshed when a new request is made to Google,
-                # so check before
-                service = self._getService()
+                result = None
                 if api_request == 'webproperties':
-                    account = self.getAccountId()
-                    return service.management().webproperties().list(accountId=account).execute()
+                    result = service.management().webproperties().list(accountId='~all').execute()
                 elif api_request == 'accounts':
-                    return service.management().accounts().list().execute()
-            except RefreshError, e:
-                if hasattr(e, 'reason'):
-                    reason = e.reason
+                    result = service.management().accounts().list().execute()
+                elif api_request == 'profiles':
+                    result = service.management().profiles().list(accountId='~all', webPropertyId='~all').execute()
+                elif api_request == 'data':
+                    result = service.data().ga().get(**query_args).execute()
                 else:
-                    reason = e[0]['reason']
-                if 'Token invalid' in reason or reason in ('Forbidden', 'Unauthorized'):
+                    raise ValueError("Not supported api")
+                self._update_credentials(creds)
+                return result
+            except RefreshError, e:
+                reason = e.message
+                if any([r in reason for r in ['Token invalid', 'Forbidden', 'Unauthorized']]):
                     # Reset the stored auth token.
-                    self._auth_token = None
+                    self._state['token'] = None
                     settings = self.get_settings()
                     settings.reports_profile = None
                     raise error.BadAuthenticationError, 'You need to authorize with Google'
@@ -240,33 +246,6 @@ class Analytics(PloneBaseTool, IFAwareObjectManager, OrderedFolder):
         """
 
         return self.report_categories
-
-    @security.private
-    @ram.cache(account_feed_cachekey)
-    def getAccounts(self):
-        """
-        Returns the list of accounts.
-        """
-        accounts = self.makeClientRequest('accounts')
-        return accounts.get('items', [])
-
-    @security.private
-    @ram.cache(account_feed_cachekey)
-    def getAccountId(self):
-        """
-        Returns the list of accounts.
-        """
-        accounts = self.getAccounts()
-        return accounts[0].get('id') if accounts else None
-
-    @security.private
-    @ram.cache(account_feed_cachekey)
-    def getWebProperties(self):
-        account = self.getAccountId()
-        if account is None:
-            return []
-        properties = self.makeClientRequest('webproperties').get('items', [])
-        return properties
 
     @security.public
     def revoke_token(self):

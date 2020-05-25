@@ -97,10 +97,10 @@ class DummyTool(object):
     auth_token = 'foo'
     accounts = None
 
-    def getAccounts(self):
+    def makeClientRequest(self, api_request):
         return self.accounts
 
-    def getWebProperties(self):
+    def makeCachedRequest(self, api_request):
         return self.accounts
 
     def is_auth(self):

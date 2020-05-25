@@ -32,7 +32,7 @@ def renderer_cache_key(method, instance):
     cache_interval = analytics_settings.cache_interval
     cache_interval = (cache_interval > 0 and cache_interval * 60) or 1
     time_key = time.time() // cache_interval
-    modification_time = str(instance.report.bobobase_modification_time())
+    modification_time = str(instance.report.propdict())  # was modification_time but no longer there in 5.2
     report_id = instance.report.id
     cache_vars = [time_key, modification_time, report_id, tuple(instance.profile_ids())]
 
@@ -147,8 +147,10 @@ class AnalyticsReportRenderer(object):
         """
 
         results = []
-        for entry in self._getDataFeed().entry:
-            results.append(dict([extract_value(row) for row in entry.dimension + entry.metric]))
+        feed = self._getDataFeed()
+        names = [h['name'] for h in feed.get('columnHeaders', [])]
+        for row in feed.get('rows', []):
+            results.append(dict([extract_value(name, value) for name, value in zip(names, row)]))
         return results
 
     @memoize
@@ -269,13 +271,13 @@ class AnalyticsReportRenderer(object):
 
         criteria = self.query_criteria()
         query_args = {
-            'ids': ','.join(criteria['ids']),
+            'ids': ','.join(['ga:%s' % id for id in criteria['ids']]),
             'dimensions': ','.join(criteria['dimensions']),
             'metrics': ','.join(criteria['metrics']),
             'sort': ','.join(criteria['sort']),
-            'start-date': criteria['start_date'],
-            'end-date': criteria['end_date'],
-            'max-results': criteria['max_results'],
+            'start_date': str(criteria['start_date']),
+            'end_date': str(criteria['end_date']),
+            'max_results': criteria['max_results'],
         }
         if criteria['filters']:
             query_args['filters'] = ','.join(criteria['filters'])
