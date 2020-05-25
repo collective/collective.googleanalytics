@@ -322,8 +322,21 @@ class Analytics(PloneBaseTool, IFAwareObjectManager, OrderedFolder):
         return message
 
     @security.public
-    def auth_url(self, key, secret):
+    def auth_url(self, key=None, secret=None):
         safeWrite(self)
+
+        # Special case to wipe our stored secrets
+        if key == '' or secret == '':
+            self._state = {}
+            return
+        elif self._state is None:
+            return
+        elif key is None or secret is None:
+            key = self._state.get('client_id', None)
+            secret = self._state.get('client_secret', None)
+            if not key or not secret:
+                return
+
         client_config = dict(client_id=key,
                              client_secret=secret,
                              auth_uri="https://accounts.google.com/o/oauth2/auth",

@@ -115,13 +115,10 @@ class AnalyticsControlPanel(controlpanel.ControlPanelFormWrapper):
         """
         Returns the URL used to retrieve a Google OAuth2 token.
         """
-        key = self.request.get('consumer_key', '')
-        secret = self.request.get('consumer_secret', '')
-        auth_url = None
-        if key and secret:
-
-            analytics_tool = getToolByName(self.context, 'portal_analytics')
-            auth_url = analytics_tool.auth_url(key, secret)
+        key = self.request.get('consumer_key', None)
+        secret = self.request.get('consumer_secret', None)
+        analytics_tool = getToolByName(self.context, 'portal_analytics')
+        auth_url = analytics_tool.auth_url(key, secret)
 
         return auth_url
 
