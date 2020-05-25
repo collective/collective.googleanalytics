@@ -2,6 +2,7 @@
 from Products.CMFCore.utils import getToolByName
 from plone.app.testing import TEST_USER_ID
 from plone.app.testing import setRoles
+from plone.app.testing import quickInstallProduct
 from collective.googleanalytics.report import AnalyticsReport
 from collective.googleanalytics.tests.base import FunctionalTestCase
 from collective.googleanalytics.vocabularies import getProfiles
@@ -58,10 +59,12 @@ class TestReinstall(FunctionalTestCase):
 
         # Reinstall the product.
         setRoles(self.portal, TEST_USER_ID, ['Manager'])
-        quick_installer = getToolByName(self.portal, "portal_quickinstaller")
-        quick_installer.reinstallProducts(
-            products=['collective.googleanalytics', ]
-        )
+        quickInstallProduct(self.portal, 'collective.googleanalytics', reinstall=False)
+        # quick_installer = getToolByName(self.portal, "portal_quickinstaller")
+        # import pdb; pdb.set_trace()
+        # quick_installer.reinstallProducts(
+        #     products=['collective.googleanalytics', ]
+        # )
 
         # Make sure the properties are still set.
         analytics_tool = getToolByName(self.portal, 'portal_analytics')
@@ -79,10 +82,11 @@ class TestReinstall(FunctionalTestCase):
 
         # Reinstall the product.
         setRoles(self.portal, TEST_USER_ID, ['Manager'])
-        quick_installer = getToolByName(self.portal, "portal_quickinstaller")
-        quick_installer.reinstallProducts(
-            products=['collective.googleanalytics', ]
-        )
+        quickInstallProduct(self.portal, 'collective.googleanalytics', reinstall=False)
+        # quick_installer = getToolByName(self.portal, "portal_quickinstaller")
+        # quick_installer.reinstallProducts(
+        #     products=['collective.googleanalytics', ]
+        # )
 
         # Make sure the reports are still there.
         analytics_tool = getToolByName(self.portal, 'portal_analytics')
