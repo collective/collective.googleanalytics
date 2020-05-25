@@ -11,6 +11,11 @@ from zope.interface import implementer
 from pyga.requests import Tracker, Page, Session, Visitor
 from zope.site.hooks import getSite
 from zope.annotation.interfaces import IAnnotations
+import logging
+from urllib2 import URLError
+import threading
+
+logger = logging.getLogger('collective.googleanalytics')
 
 
 @implementer(IAnalyticsTrackingPlugin)
@@ -111,7 +116,7 @@ def on_download(event):
         return
 
     # TODO: do we need to look at content-type header also?
-    if event.request.response.getStatus() == 200:
+    if event.request.response.getStatus() != 200:
         # we don't want 206 range responses or errors to be reported
         return
 
@@ -138,8 +143,6 @@ def on_after_download(event):
     if web_property is None:
         return
 
-    # TODO: Ideally should be done in a seperate thread so doesn't slow accepting the next request
-
     tracker = Tracker(web_property, event.request.HTTP_HOST)
     visitor = Visitor()
     visitor.ip_address = get_ip(event.request)
@@ -148,8 +151,20 @@ def on_after_download(event):
     if utmb:
         session.extract_from_utmb(utmb)
     page = Page(event.request.PATH_INFO)
+
     # TODO: set title from content-disposition
-    tracker.track_pageview(page, session, visitor)
+
+    def virtual_pageview(page, session, visitor):
+        logger.debug("Trying Virtual Page View to %s (sesion %s)" % (event.request.PATH_INFO, session.session_id))
+        try:
+            tracker.track_pageview(page, session, visitor)
+        except URLError, e:
+            logger.warning("Virtual Page View Failed: %s" % e.reason)
+        else:
+            logger.debug("Virtual Success")
+    # Do in seperate thread just in case its slow. Doesn't touch zodb so its fine
+    thread = threading.Thread(target=virtual_pageview, args=(page, session, visitor))
+    thread.start()
 
 
 def get_ip(request):
