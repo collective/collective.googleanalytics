@@ -133,11 +133,11 @@ class AnalyticsControlPanel(controlpanel.ControlPanelFormWrapper):
         analytics_tool = getToolByName(self.context, 'portal_analytics')
 
         try:
-            res = analytics_tool.getAccountsFeed('accounts')
+            return analytics_tool.getAccounts()[0]['name']
+            # return res.title.text.split(' ')[-1]
         except error.BadAuthenticationError:
             return None
         except error.RequestTimedOutError:
             return None
         except RequestError:
             return None
-        return res.title.text.split(' ')[-1]

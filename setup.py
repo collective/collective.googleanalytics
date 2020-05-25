@@ -38,6 +38,12 @@ setup(name='collective.googleanalytics',
       install_requires=[
           'setuptools',
           'gdata>=2.0.18',
+          'google-api-python-client',
+          'oauth2client',
+          'google-auth',
+          'google-auth-oauthlib',
+          'pyasn1<0.5.0,>=0.4.6', #required by google-auth
+          'cachetools<4.0.0', # for python 2 support in google-auth
           'plone.api',
           'pyga',
       ],
