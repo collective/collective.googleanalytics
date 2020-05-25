@@ -161,13 +161,15 @@ def on_after_download(event):
     utmb = event.request.cookies.get('__utmb', None)
     if utmb is not None:
         session.extract_from_utmb(utmb)
-    # TODO: should update utma and utmb with changed data via setcookie?
 
     page = Page(event.request.PATH_INFO)
     page.referer = event.request.HTTP_REFERER
     if 'ga_start_load' in annotations:
         page.load_time = int((datetime.datetime.now() - annotations.get('ga_start_load')).total_seconds() * 1000)
     # page.title = # TODO: set title from content-disposition ?
+
+    # TODO: should update utma and utmb with changed data via setcookie?
+    visitor.add_session(session)
 
     def virtual_pageview(page, session, visitor):
         logger.debug("Trying Virtual Page View to %s (sesion %s)" % (event.request.PATH_INFO, session.session_id))
