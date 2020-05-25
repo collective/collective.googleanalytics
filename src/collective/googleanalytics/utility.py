@@ -35,12 +35,18 @@ from zope.i18nmessageid import MessageFactory
 from zope.interface import implementer
 from zope.schema.fieldproperty import FieldProperty
 from apiclient.discovery import build
-# from oauth2client.service_account import ServiceAccountCredentials
 from google.oauth2.credentials import Credentials
+from httplib import ResponseNotReady
+# from urllib.request import Unauthorized, RequestError
+from google.auth.exceptions import RefreshError
+from google.auth.transport.requests import Request
+import requests
 
 logger = logging.getLogger('collective.googleanalytics')
 
 DEFAULT_TIMEOUT = socket.getdefaulttimeout()
+
+SCOPES = ["https://www.googleapis.com/auth/analytics"]
 
 _ = MessageFactory('collective.googleanalytics')
 
@@ -99,26 +105,25 @@ class Analytics(PloneBaseTool, IFAwareObjectManager, OrderedFolder):
     _auth_token = None
     security.declarePrivate('_valid_token')
     _valid_token = None
+    security.declarePrivate('_creds')
+    _creds = None
 
     security.declarePrivate('_getAuthenticatedClient')
+
+    # def _getAuthenticatedClient(self):
+    #     """
+    #     Get the client object and authenticate using our stored credentials.
+    #     """
+    #     client = None
+    #     if self.is_auth():
+    #         client = gdata.analytics.client.AnalyticsClient()
+    #         self._auth_token.authorize(client)
+    #     else:
+    #         raise error.BadAuthenticationError, 'You need to authorize with Google'
+
+    #     return client
+
     security.declarePrivate('is_auth')
-    security.declarePrivate('makeClientRequest')
-    security.declarePrivate('getReports')
-    security.declarePrivate('getCategoriesChoices')
-    security.declarePrivate('getAccountsFeed')
-
-    def _getAuthenticatedClient(self):
-        """
-        Get the client object and authenticate using our stored credentials.
-        """
-        client = None
-        if self.is_auth():
-            client = gdata.analytics.client.AnalyticsClient()
-            self._auth_token.authorize(client)
-        else:
-            raise error.BadAuthenticationError, 'You need to authorize with Google'
-
-        return client
 
     def is_auth(self):
         valid_token = self._valid_token
@@ -126,86 +131,90 @@ class Analytics(PloneBaseTool, IFAwareObjectManager, OrderedFolder):
             return True
         return False
 
-    def getService(self):
+    def _getService(self):
 
         if not self.is_auth():
             raise error.BadAuthenticationError, 'You need to authorize with Google'
 
-        credentials = Credentials(
-            token=self._auth_token.access_token,
-            refresh_token=self._auth_token.refresh_token,
-            token_uri=self._auth_token.token_uri,
-            client_id=self._auth_token.client_id,
-            client_secret=self._auth_token.client_secret,
-        )
+        if getattr(self, '_creds', None):
+            creds = self._creds
+        else:
+            # upgrade from gdata auth token structure
+            creds = Credentials(
+                token=self._auth_token.access_token,
+                refresh_token=self._auth_token.refresh_token,
+                token_uri=self._auth_token.token_uri,
+                client_id=self._auth_token.client_id,
+                client_secret=self._auth_token.client_secret,
+            )
+            self._creds = creds
+        if creds and creds.expired and creds.refresh_token:
+            logger.debug("This access token expired, will try to "
+                         "refresh it.")
+            creds.refresh(Request())
+            logger.debug("Token was refreshed successfuly. New expire "
+                         "date: %s" % self._auth_token.token_expiry)
 
-        service = build('analytics', 'v3', credentials=credentials)
+        service = build('analytics', 'v3', credentials=creds)
         return service
 
-    # def makeClientRequest(self, feed, *args, **kwargs):
-    #     """
-    #     Get the authenticated client object and make the specified request.
-    #     We need this wrapper method so that we can intelligently handle errors.
-    #     """
+    security.declarePrivate('makeClientRequest')
 
-    #     safeWrite(self)
-    #     # XXX: Have to use v2.4. gdata 2.0.18 doesn't yet support v3 for
-    #     #      analytics
-    #     feed_url = 'https://www.googleapis.com/analytics/v2.4/' + feed
-    #     client = self._getAuthenticatedClient()
+    def makeClientRequest(self, api_request):
+        """
+        Get the authenticated client object and make the specified request.
+        We need this wrapper method so that we can intelligently handle errors.
+        """
 
-    #     if feed.startswith('management'):
-    #         query_method = client.get_management_feed
-    #     if feed.startswith('data'):
-    #         query_method = client.get_data_feed
+        safeWrite(self)
 
-    #     # Workaround for the lack of timeout handling in gdata. This approach comes
-    #     # from collective.twitterportlet. See:
-    #     # https://svn.plone.org/svn/collective/collective.twitterportlet/
-    #     timeout = socket.getdefaulttimeout()
+        # Workaround for the lack of timeout handling in gdata. This approach comes
+        # from collective.twitterportlet. See:
+        # https://svn.plone.org/svn/collective/collective.twitterportlet/
+        # timeout = socket.getdefaulttimeout()
 
-    #     # If the current timeout is set to GOOGLE_REQUEST_TIMEOUT, then another
-    #     # thread has called this method before we had a chance to reset the
-    #     # default timeout. In that case, we fall back to the system default
-    #     # timeout value.
-    #     if timeout == GOOGLE_REQUEST_TIMEOUT:
-    #         timeout = DEFAULT_TIMEOUT
-    #         logger.warning('Conflict while setting socket timeout.')
+        # If the current timeout is set to GOOGLE_REQUEST_TIMEOUT, then another
+        # thread has called this method before we had a chance to reset the
+        # default timeout. In that case, we fall back to the system default
+        # timeout value.
+        # if timeout == GOOGLE_REQUEST_TIMEOUT:
+        #     timeout = DEFAULT_TIMEOUT
+        #     logger.warning('Conflict while setting socket timeout.')
 
-    #     try:
-    #         socket.setdefaulttimeout(GOOGLE_REQUEST_TIMEOUT)
-    #         try:
-    #             expired = False
-    #             # Token gets refreshed when a new request is made to Google,
-    #             # so check before
-    #             if self._auth_token.token_expiry < datetime.now():
-    #                 logger.debug("This access token expired, will try to "
-    #                              "refresh it.")
-    #                 expired = True
-    #             result = query_method(feed_url, *args, **kwargs)
-    #             if expired:
-    #                 logger.debug("Token was refreshed successfuly. New expire "
-    #                              "date: %s" % self._auth_token.token_expiry)
-    #             return result
-    #         except (Unauthorized, RequestError), e:
-    #             if hasattr(e, 'reason'):
-    #                 reason = e.reason
-    #             else:
-    #                 reason = e[0]['reason']
-    #             if 'Token invalid' in reason or reason in ('Forbidden', 'Unauthorized'):
-    #                 # Reset the stored auth token.
-    #                 self._auth_token = None
-    #                 settings = self.get_settings()
-    #                 settings.reports_profile = None
-    #                 raise error.BadAuthenticationError, 'You need to authorize with Google'
-    #             else:
-    #                 raise
-    #         except (socket.sslerror, socket.timeout):
-    #             raise error.RequestTimedOutError, 'The request to Google timed out'
-    #         except socket.gaierror:
-    #             raise error.RequestTimedOutError, 'You may not have internet access. Please try again later.'
-    #     finally:
-    #         socket.setdefaulttimeout(timeout)
+        try:
+            # socket.setdefaulttimeout(GOOGLE_REQUEST_TIMEOUT)
+            try:
+
+                # Token gets refreshed when a new request is made to Google,
+                # so check before
+                service = self._getService()
+                if api_request == 'webproperties':
+                    account = self.getAccountId()
+                    return service.management().webproperties().list(accountId=account).execute()
+                elif api_request == 'accounts':
+                    return service.management().accounts().list().execute()
+            except RefreshError, e:
+                if hasattr(e, 'reason'):
+                    reason = e.reason
+                else:
+                    reason = e[0]['reason']
+                if 'Token invalid' in reason or reason in ('Forbidden', 'Unauthorized'):
+                    # Reset the stored auth token.
+                    self._auth_token = None
+                    settings = self.get_settings()
+                    settings.reports_profile = None
+                    raise error.BadAuthenticationError, 'You need to authorize with Google'
+                else:
+                    raise
+            except (socket.sslerror, socket.timeout):
+                raise error.RequestTimedOutError, 'The request to Google timed out'
+            except (socket.gaierror, ResponseNotReady):
+                raise error.RequestTimedOutError, 'You may not have internet access. Please try again later.'
+        finally:
+            # socket.setdefaulttimeout(timeout)
+            pass
+
+    security.declarePrivate('getReports')
 
     def getReports(self, category=None):
         """
@@ -219,6 +228,8 @@ class Analytics(PloneBaseTool, IFAwareObjectManager, OrderedFolder):
                 if (category and category in obj.categories) or not category:
                     yield obj
 
+    security.declarePrivate('getCategoriesChoices')
+
     def getCategoriesChoices(self):
         """
         Return a list of possible report categories.
@@ -226,14 +237,17 @@ class Analytics(PloneBaseTool, IFAwareObjectManager, OrderedFolder):
 
         return self.report_categories
 
+    security.declarePrivate('getAccounts')
+
     @ram.cache(account_feed_cachekey)
     def getAccounts(self):
         """
         Returns the list of accounts.
         """
-        service = self.getService()
-        accounts = service.management().accounts().list().execute()
+        accounts = self.makeClientRequest('accounts')
         return accounts.get('items', [])
+
+    security.declarePrivate('getAccountId')
 
     @ram.cache(account_feed_cachekey)
     def getAccountId(self):
@@ -243,33 +257,43 @@ class Analytics(PloneBaseTool, IFAwareObjectManager, OrderedFolder):
         accounts = self.getAccounts()
         return accounts[0].get('id') if accounts else None
 
+    security.declarePrivate('getWebProperties')
+
     @ram.cache(account_feed_cachekey)
     def getWebProperties(self):
         account = self.getAccountId()
         if account is None:
             return []
-        service = self.getService()
-        properties = service.management().webproperties().list(accountId=account).execute().get('items', [])
+        properties = self.makeClientRequest('webproperties').get('items', [])
         return properties
 
     def revoke_token(self):
         logger.debug("Trying to revoke token")
-        try:
-            oauth2_token = self._auth_token
-            if oauth2_token:
-                oauth2_token.revoke()
-                logger.debug("Token revoked successfuly")
-        except OAuth2RevokeError:
-            # Authorization already revoked
-            logger.debug("Token was already revoked")
-            pass
-        except socket.gaierror:
-            logger.debug("There was a connection issue, could not revoke "
-                         "token.")
-            raise error.RequestTimedOutError, (
-                'You may not have internet access. Please try again '
-                'later.'
-            )
+
+        if getattr(self, '_creds'):
+            requests.post('https://oauth2.googleapis.com/revoke',
+                          params={'token': self._creds.token},
+                          headers={'content-type': 'application/x-www-form-urlencoded'})
+            self._creds = None
+
+            return
+        else:
+            try:
+                oauth2_token = self._auth_token
+                if oauth2_token:
+                    oauth2_token.revoke()
+                    logger.debug("Token revoked successfuly")
+            except OAuth2RevokeError:
+                # Authorization already revoked
+                logger.debug("Token was already revoked")
+                pass
+            except socket.gaierror:
+                logger.debug("There was a connection issue, could not revoke "
+                             "token.")
+                raise error.RequestTimedOutError, (
+                    'You may not have internet access. Please try again '
+                    'later.'
+                )
 
         self._auth_token = None
         self._valid_token = False
@@ -311,7 +335,7 @@ class Analytics(PloneBaseTool, IFAwareObjectManager, OrderedFolder):
             oauth2_token = gdata.gauth.OAuth2Token(
                 client_id=key,
                 client_secret=secret,
-                scope="https://www.googleapis.com/auth/analytics",
+                scope=SCOPES,
                 user_agent='collective-googleanalytics',
             )
             logger.debug(u"Created new OAuth2 token with id: '%s' and secret:"
@@ -328,6 +352,28 @@ class Analytics(PloneBaseTool, IFAwareObjectManager, OrderedFolder):
             logger.debug(u"Auth URL: %s" % auth_url)
 
         return auth_url
+
+    # def auth_url(self, key, secret):
+    #     flow = google_auth_oauthlib.flow.Flow.from_client_secrets_config(
+    #         dict(web=dict(client_id=key, client_secret=secret)), scopes=SCOPES)
+
+    #     # The URI created here must exactly match one of the authorized redirect URIs
+    #     # for the OAuth 2.0 client, which you configured in the API Console. If this
+    #     # value doesn't match an authorized URI, you will get a 'redirect_uri_mismatch'
+    #     # error.
+    #     flow.redirect_uri = '%s/analytics-auth' % api.portal.get().absolute_url()
+
+    #     authorization_url, state = flow.authorization_url(
+    #         # Enable offline access so that you can refresh an access token without
+    #         # re-prompting the user for permission. Recommended for web server apps.
+    #         access_type='offline',
+    #         # Enable incremental authorization. Recommended as a best practice.
+    #         include_granted_scopes='true')
+
+    #     # Store the state so the callback can verify the auth server response.
+    #     self.state = state
+
+    #     return authorization_url
 
     def get_settings(self):
         registry = getUtility(IRegistry)
