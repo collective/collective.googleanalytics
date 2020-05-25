@@ -40,7 +40,8 @@ logger = logging.getLogger('collective.googleanalytics')
 
 DEFAULT_TIMEOUT = socket.getdefaulttimeout()
 
-SCOPES = ["https://www.googleapis.com/auth/analytics"]
+# SCOPES = ["https://www.googleapis.com/auth/analytics"]
+SCOPES = ["https://www.googleapis.com/auth/analytics.readonly"]
 # TODO: do we need readonly instead?
 
 _ = MessageFactory('collective.googleanalytics')

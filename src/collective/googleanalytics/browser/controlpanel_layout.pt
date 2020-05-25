@@ -51,8 +51,10 @@
                                 tal:attributes="href auth_url" i18n:translate="">Authorize with Google</a>
                         </div>
                         <div style="margin: 1em 0;">
-                            <a style="font-size:1.3em; font-weight: bold;"
-                                href="@@analytics-controlpanel?consumer_key=&amp;consumer_secret=" i18n:translate="">Resetup OAuth secret</a>
+                            <form action="@@analytics-controlpanel" method="POST">
+                                <input type="hidden" name="consumer_key" value=""/><input type="hidden" name="consumer_secret" value=""/>
+                                <input type="submit" value="Resetup OAuth secret"/>
+                            </form>
                         </div>
                     </div>
                     <tal:block condition="not:auth_url">
