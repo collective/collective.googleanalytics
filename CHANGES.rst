@@ -4,6 +4,8 @@ Changelog
 1.7 (unreleased)
 ----------------
 
+- Additional plugin for server-side download virtual page hits so direct download links get counted
+  [djay]
 - Ensure download handler works even on links loaded from AJAX such as the quicksearch.
   [ivanteoh]
 
