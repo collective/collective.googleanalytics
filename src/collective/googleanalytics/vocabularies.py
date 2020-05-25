@@ -2,7 +2,6 @@
 from Products.CMFCore.utils import getToolByName
 from collective.googleanalytics import error
 from collective.googleanalytics.interfaces.tracking import IAnalyticsTrackingPlugin
-from gdata.client import RequestError
 from zope.component import getGlobalSiteManager
 from zope.component.hooks import getSite
 from zope.schema.vocabulary import SimpleVocabulary, SimpleTerm
@@ -39,10 +38,6 @@ def getProfiles(context):
         choices = [('The request to Google Analytics timed out. Please try \
             again later.', None)]
         return SimpleVocabulary.fromItems(choices)
-    except RequestError:
-        choices = [('Request to Google Analytics errored, you might need to '
-                    'authenticate again.', None)]
-        return SimpleVocabulary.fromItems(choices)
     if profiles:
         unique_choices = {}
         for entry in profiles:
@@ -76,10 +71,6 @@ def getWebProperties(context):
     except error.RequestTimedOutError:
         choices = [('The request to Google Analytics timed out. Please try \
             again later.', None)]
-        return SimpleVocabulary.fromItems(choices)
-    except RequestError:
-        choices = [('Request to Google Analytics errored, you might need to '
-                    'authenticate again.', None)]
         return SimpleVocabulary.fromItems(choices)
     if webproperties:
         unique_choices = {}

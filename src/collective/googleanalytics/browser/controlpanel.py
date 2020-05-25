@@ -14,7 +14,6 @@ from collective.googleanalytics.interfaces.utility import \
 from collective.googleanalytics.interfaces.utility import IAnalyticsSchema
 from collective.googleanalytics.interfaces.utility import IAnalyticsSettings
 from collective.googleanalytics.interfaces.utility import IAnalyticsTracking
-from gdata.client import RequestError
 from plone.app.registry.browser import controlpanel
 from plone import api
 from plone.registry.interfaces import IRegistry
@@ -135,6 +134,4 @@ class AnalyticsControlPanel(controlpanel.ControlPanelFormWrapper):
         except error.BadAuthenticationError:
             return None
         except error.RequestTimedOutError:
-            return None
-        except RequestError:
             return None
