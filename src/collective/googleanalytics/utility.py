@@ -1,7 +1,4 @@
 
-import gdata.analytics.client
-import gdata.analytics.service
-import gdata.gauth
 import logging
 import socket
 from AccessControl import ClassSecurityInfo
@@ -14,11 +11,6 @@ from collective.googleanalytics import error
 from collective.googleanalytics.interfaces.report import IAnalyticsReport
 from collective.googleanalytics.interfaces.utility import IAnalytics
 from collective.googleanalytics.interfaces.utility import IAnalyticsSchema
-# from datetime import datetime
-# from gdata.client import Unauthorized
-from gdata.gauth import OAuth2AccessTokenError
-from gdata.gauth import OAuth2RevokeError
-# from gdata.service import RequestError
 from plone import api
 from plone.memoize import ram
 try:
@@ -36,6 +28,8 @@ from zope.interface import implementer
 from zope.schema.fieldproperty import FieldProperty
 from apiclient.discovery import build
 from google.oauth2.credentials import Credentials
+import google_auth_oauthlib
+from oauthlib.oauth2.rfc6749.errors import InvalidGrantError
 from httplib import ResponseNotReady
 # from urllib.request import Unauthorized, RequestError
 from google.auth.exceptions import RefreshError
@@ -47,6 +41,7 @@ logger = logging.getLogger('collective.googleanalytics')
 DEFAULT_TIMEOUT = socket.getdefaulttimeout()
 
 SCOPES = ["https://www.googleapis.com/auth/analytics"]
+# TODO: do we need readonly instead?
 
 _ = MessageFactory('collective.googleanalytics')
 
@@ -105,40 +100,21 @@ class Analytics(PloneBaseTool, IFAwareObjectManager, OrderedFolder):
     _auth_token = None
     security.declarePrivate('_valid_token')
     _valid_token = None
-    security.declarePrivate('_creds')
-    _creds = None
+    security.declarePrivate('_state')
+    _state = {}
 
-    security.declarePrivate('_getAuthenticatedClient')
-
-    # def _getAuthenticatedClient(self):
-    #     """
-    #     Get the client object and authenticate using our stored credentials.
-    #     """
-    #     client = None
-    #     if self.is_auth():
-    #         client = gdata.analytics.client.AnalyticsClient()
-    #         self._auth_token.authorize(client)
-    #     else:
-    #         raise error.BadAuthenticationError, 'You need to authorize with Google'
-
-    #     return client
-
-    security.declarePrivate('is_auth')
-
+    @security.private
     def is_auth(self):
-        valid_token = self._valid_token
-        if valid_token:
-            return True
-        return False
+        # valid_token = self._valid_token
+        # if valid_token:
+        #     return True
+        # return False
+        creds = self._get_credentials()
+        return creds and creds.valid
 
-    def _getService(self):
-
-        if not self.is_auth():
-            raise error.BadAuthenticationError, 'You need to authorize with Google'
-
-        if getattr(self, '_creds', None):
-            creds = self._creds
-        else:
+    @security.private
+    def _get_credentials(self):
+        if getattr(self, '_auth_token', None):
             # upgrade from gdata auth token structure
             creds = Credentials(
                 token=self._auth_token.access_token,
@@ -147,19 +123,48 @@ class Analytics(PloneBaseTool, IFAwareObjectManager, OrderedFolder):
                 client_id=self._auth_token.client_id,
                 client_secret=self._auth_token.client_secret,
             )
-            self._creds = creds
+            self._update_credentials(creds)
+            self._auth_token = None
+        elif 'token' in self._state:
+            CRED_ARGS = ['token', 'refresh_token', 'token_uri', 'client_id', 'client_secred']
+            creds = Credentials(**{key: value for key, value in self._state.items() if key in CRED_ARGS})
+        else:
+            creds = None
+        return creds
+
+    @security.private
+    def _update_credentials(self, credentials):
+        self._state.update(
+            {
+                'token': credentials.token,
+                'refresh_token': credentials.refresh_token,
+                'token_uri': credentials.token_uri,
+                'client_id': credentials.client_id,
+                'client_secret': credentials.client_secret,
+                'scopes': credentials.scopes
+            }
+        )
+        self._state = self._state
+
+    @security.private
+    def _getService(self):
+
+        if not self.is_auth():
+            raise error.BadAuthenticationError, 'You need to authorize with Google'
+        creds = self._get_credentials()
+
         if creds and creds.expired and creds.refresh_token:
             logger.debug("This access token expired, will try to "
                          "refresh it.")
             creds.refresh(Request())
             logger.debug("Token was refreshed successfuly. New expire "
                          "date: %s" % self._auth_token.token_expiry)
+            self._update_credentials(creds)
 
         service = build('analytics', 'v3', credentials=creds)
         return service
 
-    security.declarePrivate('makeClientRequest')
-
+    @security.private
     def makeClientRequest(self, api_request):
         """
         Get the authenticated client object and make the specified request.
@@ -214,8 +219,7 @@ class Analytics(PloneBaseTool, IFAwareObjectManager, OrderedFolder):
             # socket.setdefaulttimeout(timeout)
             pass
 
-    security.declarePrivate('getReports')
-
+    @security.private
     def getReports(self, category=None):
         """
         List the available Analytics reports. If a category is specified, only
@@ -228,8 +232,7 @@ class Analytics(PloneBaseTool, IFAwareObjectManager, OrderedFolder):
                 if (category and category in obj.categories) or not category:
                     yield obj
 
-    security.declarePrivate('getCategoriesChoices')
-
+    @security.private
     def getCategoriesChoices(self):
         """
         Return a list of possible report categories.
@@ -237,8 +240,7 @@ class Analytics(PloneBaseTool, IFAwareObjectManager, OrderedFolder):
 
         return self.report_categories
 
-    security.declarePrivate('getAccounts')
-
+    @security.private
     @ram.cache(account_feed_cachekey)
     def getAccounts(self):
         """
@@ -247,8 +249,7 @@ class Analytics(PloneBaseTool, IFAwareObjectManager, OrderedFolder):
         accounts = self.makeClientRequest('accounts')
         return accounts.get('items', [])
 
-    security.declarePrivate('getAccountId')
-
+    @security.private
     @ram.cache(account_feed_cachekey)
     def getAccountId(self):
         """
@@ -257,8 +258,7 @@ class Analytics(PloneBaseTool, IFAwareObjectManager, OrderedFolder):
         accounts = self.getAccounts()
         return accounts[0].get('id') if accounts else None
 
-    security.declarePrivate('getWebProperties')
-
+    @security.private
     @ram.cache(account_feed_cachekey)
     def getWebProperties(self):
         account = self.getAccountId()
@@ -267,113 +267,88 @@ class Analytics(PloneBaseTool, IFAwareObjectManager, OrderedFolder):
         properties = self.makeClientRequest('webproperties').get('items', [])
         return properties
 
+    @security.public
     def revoke_token(self):
         logger.debug("Trying to revoke token")
 
-        if getattr(self, '_creds'):
-            requests.post('https://oauth2.googleapis.com/revoke',
-                          params={'token': self._creds.token},
-                          headers={'content-type': 'application/x-www-form-urlencoded'})
-            self._creds = None
-
-            return
+        if getattr(self, '_state'):
+            token = self._state.get('token')
         else:
-            try:
-                oauth2_token = self._auth_token
-                if oauth2_token:
-                    oauth2_token.revoke()
-                    logger.debug("Token revoked successfuly")
-            except OAuth2RevokeError:
-                # Authorization already revoked
-                logger.debug("Token was already revoked")
-                pass
-            except socket.gaierror:
-                logger.debug("There was a connection issue, could not revoke "
-                             "token.")
-                raise error.RequestTimedOutError, (
-                    'You may not have internet access. Please try again '
-                    'later.'
-                )
+            token = self._auth_token.token
 
-        self._auth_token = None
-        self._valid_token = False
+        result = requests.post('https://oauth2.googleapis.com/revoke',
+                               params={'token': token}, headers={'content-type': 'application/x-www-form-urlencoded'})
+        status_code = getattr(result, 'status_code')
+        if status_code == 200:
+            logger.debug("Token was already revoked")
+            self._auth_token = None
+            self._valid_token = False
+            self._state['token'] = None
+        else:
+            logger.warning("Problem revoking token")
 
-    def set_token(self, code):
+            # raise error.RequestTimedOutError, (
+            #     'You may not have internet access. Please try again '
+            #     'later.'
+            # )
+
+    @security.public
+    def set_token(self, code, state):
+        safeWrite(self)
         logger.debug(
             "Received callback from Google with code '%s' " % code
         )
-        oauth2_token = self._auth_token
+        flow = google_auth_oauthlib.flow.Flow.from_client_config(
+            dict(web=self._state), scopes=SCOPES, state=state)
+        flow.redirect_uri = '%s/analytics-auth' % api.portal.get().absolute_url()
+
         try:
-            oauth2_token.get_access_token(code)
+            flow.fetch_token(code=code)
+        except [InvalidGrantError]:
+            logger.debug("Code was invalid, could not get tokens")
+            message = _(u'Authorization failed. Google Analytics for '
+                        u'Plone received an invalid token.')
+        else:
             logger.debug(
                 "Code was valid, got '%s' as access_token and '%s' as "
                 "refresh_token. Token will expire on '%s'" %
-                (oauth2_token.access_token,
-                 oauth2_token.refresh_token,
-                 oauth2_token.token_expiry))
+                (flow.credentials.token,
+                    flow.credentials.refresh_token,
+                    flow.credentials.expiry))
+            self._update_credentials(flow.credentials)
             message = _(u'Authorization succeeded. You may now configure '
                         u'Google Analytics for Plone.')
-            self._valid_token = True
 
-        except OAuth2AccessTokenError:
-            logger.debug("Code was invalid, could not get tokens")
-            self._auth_token = None
-            self._valid_token = False
-            message = _(u'Authorization failed. Google Analytics for '
-                        u'Plone received an invalid token.')
         return message
 
+    @security.public
     def auth_url(self, key, secret):
-        """
-        Returns the URL used to retrieve a Google OAuth2 token.
-        """
         safeWrite(self)
-        auth_url = None
-        if key and secret:
-            next = '%s/analytics-auth' % api.portal.get().absolute_url()
+        client_config = dict(client_id=key,
+                             client_secret=secret,
+                             auth_uri="https://accounts.google.com/o/oauth2/auth",
+                             token_uri="https://accounts.google.com/o/oauth2/token")
 
-            oauth2_token = gdata.gauth.OAuth2Token(
-                client_id=key,
-                client_secret=secret,
-                scope=SCOPES,
-                user_agent='collective-googleanalytics',
-            )
-            logger.debug(u"Created new OAuth2 token with id: '%s' and secret:"
-                         u" '%s'" % (key, secret))
+        flow = google_auth_oauthlib.flow.Flow.from_client_config(
+            dict(web=client_config), scopes=SCOPES)
 
-            oauth2_token.redirect_uri = next
-            self._auth_token = oauth2_token
+        # The URI created here must exactly match one of the authorized redirect URIs
+        # for the OAuth 2.0 client, which you configured in the API Console. If this
+        # value doesn't match an authorized URI, you will get a 'redirect_uri_mismatch'
+        # error.
+        flow.redirect_uri = '%s/analytics-auth' % api.portal.get().absolute_url()
 
-            auth_url = oauth2_token.generate_authorize_url(
-                redirect_uri=next,
-                approval_prompt='force'
-            )
+        authorization_url, state = flow.authorization_url(
+            # Enable offline access so that you can refresh an access token without
+            # re-prompting the user for permission. Recommended for web server apps.
+            access_type='offline',
+            # Enable incremental authorization. Recommended as a best practice.
+            include_granted_scopes='true')
 
-            logger.debug(u"Auth URL: %s" % auth_url)
+        # Store the state so the callback can verify the auth server response.
+        self._state = client_config
 
-        return auth_url
-
-    # def auth_url(self, key, secret):
-    #     flow = google_auth_oauthlib.flow.Flow.from_client_secrets_config(
-    #         dict(web=dict(client_id=key, client_secret=secret)), scopes=SCOPES)
-
-    #     # The URI created here must exactly match one of the authorized redirect URIs
-    #     # for the OAuth 2.0 client, which you configured in the API Console. If this
-    #     # value doesn't match an authorized URI, you will get a 'redirect_uri_mismatch'
-    #     # error.
-    #     flow.redirect_uri = '%s/analytics-auth' % api.portal.get().absolute_url()
-
-    #     authorization_url, state = flow.authorization_url(
-    #         # Enable offline access so that you can refresh an access token without
-    #         # re-prompting the user for permission. Recommended for web server apps.
-    #         access_type='offline',
-    #         # Enable incremental authorization. Recommended as a best practice.
-    #         include_granted_scopes='true')
-
-    #     # Store the state so the callback can verify the auth server response.
-    #     self.state = state
-
-    #     return authorization_url
+        return authorization_url
 
     def get_settings(self):
         registry = getUtility(IRegistry)
