@@ -47,7 +47,7 @@ SCOPES = ["https://www.googleapis.com/auth/analytics.readonly"]
 _ = MessageFactory('collective.googleanalytics')
 
 
-def account_feed_cachekey(func, instance, api_request):
+def account_feed_cachekey(func, instance, api_request=None):
     """
     Cache key for the account feed. We only refresh it every ten minutes.
     """
@@ -149,6 +149,24 @@ class Analytics(PloneBaseTool, IFAwareObjectManager, OrderedFolder):
 
     @security.private
     @ram.cache(account_feed_cachekey)
+    def _getService(self):
+        if not self.is_auth():
+            raise error.BadAuthenticationError, 'You need to authorize with Google'
+        creds = self._get_credentials()
+
+        if creds and creds.expired and creds.refresh_token:
+            logger.debug("This access token expired, will try to "
+                         "refresh it.")
+            creds.refresh(Request())
+            logger.debug("Token was refreshed successfuly. New expire "
+                         "date: %s" % self._auth_token.token_expiry)
+            self._update_credentials(creds)
+
+        service = build('analytics', 'v3', credentials=creds)
+        return creds, service
+
+    @security.private
+    @ram.cache(account_feed_cachekey)
     def makeCachedRequest(self, api_request):
         """
         Returns the list of accounts.
@@ -178,19 +196,7 @@ class Analytics(PloneBaseTool, IFAwareObjectManager, OrderedFolder):
         #     timeout = DEFAULT_TIMEOUT
         #     logger.warning('Conflict while setting socket timeout.')
 
-        if not self.is_auth():
-            raise error.BadAuthenticationError, 'You need to authorize with Google'
-        creds = self._get_credentials()
-
-        if creds and creds.expired and creds.refresh_token:
-            logger.debug("This access token expired, will try to "
-                         "refresh it.")
-            creds.refresh(Request())
-            logger.debug("Token was refreshed successfuly. New expire "
-                         "date: %s" % self._auth_token.token_expiry)
-            self._update_credentials(creds)
-
-        service = build('analytics', 'v3', credentials=creds)
+        creds, service = self._getService()
 
         try:
             # socket.setdefaulttimeout(GOOGLE_REQUEST_TIMEOUT)
