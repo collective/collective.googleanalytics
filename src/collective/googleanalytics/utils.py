@@ -51,7 +51,7 @@ def makeDate(date_stamp):
     try:
         # XXX: Should we be doing it like this?
         date_string = date_stamp.value
-    except:
+    except AttributeError:
         date_string = str(date_stamp)
 
     year = int(date_string[0:4])
@@ -104,7 +104,7 @@ def extract_value(column):
         except ValueError:
             try:
                 value = float(value)
-            except:
+            except ValueError:
                 pass
     return (column.name, value)
 

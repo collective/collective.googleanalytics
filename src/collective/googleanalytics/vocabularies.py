@@ -11,9 +11,9 @@ from zope.schema.vocabulary import SimpleVocabulary, SimpleTerm
 def crop(text, length):
     if len(text) > 40:
         text = text[:40]
-        l = text.rfind(' ')
-        if l > 20:  # 40 / 2
-            text = text[:l + 1]
+        left = text.rfind(' ')
+        if left > 20:  # 40 / 2
+            text = text[:left + 1]
         text += '...'
     return text
 

@@ -109,7 +109,11 @@ class AnalyticsPageLoadTimePlugin(AnalyticsBaseTrackingPlugin):
 def on_download(event):
     if event.request is None or event.request.response is None or 'content-disposition' not in event.request.response.headers:
         return
+
     # TODO: do we need to look at content-type header also?
+    if event.request.response.getStatus() == 200:
+        # we don't want 206 range responses or errors to be reported
+        return
 
     context = getSite()
     analytics_tool = getToolByName(context, "portal_analytics")
@@ -140,7 +144,7 @@ def on_after_download(event):
     visitor = Visitor()
     visitor.ip_address = get_ip(event.request)
     session = Session()
-    utmb = event.request.cookies.get('__utmb')
+    utmb = event.request.cookies.get('__utmb', None)
     if utmb:
         session.extract_from_utmb(utmb)
     page = Page(event.request.PATH_INFO)
