@@ -53,6 +53,10 @@
         handler=".plugins.on_download"
         />
     <subscriber
+        for="ZPublisher.interfaces.IPubFailure"
+        handler=".plugins.on_abort"
+        />
+    <subscriber
         for="zope.publisher.interfaces.IEndRequestEvent"
         handler=".plugins.on_after_download"
         /> 

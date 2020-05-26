@@ -6,6 +6,7 @@ except ImportError:
 from Products.CMFCore.utils import getToolByName
 from collective.googleanalytics.config import FILE_EXTENSION_CHOICES
 from collective.googleanalytics.interfaces.tracking import IAnalyticsTrackingPlugin
+from collective.googleanalytics.interfaces.browserlayer import IAnalyticsLayer
 from zope.browserpage.viewpagetemplatefile import ViewPageTemplateFile
 from zope.interface import implementer
 from pyga.requests import Tracker, Page, Session, Visitor
@@ -125,6 +126,8 @@ def on_start(event):
 def on_download(event):
     if event.request is None or event.request.response is None:
         return
+    if not IAnalyticsLayer.providedBy(event.request):
+        return
     # TODO: just when we have content-disposition or should video streams or other downloads be counted?
     if 'content-disposition' not in event.request.response.headers:
         return
@@ -135,21 +138,29 @@ def on_download(event):
     # TODO: is there a way to support 304 not modified responses to attachments?
     # TODO: test support xsendfile
 
-    context = getSite()
-    analytics_tool = getToolByName(context, "portal_analytics")
-    analytics_settings = analytics_tool.get_settings()
-    if 'File downloads (Server-side)' not in analytics_settings.tracking_plugin_names:
+    annotate_web_property(event.request)
+
+
+def on_abort(event):
+    # Special case where plone.caching.hooks.Intercepted aborts in order to return 304 not modified
+    if not IAnalyticsLayer.providedBy(event.request):
         return
-
-    membership_tool = getToolByName(context, "portal_membership")
-    member = membership_tool.getAuthenticatedMember()
-    for role in analytics_settings.tracking_excluded_roles:
-        if member.has_role(role):
-            return
-
-    web_property = analytics_settings.tracking_web_property
-    annotations = IAnnotations(event.request)
-    annotations['web_property'] = web_property
+    if event.request.response.getStatus() != 304:
+        return
+    # for general purpose content (instead of images) its
+    # "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9"
+    if 'text/html' not in event.request.HTTP_ACCEPT:
+        return
+    if 'application/xml' not in event.request.HTTP_ACCEPT:
+        return
+    if '*/*' not in event.request.HTTP_ACCEPT:
+        return
+    if 'application/signed-exchange' not in event.request.HTTP_ACCEPT:
+        return
+    # HACK: distiquish between file downloads and html content
+    if not event.request.response.headers.get('x-cache-rule', None) == 'plone.content.file':
+        return
+    annotate_web_property(event.request)
 
 
 def on_after_download(event):
@@ -174,9 +185,10 @@ def on_after_download(event):
     page.referrer = event.request.HTTP_REFERER
     if 'ga_start_load' in annotations:
         page.load_time = int((datetime.datetime.now() - annotations.get('ga_start_load')).total_seconds() * 1000)
-    filename = get_filename(event.request)
-    if filename:
-        page.title = u"Attachment: %s" % filename
+    # Since we have no filename for 304 responses we should not set one so hits look the same
+    # filename = get_filename(event.request)
+    # if filename:
+    #    page.title = u"Attachment: %s" % filename
 
     # TODO: should update utma and utmb with changed data via setcookie?
     visitor.add_session(session)  # Not sure if we are supposed to do this or after pageview or at all?
@@ -194,16 +206,37 @@ def on_after_download(event):
     thread.start()
 
 
+def annotate_web_property(request):
+    context = getSite()
+    analytics_tool = getToolByName(context, "portal_analytics", None)
+    if analytics_tool is None:
+        return
+    analytics_settings = analytics_tool.get_settings()
+    if 'File downloads (Server-side)' not in analytics_settings.tracking_plugin_names:
+        return
+
+    membership_tool = getToolByName(context, "portal_membership")
+    member = membership_tool.getAuthenticatedMember()
+    for role in analytics_settings.tracking_excluded_roles:
+        if member.has_role(role):
+            return
+
+    web_property = analytics_settings.tracking_web_property
+    annotations = IAnnotations(request)
+    annotations['web_property'] = web_property
+
+
 def get_filename(request):
-    value, params = cgi.parse_header(request.response.headers['content-disposition'])
+    value, params = cgi.parse_header(request.response.headers.get('content-disposition', ''))
+    if value != "attachment":
+        return None
     filename = None
-    if value == "attachment":
-        for key, v in params.items():
-            if key == 'filename*':
-                encoding, filename = v.split("''")
-                filename = filename.decode(encoding)
-            elif key == 'filename':
-                filename = v
+    for key, v in params.items():
+        if key == 'filename*':
+            encoding, filename = v.split("''")
+            filename = filename.decode(encoding)
+        elif key == 'filename':
+            filename = v
     if filename:
         filename = unquote(filename)
     return filename
