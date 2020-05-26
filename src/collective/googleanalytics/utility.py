@@ -149,7 +149,7 @@ class Analytics(PloneBaseTool, IFAwareObjectManager, OrderedFolder):
 
     @security.private
     @ram.cache(account_feed_cachekey)
-    def _getService(self):
+    def _getService(self, api_request):
         if not self.is_auth():
             raise error.BadAuthenticationError, 'You need to authorize with Google'
         creds = self._get_credentials()
@@ -162,7 +162,10 @@ class Analytics(PloneBaseTool, IFAwareObjectManager, OrderedFolder):
                          "date: %s" % self._auth_token.token_expiry)
             self._update_credentials(creds)
 
-        service = build('analytics', 'v3', credentials=creds)
+        if api_request == 'data':
+            service = build('analyticsreporting', 'v4', credentials=creds)
+        else:
+            service = build('analytics', 'v3', credentials=creds)
         return creds, service
 
     @security.private
@@ -196,7 +199,7 @@ class Analytics(PloneBaseTool, IFAwareObjectManager, OrderedFolder):
         #     timeout = DEFAULT_TIMEOUT
         #     logger.warning('Conflict while setting socket timeout.')
 
-        creds, service = self._getService()
+        creds, service = self._getService(api_request)
 
         try:
             # socket.setdefaulttimeout(GOOGLE_REQUEST_TIMEOUT)
@@ -209,7 +212,7 @@ class Analytics(PloneBaseTool, IFAwareObjectManager, OrderedFolder):
                 elif api_request == 'profiles':
                     result = service.management().profiles().list(accountId='~all', webPropertyId='~all').execute()
                 elif api_request == 'data':
-                    result = service.data().ga().get(**query_args).execute()
+                    result = service.reports().batchGet(body={'reportRequests': dict(**query_args)}).execute()
                 else:
                     raise ValueError("Not supported api")
                 self._update_credentials(creds)
