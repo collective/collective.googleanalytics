@@ -101,6 +101,10 @@ File downloads
     doc, eps, exe, jpg, js, mov, mp3, pdf, png, ppt, rar, svg, txt, vsd, vxd,
     wma, wmv, xls, zip.
 
+Direct file downloads
+    This plugin records a virtual page view for downloads even if the file
+    is deep linked from else where and no js is loaded.
+
 Using Reports
 =============
 After you have authorized your site in the control panel, you can begin using

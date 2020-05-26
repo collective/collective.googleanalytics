@@ -11,6 +11,12 @@ from zope.interface import implementer
 from pyga.requests import Tracker, Page, Session, Visitor
 from zope.site.hooks import getSite
 from zope.annotation.interfaces import IAnnotations
+import logging
+from urllib2 import URLError
+import threading
+import datetime
+
+logger = logging.getLogger('collective.googleanalytics')
 
 
 @implementer(IAnalyticsTrackingPlugin)
@@ -105,23 +111,29 @@ class AnalyticsPageLoadTimePlugin(AnalyticsBaseTrackingPlugin):
     __call__ = ViewPageTemplateFile('pageloadtime.pt')
 
 
+def on_start(event):
+    annotations = IAnnotations(event.request)
+    annotations['ga_start_load'] = datetime.datetime.now()
+
+
 # Special hooks for registeringa virtual page view for downloads
 def on_download(event):
-    if event.request is None or event.request.response is None or 'content-disposition' not in event.request.response.headers:
+    if event.request is None or event.request.response is None:
         return
-
-    # TODO: do we need to look at content-type header also?
-    if event.request.response.getStatus() == 200:
+    # TODO: just when we have content-disposition or should video streams or other downloads be counted?
+    if 'content-disposition' not in event.request.response.headers:
+        return
+    if event.request.response.getStatus() != 200:
         # we don't want 206 range responses or errors to be reported
         return
 
     context = getSite()
     analytics_tool = getToolByName(context, "portal_analytics")
-    membership_tool = getToolByName(context, "portal_membership")
     analytics_settings = analytics_tool.get_settings()
     if 'File downloads (Server-side)' not in analytics_settings.tracking_plugin_names:
         return
 
+    membership_tool = getToolByName(context, "portal_membership")
     member = membership_tool.getAuthenticatedMember()
     for role in analytics_settings.tracking_excluded_roles:
         if member.has_role(role):
@@ -138,32 +150,35 @@ def on_after_download(event):
     if web_property is None:
         return
 
-    # TODO: Ideally should be done in a seperate thread so doesn't slow accepting the next request
-
     tracker = Tracker(web_property, event.request.HTTP_HOST)
     visitor = Visitor()
-    visitor.ip_address = get_ip(event.request)
+    visitor.extract_from_server_meta(event.request)
+    utma = event.request.cookies.get('__utma', None)
+    if utma is not None:
+        visitor.extract_from_utma(utma)
+
     session = Session()
     utmb = event.request.cookies.get('__utmb', None)
-    if utmb:
+    if utmb is not None:
         session.extract_from_utmb(utmb)
+
     page = Page(event.request.PATH_INFO)
-    # TODO: set title from content-disposition
-    tracker.track_pageview(page, session, visitor)
+    page.referer = event.request.HTTP_REFERER
+    if 'ga_start_load' in annotations:
+        page.load_time = int((datetime.datetime.now() - annotations.get('ga_start_load')).total_seconds() * 1000)
+    # page.title = # TODO: set title from content-disposition ?
 
+    # TODO: should update utma and utmb with changed data via setcookie?
+    visitor.add_session(session)
 
-def get_ip(request):
-    """ Extract the client IP address from the HTTP request in a proxy-compatible way.
-
-    @return: IP address as a string or None if not available
-    """
-    if "HTTP_X_FORWARDED_FOR" in request.environ:
-        # Virtual host
-        ip = request.environ["HTTP_X_FORWARDED_FOR"]
-    elif "HTTP_HOST" in request.environ:
-        # Non-virtualhost
-        ip = request.environ["REMOTE_ADDR"]
-    else:
-        # Unit test code?
-        ip = None
-    return ip
+    def virtual_pageview(page, session, visitor):
+        logger.debug("Trying Virtual Page View to %s (sesion %s)" % (event.request.PATH_INFO, session.session_id))
+        try:
+            tracker.track_pageview(page, session, visitor)
+        except URLError, e:
+            logger.warning("Virtual Page View Failed: %s" % e.reason)
+        else:
+            logger.debug("Virtual Success")
+    # Do in seperate thread just in case its slow. Doesn't touch zodb so its fine
+    thread = threading.Thread(target=virtual_pageview, args=(page, session, visitor))
+    thread.start()

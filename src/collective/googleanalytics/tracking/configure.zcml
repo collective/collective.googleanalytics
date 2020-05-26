@@ -44,7 +44,12 @@
         />
 
     <subscriber
-        for="ZPublisher.pubevents.PubSuccess"
+        for="ZPublisher.interfaces.IPubStart"
+        handler=".plugins.on_start"
+        />
+
+    <subscriber
+        for="ZPublisher.interfaces.IPubSuccess"
         handler=".plugins.on_download"
         />
     <subscriber
