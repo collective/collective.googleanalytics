@@ -14,6 +14,8 @@ Changelog
   [djay]
 - allow setting client secrets ahead of user authentication
   [djay]
+- Fix bug where every page view is register twice
+  [djay]
 
 
 1.6.1 (2017-08-22)
