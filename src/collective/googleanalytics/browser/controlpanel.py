@@ -14,7 +14,6 @@ from collective.googleanalytics.interfaces.utility import \
 from collective.googleanalytics.interfaces.utility import IAnalyticsSchema
 from collective.googleanalytics.interfaces.utility import IAnalyticsSettings
 from collective.googleanalytics.interfaces.utility import IAnalyticsTracking
-from gdata.client import RequestError
 from plone.app.registry.browser import controlpanel
 from plone import api
 from plone.registry.interfaces import IRegistry
@@ -115,13 +114,10 @@ class AnalyticsControlPanel(controlpanel.ControlPanelFormWrapper):
         """
         Returns the URL used to retrieve a Google OAuth2 token.
         """
-        key = self.request.get('consumer_key', '')
-        secret = self.request.get('consumer_secret', '')
-        auth_url = None
-        if key and secret:
-
-            analytics_tool = getToolByName(self.context, 'portal_analytics')
-            auth_url = analytics_tool.auth_url(key, secret)
+        key = self.request.get('consumer_key', None)
+        secret = self.request.get('consumer_secret', None)
+        analytics_tool = getToolByName(self.context, 'portal_analytics')
+        auth_url = analytics_tool.auth_url(key, secret)
 
         return auth_url
 
@@ -133,11 +129,9 @@ class AnalyticsControlPanel(controlpanel.ControlPanelFormWrapper):
         analytics_tool = getToolByName(self.context, 'portal_analytics')
 
         try:
-            return analytics_tool.getAccounts()[0]['name']
+            return analytics_tool.makeClientRequest('accounts')[0]['name']
             # return res.title.text.split(' ')[-1]
         except error.BadAuthenticationError:
             return None
         except error.RequestTimedOutError:
-            return None
-        except RequestError:
             return None
