@@ -132,6 +132,9 @@ def on_download(event):
         # we don't want 206 range responses or errors to be reported
         return
 
+    # TODO: is there a way to support 304 not modified responses to attachments?
+    # TODO: test support xsendfile
+
     context = getSite()
     analytics_tool = getToolByName(context, "portal_analytics")
     analytics_settings = analytics_tool.get_settings()
