@@ -6,6 +6,8 @@ Changelog
 
 - Ensure download handler works even on links loaded from AJAX such as the quicksearch.
   [ivanteoh]
+- Fix exception thrown with external link plugin
+  [nngu6036]
 - upgrade to google api v3 and deprecate gdata library usage
   [djay]
 - allow setting client secrets ahead of user authentication
