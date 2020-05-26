@@ -15,10 +15,10 @@ matrix:
       env: PLONE_VERSION=5.1.x
     - python: "2.7"
       env: PLONE_VERSION=5.2.x
-    - python: "3.7"
-      env: PLONE_VERSION=5.2.x
-      dist: xenial
-      sudo: true
+    # - python: "3.7"
+    #   env: PLONE_VERSION=5.2.x
+    #   dist: xenial
+    #   sudo: true
 cache:
   pip: true
   directories:
