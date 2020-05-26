@@ -15,6 +15,11 @@ import logging
 from urllib2 import URLError
 import threading
 import datetime
+import cgi
+try:
+    from urllib.parse import unquote
+except ImportError:
+    from urllib2 import unquote
 
 logger = logging.getLogger('collective.googleanalytics')
 
@@ -127,6 +132,9 @@ def on_download(event):
         # we don't want 206 range responses or errors to be reported
         return
 
+    # TODO: is there a way to support 304 not modified responses to attachments?
+    # TODO: test support xsendfile
+
     context = getSite()
     analytics_tool = getToolByName(context, "portal_analytics")
     analytics_settings = analytics_tool.get_settings()
@@ -163,13 +171,15 @@ def on_after_download(event):
         session.extract_from_utmb(utmb)
 
     page = Page(event.request.PATH_INFO)
-    page.referer = event.request.HTTP_REFERER
+    page.referrer = event.request.HTTP_REFERER
     if 'ga_start_load' in annotations:
         page.load_time = int((datetime.datetime.now() - annotations.get('ga_start_load')).total_seconds() * 1000)
-    # page.title = # TODO: set title from content-disposition ?
+    filename = get_filename(event.request)
+    if filename:
+        page.title = u"Attachment: %s" % filename
 
     # TODO: should update utma and utmb with changed data via setcookie?
-    visitor.add_session(session)
+    visitor.add_session(session)  # Not sure if we are supposed to do this or after pageview or at all?
 
     def virtual_pageview(page, session, visitor):
         logger.debug("Trying Virtual Page View to %s (sesion %s)" % (event.request.PATH_INFO, session.session_id))
@@ -182,3 +192,18 @@ def on_after_download(event):
     # Do in seperate thread just in case its slow. Doesn't touch zodb so its fine
     thread = threading.Thread(target=virtual_pageview, args=(page, session, visitor))
     thread.start()
+
+
+def get_filename(request):
+    value, params = cgi.parse_header(request.response.headers['content-disposition'])
+    filename = None
+    if value == "attachment":
+        for key, v in params.items():
+            if key == 'filename*':
+                encoding, filename = v.split("''")
+                filename = filename.decode(encoding)
+            elif key == 'filename':
+                filename = v
+    if filename:
+        filename = unquote(filename)
+    return filename
