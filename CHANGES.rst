@@ -8,6 +8,8 @@ Changelog
   [ivanteoh]
 - Fix exception thrown with external link plugin
   [nngu6036]
+- Fix bug where every page view is register twice
+  [djay]
 
 
 1.6.1 (2017-08-22)
