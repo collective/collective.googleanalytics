@@ -210,7 +210,7 @@ class AnalyticsDefaultDateRangeChoices(object):
             'ytd': [today - timedelta(days=ytd_days), today],
         }
 
-        if hasattr(self.context, 'Date') and self.context.Date() is not 'None':
+        if hasattr(self.context, 'Date') and self.context.Date() != 'None':
             pub_dt = DateTime(self.context.Date())
             published_date = datetime.date(pub_dt.year(), pub_dt.month(), pub_dt.day())
             date_ranges.update({
