@@ -129,9 +129,12 @@ class AnalyticsControlPanel(controlpanel.ControlPanelFormWrapper):
         analytics_tool = getToolByName(self.context, 'portal_analytics')
 
         try:
-            return analytics_tool.makeClientRequest('accounts')[0]['name']
+            accounts = analytics_tool.makeCachedRequest('accounts')
             # return res.title.text.split(' ')[-1]
         except error.BadAuthenticationError:
             return None
         except error.RequestTimedOutError:
             return None
+        else:
+            if accounts:
+                return accounts[0]['name']
