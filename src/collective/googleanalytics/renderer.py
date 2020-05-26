@@ -268,19 +268,28 @@ class AnalyticsReportRenderer(object):
         """
         Returns the query arguments in the format that Google expects.
         """
+        def sort_expression(exp):
+            if exp[0] == '-':
+                return dict(sortOrder="DESCENDING", fieldName=exp[1:])
+            else:
+                return dict(fieldName=exp)
 
         criteria = self.query_criteria()
         query_args = {
-            'ids': ','.join(['ga:%s' % id for id in criteria['ids']]),
-            'dimensions': ','.join(criteria['dimensions']),
-            'metrics': ','.join(criteria['metrics']),
-            'sort': ','.join(criteria['sort']),
-            'start_date': str(criteria['start_date']),
-            'end_date': str(criteria['end_date']),
-            'max_results': criteria['max_results'],
+            'viewId': 'ga:%s' % criteria['ids'][0],
+            'dimensions': [dict(name=c) for c in criteria['dimensions']],
+            'metrics': [dict(expression=c) for c in criteria['metrics']],
+            'orderBys': [sort_expression(c) for c in criteria['sort']],
+            'dateRanges': [dict(startDate=str(criteria['start_date']), endDate=str(criteria['end_date']))],
+            'pageSize': criteria['max_results'],
         }
         if criteria['filters']:
-            query_args['filters'] = ','.join(criteria['filters'])
+            def split_expression(expression):
+                field, value = expression.split('=', 1)
+                return dict(dimensionName=field, operator="EXACT", expressions=[value])
+            query_args['dimensionFilterClauses'] = [
+                dict(filters=[split_expression(f) for f in criteria['filters']])
+            ]
         return query_args
 
     @memoize
