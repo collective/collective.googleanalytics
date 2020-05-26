@@ -274,9 +274,14 @@ class AnalyticsReportRenderer(object):
             else:
                 return dict(fieldName=exp)
 
+        def split_expression(expression):
+            # TODO: support other operators https://developers.google.com/analytics/devguides/reporting/core/v4/rest/v4/reports/batchGet#Operator
+            field, value = expression.split('=', 1)
+            return dict(dimensionName=field, operator="EXACT", expressions=[value])
+
         criteria = self.query_criteria()
         query_args = {
-            'viewId': 'ga:%s' % criteria['ids'][0],
+            'viewId': 'ga:%s' % criteria['ids'][0],  # TODO: what about other ids?
             'dimensions': [dict(name=c) for c in criteria['dimensions']],
             'metrics': [dict(expression=c) for c in criteria['metrics']],
             'orderBys': [sort_expression(c) for c in criteria['sort']],
@@ -284,9 +289,6 @@ class AnalyticsReportRenderer(object):
             'pageSize': criteria['max_results'],
         }
         if criteria['filters']:
-            def split_expression(expression):
-                field, value = expression.split('=', 1)
-                return dict(dimensionName=field, operator="EXACT", expressions=[value])
             query_args['dimensionFilterClauses'] = [
                 dict(filters=[split_expression(f) for f in criteria['filters']])
             ]
