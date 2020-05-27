@@ -66,7 +66,7 @@ class AnalyticsReportVisualization(object):
             for value in self.rows[0]:
                 if isinstance(value, datetime.date):
                     col_type = 'date'
-                elif isinstance(value, str):
+                elif isinstance(value, str) or isinstance(value, unicode):
                     col_type = 'string'
                 else:
                     col_type = 'number'
