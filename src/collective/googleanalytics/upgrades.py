@@ -211,3 +211,7 @@ def upgrade_12_to_13(setup_tool):
 
     name = 'profile-collective.googleanalytics:upgrade_12_13'
     setup_tool.runAllImportStepsFromProfile(name)
+
+    analytics_tool = getToolByName(setup_tool, 'portal_analytics')
+    # this will update the creds to use a dict instead. but if not it will be done on first access
+    analytics_tool._get_credentials()
