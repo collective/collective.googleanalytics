@@ -202,3 +202,12 @@ def upgrade_11_to_12(setup_tool):
             setattr(records, field,
                     getattr(analytics_tool, field,
                             IAnalyticsSchema[field].missing_value))
+
+
+def upgrade_12_to_13(setup_tool):
+    """
+    Remove gdata record and install resource registry
+    """
+
+    name = 'profile-collective.googleanalytics:upgrade_12_13'
+    setup_tool.runAllImportStepsFromProfile(name)
