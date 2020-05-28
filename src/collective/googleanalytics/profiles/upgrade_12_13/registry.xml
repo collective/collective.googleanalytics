@@ -13,7 +13,6 @@
   <value key="jscompilation">++resource++analytics_config.js</value>
   <value key="last_compilation">2020-05-27 00:00:00</value>
   <value key="compile">False</value>
-  <value key="merge_with">logged-in</value>
   <value key="expression">python:portal['portal_membership'].checkPermission('Google Analytics: View Analytics Results', request.context)</value>
 </records>
 
