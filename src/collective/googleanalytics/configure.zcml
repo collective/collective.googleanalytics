@@ -118,6 +118,14 @@
           provides="Products.GenericSetup.interfaces.EXTENSION"
           />
 
+     <genericsetup:registerProfile
+          name="upgrade_12_13"
+          title="Upgrade profile for Google Analytics from 1.6 to 1.7"
+          directory="profiles/upgrade_12_13"
+          description="Configuration changes for the upgrade in 1.7"
+          provides="Products.GenericSetup.interfaces.EXTENSION"
+          />
+
     <genericsetup:importStep
         name="analytics"
         title="Google Analytics"
