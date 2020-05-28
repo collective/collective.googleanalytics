@@ -1,11 +1,13 @@
 <?xml version="1.0"?>
 <registry>
 <records prefix="plone.resources/analytics_config"
-         interface='Products.CMFPlone.interfaces.IResourceRegistry'>
+         interface='Products.CMFPlone.interfaces.IResourceRegistry'
+         condition="installed Products.CMFPlone.interfaces.IResourceRegistry">
   <value key="js">++resource++analytics_config.js</value>
 </records>
 <records prefix="plone.bundles/collective.googleanalytics"
-            interface='Products.CMFPlone.interfaces.IBundleRegistry'>
+            interface='Products.CMFPlone.interfaces.IBundleRegistry'
+            condition="installed Products.CMFPlone.interfaces.IResourceRegistry">
   <value key="resources">
     <element>analytics_config</element>
   </value>
