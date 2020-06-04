@@ -71,7 +71,7 @@ class AnalyticsTrackingViewlet(AnalyticsViewlet):
                 ("'/error/%s?page=' + document.location.pathname + "
                  "document.location.search + '&from=' + document.referrer")
                 % status)
-        elif self.view.__name__.startswith("search"):
+        elif self.view.__name__ is not None and self.view.__name__.startswith("search"):
             query = {'q': self.request.get('SearchableText', ''),
                      'searchcat': self.getsearchcat()}
             push_params.append("'/searchresult?%s'" % urlencode(query))
