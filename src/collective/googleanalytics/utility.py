@@ -294,16 +294,21 @@ class Analytics(PloneBaseTool, IFAwareObjectManager, OrderedFolder):
             logger.debug("Code was invalid, could not get tokens")
             message = _(u'Authorization failed. Google Analytics for '
                         u'Plone received an invalid token.')
-        else:
-            logger.debug(
-                "Code was valid, got '%s' as access_token and '%s' as "
-                "refresh_token. Token will expire on '%s'" %
-                (flow.credentials.token,
-                    flow.credentials.refresh_token,
-                    flow.credentials.expiry))
-            self._update_credentials(flow.credentials)
-            message = _(u'Authorization succeeded. You may now configure '
-                        u'Google Analytics for Plone.')
+            return message
+        except Warning as e:
+            # Probably due to Warning: Scope has changed from "https://www.googleapis.com/auth/analytics.readonly" to "https://www.googleapis.com/auth/analytics https://www.googleapis.com/auth/analytics.readonly".
+            # This most likely happens because the user already has a token but for the old version which was more permissive.
+            logger.info("Warning on fetch_token: %s" % str(e))
+
+        logger.debug(
+            "Code was valid, got '%s' as access_token and '%s' as "
+            "refresh_token. Token will expire on '%s'" %
+            (flow.credentials.token,
+                flow.credentials.refresh_token,
+                flow.credentials.expiry))
+        self._update_credentials(flow.credentials)
+        message = _(u'Authorization succeeded. You may now configure '
+                    u'Google Analytics for Plone.')
 
         return message
 
