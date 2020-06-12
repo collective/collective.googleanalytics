@@ -217,7 +217,7 @@ class Analytics(PloneBaseTool, IFAwareObjectManager, OrderedFolder):
                 return result
             except RefreshError, e:
                 reason = e.message
-                if any([r in reason for r in ['Token invalid', 'Forbidden', 'Unauthorized']]):
+                if any([r in reason for r in ['Token invalid', 'Forbidden', 'Unauthorized', 'invalid_grant']]):
                     # Reset the stored auth token.
                     self._state['token'] = None
                     settings = self.get_settings()
