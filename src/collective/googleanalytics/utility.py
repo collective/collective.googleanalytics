@@ -35,6 +35,7 @@ from httplib import ResponseNotReady
 from google.auth.exceptions import RefreshError
 from google.auth.transport.requests import Request
 import requests
+import urllib2
 
 logger = logging.getLogger('collective.googleanalytics')
 
@@ -228,6 +229,9 @@ class Analytics(PloneBaseTool, IFAwareObjectManager, OrderedFolder):
                 raise error.RequestTimedOutError, 'The request to Google timed out'
             except (socket.gaierror, ResponseNotReady):
                 raise error.RequestTimedOutError, 'You may not have internet access. Please try again later.'
+            except urllib2.HttpError as e:
+                raise error.InvalidRequestMethodError, str(e)
+
         finally:
             # socket.setdefaulttimeout(timeout)
             pass
