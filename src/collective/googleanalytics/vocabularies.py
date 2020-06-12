@@ -72,6 +72,9 @@ def getWebProperties(context):
         choices = [('The request to Google Analytics timed out. Please try \
             again later.', None)]
         return SimpleVocabulary.fromItems(choices)
+    except error.InvalidRequestMethodError as e:
+        choices = [('The request to Google Analytics had an error. %s' % str(e), None)]
+        return SimpleVocabulary.fromItems(choices)
     if webproperties:
         unique_choices = {}
         # In vocabularies, both the terms and the values must be unique. Since
