@@ -128,17 +128,28 @@ def on_download(event):
         return
     if not IAnalyticsLayer.providedBy(event.request):
         return
-    # TODO: just when we have content-disposition or should video streams or other downloads be counted?
-    if 'content-disposition' not in event.request.response.headers:
-        return
+
     if event.request.response.getStatus() != 200:
         # we don't want 206 range responses or errors to be reported
         return
+    # TODO: just when we have content-disposition or should video streams or other downloads be counted?
+    if 'content-disposition' in event.request.response.headers:
+        annotate_web_property(event.request)
+        return
 
-    # TODO: is there a way to support 304 not modified responses to attachments?
-    # TODO: test support xsendfile
-
+    # it could be using @@display-file for pdf which doesn't set content-disposition
+    context = getSite()
+    tool = getToolByName(context, "mimetypes_registry", None)
+    entry = tool.lookup(event.request.response.headers['content-type'])
+    mimetypes = [item for item in entry for ext in item.extensions if ext in FILE_EXTENSION_CHOICES]
+    if not mimetypes:
+        return
+    # images that don't have content-disposition we won't include
+    if not set([mt for mt in mimetypes if mt.major() != 'image']):
+        return
     annotate_web_property(event.request)
+
+    # TODO: test support xsendfile
 
 
 def on_abort(event):
