@@ -36,6 +36,7 @@ from google.auth.exceptions import RefreshError
 from google.auth.transport.requests import Request
 import requests
 import gav4
+import urllib2
 
 logger = logging.getLogger('collective.googleanalytics')
 
@@ -220,7 +221,7 @@ class Analytics(PloneBaseTool, IFAwareObjectManager, OrderedFolder):
                 return result
             except RefreshError, e:
                 reason = e.message
-                if any([r in reason for r in ['Token invalid', 'Forbidden', 'Unauthorized']]):
+                if any([r in reason for r in ['Token invalid', 'Forbidden', 'Unauthorized', 'invalid_grant']]):
                     # Reset the stored auth token.
                     self._state['token'] = None
                     settings = self.get_settings()
@@ -232,6 +233,9 @@ class Analytics(PloneBaseTool, IFAwareObjectManager, OrderedFolder):
                 raise error.RequestTimedOutError, 'The request to Google timed out'
             except (socket.gaierror, ResponseNotReady):
                 raise error.RequestTimedOutError, 'You may not have internet access. Please try again later.'
+            except urllib2.HttpError as e:
+                raise error.InvalidRequestMethodError, str(e)
+
         finally:
             # socket.setdefaulttimeout(timeout)
             pass
@@ -298,16 +302,21 @@ class Analytics(PloneBaseTool, IFAwareObjectManager, OrderedFolder):
             logger.debug("Code was invalid, could not get tokens")
             message = _(u'Authorization failed. Google Analytics for '
                         u'Plone received an invalid token.')
-        else:
-            logger.debug(
-                "Code was valid, got '%s' as access_token and '%s' as "
-                "refresh_token. Token will expire on '%s'" %
-                (flow.credentials.token,
-                    flow.credentials.refresh_token,
-                    flow.credentials.expiry))
-            self._update_credentials(flow.credentials)
-            message = _(u'Authorization succeeded. You may now configure '
-                        u'Google Analytics for Plone.')
+            return message
+        except Warning as e:
+            # Probably due to Warning: Scope has changed from "https://www.googleapis.com/auth/analytics.readonly" to "https://www.googleapis.com/auth/analytics https://www.googleapis.com/auth/analytics.readonly".
+            # This most likely happens because the user already has a token but for the old version which was more permissive.
+            logger.info("Warning on fetch_token: %s" % str(e))
+
+        logger.debug(
+            "Code was valid, got '%s' as access_token and '%s' as "
+            "refresh_token. Token will expire on '%s'" %
+            (flow.credentials.token,
+                flow.credentials.refresh_token,
+                flow.credentials.expiry))
+        self._update_credentials(flow.credentials)
+        message = _(u'Authorization succeeded. You may now configure '
+                    u'Google Analytics for Plone.')
 
         return message
 

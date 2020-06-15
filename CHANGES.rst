@@ -12,7 +12,11 @@ Changelog
   [djay]
 - allow setting client secrets ahead of user authentication
   [djay]
-
+- switched to https://www.googleapis.com/auth/analytics.readonly scope as it's all we need
+  [djay]  
+- Fix bug where every page view is register twice
+  [djay]
+- fix bug where views without "__name__" cause an error
 
 1.6.1 (2017-08-22)
 ------------------
