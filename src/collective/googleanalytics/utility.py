@@ -35,6 +35,7 @@ from httplib import ResponseNotReady
 from google.auth.exceptions import RefreshError
 from google.auth.transport.requests import Request
 import requests
+import gav4
 import urllib2
 
 logger = logging.getLogger('collective.googleanalytics')
@@ -164,7 +165,10 @@ class Analytics(PloneBaseTool, IFAwareObjectManager, OrderedFolder):
             self._update_credentials(creds)
 
         service = build('analytics', 'v3', credentials=creds)
-        return creds, service
+        reportingservice = build('analyticsreporting', 'v4', credentials=creds)
+        gav4.apply_gav4(reportingservice)
+
+        return creds, service, reportingservice
 
     @security.private
     @ram.cache(account_feed_cachekey)
@@ -197,7 +201,7 @@ class Analytics(PloneBaseTool, IFAwareObjectManager, OrderedFolder):
         #     timeout = DEFAULT_TIMEOUT
         #     logger.warning('Conflict while setting socket timeout.')
 
-        creds, service = self._getService()
+        creds, service, reportingservice = self._getService()
 
         try:
             # socket.setdefaulttimeout(GOOGLE_REQUEST_TIMEOUT)
@@ -210,7 +214,7 @@ class Analytics(PloneBaseTool, IFAwareObjectManager, OrderedFolder):
                 elif api_request == 'profiles':
                     result = service.management().profiles().list(accountId='~all', webPropertyId='~all').execute()
                 elif api_request == 'data':
-                    result = service.data().ga().get(**query_args).execute()
+                    result = reportingservice.gav4_get(**query_args).execute()
                 else:
                     raise ValueError("Not supported api")
                 self._update_credentials(creds)
