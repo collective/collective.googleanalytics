@@ -117,37 +117,74 @@ class AnalyticsPageLoadTimePlugin(AnalyticsBaseTrackingPlugin):
     __call__ = ViewPageTemplateFile('pageloadtime.pt')
 
 
+def is_response_ext_a_download(request):
+    context = getSite()
+    tool = getToolByName(context, "mimetypes_registry", None)
+    entry = tool.lookup(request.response.headers['content-type'])
+    mimetypes = [item for item in entry for ext in item.extensions if ext in FILE_EXTENSION_CHOICES]
+    if not mimetypes:
+        return False
+    # images that don't have content-disposition we won't include
+    if not set([mt for mt in mimetypes if mt.major() != 'image']):
+        return False
+    return True
+
+
+# for general purpose content (instead of images) its
+#    Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9
+# for images is something like
+#    Accept: image/webp,image/apng,image/*,*/*;q=0.8
+# more complete - https://developer.mozilla.org/en-US/docs/Web/HTTP/Content_negotiation/List_of_default_Accept_values
+GENERAL_MOST_BROWSERS = set(['text/html', 'application/xhtml+xml', '*/*'])
+GENERAL_IE8 = set(['application/xaml+xml', 'application/msword', '*/*'])
+
+
+def is_accept_for_generic_content(request):
+
+    if not request.HTTP_ACCEPT:
+        # maybe some weird crawler?
+        return True
+    elif all([mime in request.HTTP_ACCEPT for mime in GENERAL_MOST_BROWSERS]):
+        return True
+    elif all([mime in request.HTTP_ACCEPT for mime in GENERAL_IE8]):
+        return True
+    else:
+        # it could be video or audio or image or js or css?
+        return False
+
+
+# Special hooks for registeringa virtual page view for downloads
+#
+# on_start - so we can record the time for the page view
+# on_download - for normal 200 requests that are downloads set webproperty so we can record the page view later
+# on_abort - this is called instead of on_download in the case of 304 not modifed caching
+# on_after_download - does the actual virtual page view (in a seperate thread)
+
+
 def on_start(event):
     annotations = IAnnotations(event.request)
     annotations['ga_start_load'] = datetime.datetime.now()
 
 
-# Special hooks for registeringa virtual page view for downloads
 def on_download(event):
     if event.request is None or event.request.response is None:
         return
     if not IAnalyticsLayer.providedBy(event.request):
         return
-
-    if event.request.response.getStatus() != 200:
+    elif event.request.response.getStatus() != 200:
         # we don't want 206 range responses or errors to be reported
         return
-    # TODO: just when we have content-disposition or should video streams or other downloads be counted?
-    if 'content-disposition' in event.request.response.headers:
+    elif not is_accept_for_generic_content(event.request):
+        # TODO: just when we have content-disposition or should video streams or other downloads be counted?
+        # in plone the site-logo uses @@download which sets a content-disposition. We shouldn't count this
+        # since its being used inside a img tag.
+        return
+    elif 'content-disposition' in event.request.response.headers:
         annotate_web_property(event.request)
         return
-
-    # it could be using @@display-file for pdf which doesn't set content-disposition
-    context = getSite()
-    tool = getToolByName(context, "mimetypes_registry", None)
-    entry = tool.lookup(event.request.response.headers['content-type'])
-    mimetypes = [item for item in entry for ext in item.extensions if ext in FILE_EXTENSION_CHOICES]
-    if not mimetypes:
-        return
-    # images that don't have content-disposition we won't include
-    if not set([mt for mt in mimetypes if mt.major() != 'image']):
-        return
-    annotate_web_property(event.request)
+    elif is_response_ext_a_download(event.request):
+        # it could be using @@display-file for pdf which doesn't set content-disposition
+        annotate_web_property(event.request)
 
     # TODO: test support xsendfile
 
@@ -156,22 +193,15 @@ def on_abort(event):
     # Special case where plone.caching.hooks.Intercepted aborts in order to return 304 not modified
     if not IAnalyticsLayer.providedBy(event.request):
         return
-    if event.request.response.getStatus() != 304:
+    elif event.request.response.getStatus() != 304:
         return
-    # for general purpose content (instead of images) its
-    # "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9"
-    if 'text/html' not in event.request.HTTP_ACCEPT:
+    elif not is_accept_for_generic_content(event.request):
         return
-    if 'application/xml' not in event.request.HTTP_ACCEPT:
+    elif not event.request.response.headers.get('x-cache-rule', None) == 'plone.content.file':
+        # HACK: distiquish between file downloads and html content
         return
-    if '*/*' not in event.request.HTTP_ACCEPT:
-        return
-    if 'application/signed-exchange' not in event.request.HTTP_ACCEPT:
-        return
-    # HACK: distiquish between file downloads and html content
-    if not event.request.response.headers.get('x-cache-rule', None) == 'plone.content.file':
-        return
-    annotate_web_property(event.request)
+    else:
+        annotate_web_property(event.request)
 
 
 def on_after_download(event):
