@@ -149,12 +149,14 @@ VISUALIZATION_CHOICES = (
 
 FILE_EXTENSION_CHOICES = (
     'avi',
+    'css',
     'doc',
     'docx',
     'dmg',
     'eps',
     'exe',
     'jpg',
+    'js',
     'mov',
     'mp3',
     'mp4',
