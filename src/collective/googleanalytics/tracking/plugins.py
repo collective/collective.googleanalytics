@@ -17,6 +17,7 @@ from urllib2 import URLError
 import threading
 import datetime
 import cgi
+import user_agents
 try:
     from urllib.parse import unquote
 except ImportError:
@@ -213,6 +214,10 @@ def on_after_download(event):
     tracker = Tracker(web_property, event.request.HTTP_HOST)
     visitor = Visitor()
     visitor.extract_from_server_meta(event.request)
+    if user_agents.parse(event.request.get('HTTP_USER_AGENT')).is_bot:
+        # I suspect GA will do this for me already but better to be safe
+        return
+
     utma = event.request.cookies.get('__utma', None)
     if utma is not None:
         visitor.extract_from_utma(utma)
