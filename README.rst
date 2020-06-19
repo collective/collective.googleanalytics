@@ -107,20 +107,22 @@ Direct file downloads
     does by sending a server-side virtual page view instead of using JS.
     Virtual page views means you can track where users went before and after
     downloading the file.
-    Notes:
+    Note:
        - It should track for various content types and plugins as long as a 
          'content-disposition' header is set on the response or if the content-type
-	 is in the list of extensions accepted by the File downloads
+	     is in the list of extensions accepted by the File downloads
        - It won't track if you embed content in image, audio or video tags even if
-         the url results in 'content-disposition'
-       - It won't track if the browser or client isn't sending 'norma' Accept headers
-         for a click in the browser. Crawlers may or may not be included.
+         the url results in 'content-disposition' being used (such as plones site-logo url)
+       - It won't track if the browser or client isn't sending normal 'Accept' headers
+         for a click in a browser common browsers
+       - It won't track if it's from a known crawler User-Agent(but GA might also 
+         further exclude these anyway)
        - It will track if you have moderate caching for file content enabled
          but won't if you have strong caching enabled
        - It will track content download load time
        - It will result in an increase in your average page views in your site since 
          more content is now being tracked (where as the File Downloads plugin seperates
-	 downloads in GA as events).
+	     downloads in GA as events so doesn't change page view traffic stats).
 
 Using Reports
 =============
