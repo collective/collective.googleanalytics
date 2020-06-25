@@ -42,7 +42,7 @@
         name="Page load time"
         factory=".plugins.AnalyticsPageLoadTimePlugin"
         />
-
+  
     <subscriber
         for="ZPublisher.interfaces.IPubStart"
         handler=".plugins.on_start"

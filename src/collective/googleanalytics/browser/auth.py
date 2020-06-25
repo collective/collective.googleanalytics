@@ -33,7 +33,8 @@ class AnalyticsAuth(BrowserPage):
         # Otherwise, we are setting the token.
         elif self.request.QUERY_STRING and 'code' in self.request:
             code = self.request.get('code')
-            message = analytics_tool.set_token(code)
+            state = self.request.get('state')
+            message = analytics_tool.set_token(code, state)
             plone_utils.addPortalMessage(message)
 
         # Redirect back to the control panel.

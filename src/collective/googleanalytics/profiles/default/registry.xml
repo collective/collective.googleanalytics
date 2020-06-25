@@ -1,4 +1,22 @@
 <?xml version="1.0"?>
 <registry>
   <records interface="collective.googleanalytics.interfaces.utility.IAnalyticsSchema" />
+  <records prefix="plone.resources/analytics_config"
+          interface='Products.CMFPlone.interfaces.IResourceRegistry'
+          condition="installed Products.CMFPlone.interfaces.IResourceRegistry">
+    <value key="js">++resource++analytics_config.js</value>
+  </records>
+  <records prefix="plone.bundles/collective.googleanalytics"
+              interface='Products.CMFPlone.interfaces.IBundleRegistry'
+              condition="installed Products.CMFPlone.interfaces.IResourceRegistry">
+    <value key="resources">
+      <element>analytics_config</element>
+    </value>
+    <value key="enabled">True</value>
+    <value key="jscompilation">++resource++analytics_config.js</value>
+    <value key="last_compilation">2020-05-27 00:00:00</value>
+    <value key="compile">False</value>
+    <value key="expression">python:portal['portal_membership'].checkPermission('Google Analytics: View Analytics Results', request.context)</value>
+  </records>
+
 </registry>

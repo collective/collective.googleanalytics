@@ -3,8 +3,8 @@
     jQuery.expr[':'].external  = function(obj) {
       return !obj.href.match(/^mailto:/) && !obj.href.match(/^javascript:/) && (obj.hostname != document.location.hostname);
     };
-    jQuery(function() {
-        jQuery('a:external').click(function(){
+    jQuery(function($) {
+        $('a:external').click(function(){
           _gaq.push(['_trackEvent', 'External', 'Link', jQuery(this).attr('href')]);
         });
     });

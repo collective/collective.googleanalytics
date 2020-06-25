@@ -2,11 +2,7 @@ language: python
 dist: xenial
 sudo: false
 addons:
-  apt:
-    sources:
-      - google-chrome
-    packages:
-      - google-chrome-stable
+  chrome: stable
 services:
   - xvfb      
 matrix:
@@ -17,8 +13,8 @@ matrix:
       env: PLONE_VERSION=5.0.x
     - python: "2.7"
       env: PLONE_VERSION=5.1.x
-    # - python: "2.7"
-    #   env: PLONE_VERSION=5.2.x
+    - python: "2.7"
+      env: PLONE_VERSION=5.2.x
     # - python: "3.7"
     #   env: PLONE_VERSION=5.2.x
     #   dist: xenial

@@ -94,4 +94,13 @@
         handler="collective.googleanalytics.upgrades.upgrade_11_to_12"
         />
 
+    <genericsetup:upgradeStep
+        source="12"
+        destination="13"
+        title="Upgrade from 12 to 13"
+        description=""
+        profile="collective.googleanalytics:default"
+        handler="collective.googleanalytics.upgrades.upgrade_12_to_13"
+        />
+
 </configure>

@@ -2,7 +2,6 @@
 from Products.CMFCore.utils import getToolByName
 from collective.googleanalytics import error
 from collective.googleanalytics.interfaces.tracking import IAnalyticsTrackingPlugin
-from gdata.client import RequestError
 from zope.component import getGlobalSiteManager
 from zope.component.hooks import getSite
 from zope.schema.vocabulary import SimpleVocabulary, SimpleTerm
@@ -30,7 +29,7 @@ def getProfiles(context):
         return SimpleVocabulary([])
 
     try:
-        accounts = analytics_tool.getAccountsFeed('accounts/~all/webproperties/~all/profiles')
+        profiles = analytics_tool.makeCachedRequest('profiles')
     except error.BadAuthenticationError:
         choices = [('Please authorize with Google in the Google Analytics \
             control panel.', None)]
@@ -39,21 +38,12 @@ def getProfiles(context):
         choices = [('The request to Google Analytics timed out. Please try \
             again later.', None)]
         return SimpleVocabulary.fromItems(choices)
-    except RequestError:
-        choices = [('Request to Google Analytics errored, you might need to '
-                    'authenticate again.', None)]
-        return SimpleVocabulary.fromItems(choices)
-    if accounts:
+    if profiles:
         unique_choices = {}
-        for entry in accounts.entry:
-            for prop in entry.property:
-                if prop.name == 'ga:profileName':
-                    title = prop.value
-                    if not isinstance(title, unicode):
-                        title = unicode(title, 'utf-8')
-                    title = crop(title, 40)
-                if prop.name == 'dxp:tableId':
-                    tableId = prop.value
+        for entry in profiles:
+            title = entry.get('name')
+            title = crop(title, 40)
+            tableId = entry.get('id')
             unique_choices.update({title: tableId})
         choices = unique_choices.items()
     else:
@@ -73,7 +63,7 @@ def getWebProperties(context):
         return SimpleVocabulary([])
 
     try:
-        accounts = analytics_tool.getAccountsFeed('accounts/~all/webproperties/~all/profiles')
+        webproperties = analytics_tool.makeCachedRequest('webproperties')
     except error.BadAuthenticationError:
         choices = [('Please authorize with Google in the Google Analytics \
             control panel.', None)]
@@ -82,24 +72,18 @@ def getWebProperties(context):
         choices = [('The request to Google Analytics timed out. Please try \
             again later.', None)]
         return SimpleVocabulary.fromItems(choices)
-    except RequestError:
-        choices = [('Request to Google Analytics errored, you might need to '
-                    'authenticate again.', None)]
+    except error.InvalidRequestMethodError as e:
+        choices = [('The request to Google Analytics had an error. %s' % str(e), None)]
         return SimpleVocabulary.fromItems(choices)
-    if accounts:
+    if webproperties:
         unique_choices = {}
         # In vocabularies, both the terms and the values must be unique. Since
         # there can be more than one profile for a given web property, we create a list
         # of all the profiles for each property. (Ideally we would use the URL for the
         # web property, but Google doesn't expose it through the Analytics API.)
-        for entry in accounts.entry:
-            for prop in entry.property:
-                if prop.name == 'ga:profileName':
-                    title = prop.value
-                    if not isinstance(title, unicode):
-                        title = unicode(title, 'utf-8')
-                if prop.name == 'ga:webPropertyId':
-                    webPropertyId = prop.value
+        for entry in webproperties:
+            title = entry['name']
+            webPropertyId = entry['id']
             if webPropertyId not in unique_choices:
                 unique_choices.update({webPropertyId: title})
             else:
