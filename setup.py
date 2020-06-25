@@ -37,7 +37,13 @@ setup(name='collective.googleanalytics',
       zip_safe=False,
       install_requires=[
           'setuptools',
-          'gdata>=2.0.18',
+          'gdata>=2.0.18', #Still required to load stored token only
+          'google-api-python-client',
+#          'oauth2client',
+          'google-auth',
+          'google-auth-oauthlib',
+          'pyasn1<0.5.0,>=0.4.6', #required by google-auth
+          'cachetools<4.0.0', # for python 2 support in google-auth
           'plone.api',
       ],
       extras_require={

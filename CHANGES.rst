@@ -8,6 +8,12 @@ Changelog
   [ivanteoh]
 - Fix exception thrown with external link plugin
   [nngu6036]
+- upgrade to google api v3 and deprecate gdata library usage
+  [djay]
+- allow setting client secrets ahead of user authentication
+  [djay]
+- switched to https://www.googleapis.com/auth/analytics.readonly scope as it's all we need
+  [djay]  
 - Fix bug where every page view is register twice
   [djay]
 - fix bug where views without "__name__" cause an error

@@ -2,6 +2,7 @@
 from Products.CMFCore.utils import getToolByName
 from plone.app.testing import TEST_USER_ID
 from plone.app.testing import setRoles
+from plone.app.testing import quickInstallProduct
 from collective.googleanalytics.report import AnalyticsReport
 from collective.googleanalytics.tests.base import FunctionalTestCase
 from collective.googleanalytics.vocabularies import getProfiles
@@ -58,10 +59,12 @@ class TestReinstall(FunctionalTestCase):
 
         # Reinstall the product.
         setRoles(self.portal, TEST_USER_ID, ['Manager'])
-        quick_installer = getToolByName(self.portal, "portal_quickinstaller")
-        quick_installer.reinstallProducts(
-            products=['collective.googleanalytics', ]
-        )
+        quickInstallProduct(self.portal, 'collective.googleanalytics', reinstall=False)
+        # quick_installer = getToolByName(self.portal, "portal_quickinstaller")
+        # import pdb; pdb.set_trace()
+        # quick_installer.reinstallProducts(
+        #     products=['collective.googleanalytics', ]
+        # )
 
         # Make sure the properties are still set.
         analytics_tool = getToolByName(self.portal, 'portal_analytics')
@@ -79,10 +82,11 @@ class TestReinstall(FunctionalTestCase):
 
         # Reinstall the product.
         setRoles(self.portal, TEST_USER_ID, ['Manager'])
-        quick_installer = getToolByName(self.portal, "portal_quickinstaller")
-        quick_installer.reinstallProducts(
-            products=['collective.googleanalytics', ]
-        )
+        quickInstallProduct(self.portal, 'collective.googleanalytics', reinstall=False)
+        # quick_installer = getToolByName(self.portal, "portal_quickinstaller")
+        # quick_installer.reinstallProducts(
+        #     products=['collective.googleanalytics', ]
+        # )
 
         # Make sure the reports are still there.
         analytics_tool = getToolByName(self.portal, 'portal_analytics')
@@ -93,31 +97,14 @@ class TestReinstall(FunctionalTestCase):
         self.assertNotEqual(report, None)
 
 
-class Prop(object):
-    def __init__(self, name, value):
-        self.name = name
-        self.value = value
-
-
-class Entry(object):
-    def __init__(self, properties=None):
-        if not properties:
-            properties = []
-        self.property = properties
-
-
-class Accounts(object):
-    def __init__(self, entry=None):
-        if not entry:
-            entry = []
-        self.entry = entry
-
-
 class DummyTool(object):
     auth_token = 'foo'
     accounts = None
 
-    def getAccountsFeed(self, *a, **kw):
+    def makeClientRequest(self, api_request):
+        return self.accounts
+
+    def makeCachedRequest(self, api_request):
         return self.accounts
 
     def is_auth(self):
@@ -138,14 +125,11 @@ class TestUnicode(FunctionalTestCase):
     def test_cga_unicode_problems(self):
         # fails with unicode error with c.googleanalytics <= 1.4.1
         analytics_tool = getToolByName(self.portal, 'portal_analytics')
-        analytics_tool.accounts = Accounts(
-            [Entry(
-                [Prop('ga:profileName', u'A - Nantes D\xe9veloppement'),
-                 Prop('ga:webPropertyId', 'foo'),
-                 Prop('dxp:tableId', 'foo'),
-                 ]
-            )]
-        )
+        analytics_tool.accounts = [{
+            u'name': u'A - Nantes D\xe9veloppement',
+            u'id': 'foo',
+            u'tableId': 'foo'
+        }]
         accounts = getProfiles(analytics_tool)
         self.assertEquals(
             accounts.by_value['foo'].title,
@@ -160,13 +144,11 @@ class TestUnicode(FunctionalTestCase):
     def test_cga_overlong_profile_names(self):
         # fails with unicode error with c.googleanalytics <= 1.4.1
         analytics_tool = getToolByName(self.portal, 'portal_analytics')
-        analytics_tool.accounts = Accounts(
-            [Entry(
-                [Prop('ga:profileName', u'A - Nantes D\xe9veloppement a very long profile name and continuing'),
-                 Prop('ga:webPropertyId', 'foo'),
-                 Prop('dxp:tableId', 'foo')]
-            )]
-        )
+        analytics_tool.accounts = [{
+            u'name': u'A - Nantes D\xe9veloppement a very long profile name and continuing',
+            u'id': 'foo',
+            u'tableId': 'foo'
+        }]
         accounts = getProfiles(analytics_tool)
         self.assertEquals(
             accounts.by_value['foo'].title,

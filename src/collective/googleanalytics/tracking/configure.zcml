@@ -36,5 +36,4 @@
         name="Page load time"
         factory=".plugins.AnalyticsPageLoadTimePlugin"
         />
-
 </configure>
