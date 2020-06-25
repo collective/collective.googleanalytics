@@ -101,6 +101,29 @@ File downloads
     doc, eps, exe, jpg, js, mov, mp3, pdf, png, ppt, rar, svg, txt, vsd, vxd,
     wma, wmv, xls, zip.
 
+Direct file downloads
+    This plugin records a virtual page view for downloads even if the file
+    is deep linked from else where (such as from google search results). It 
+    does by sending a server-side virtual page view instead of using JS.
+    Virtual page views means you can track where users went before and after
+    downloading the file.
+    Note:
+       - It should track for various content types and plugins as long as a 
+         'content-disposition' header is set on the response or if the content-type
+	     is in the list of extensions accepted by the File downloads
+       - It won't track if you embed content in image, audio or video tags even if
+         the url results in 'content-disposition' being used (such as plones site-logo url)
+       - It won't track if the browser or client isn't sending normal 'Accept' headers
+         for a click in a browser common browsers
+       - It won't track if it's from a known crawler User-Agent(but GA might also 
+         further exclude these anyway)
+       - It will track if you have moderate caching for file content enabled
+         but won't if you have strong caching enabled
+       - It will track content download load time
+       - It will result in an increase in your average page views in your site since 
+         more content is now being tracked (where as the File Downloads plugin seperates
+	     downloads in GA as events so doesn't change page view traffic stats).
+
 Using Reports
 =============
 After you have authorized your site in the control panel, you can begin using
@@ -939,6 +962,7 @@ Development
 
 * `Matt Yoder <mattyoder@groundwire.org>`_
 * `Tom Gross <itconsense@gmail.com>`_
+* _`Dylan Jay <software@pretagov.com.au>`__ (Server side downloads plugin)
 
 Code Review
 -----------

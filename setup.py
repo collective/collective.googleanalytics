@@ -45,6 +45,8 @@ setup(name='collective.googleanalytics',
           'pyasn1<0.5.0,>=0.4.6', #required by google-auth
           'cachetools<4.0.0', # for python 2 support in google-auth
           'plone.api',
+          'pyga',
+          'user_agents',
       ],
       extras_require={
           'test': [
