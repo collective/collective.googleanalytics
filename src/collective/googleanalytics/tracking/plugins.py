@@ -47,6 +47,20 @@ class AnalyticsEmailLinkPlugin(AnalyticsBaseTrackingPlugin):
     __call__ = ViewPageTemplateFile('email.pt')
 
 
+    def email_tag(self):
+        tag = """
+            /*&lt;![CDATA[*/
+            jQuery(function($) {
+                $('a[href^="mailto"]').click(function () {
+                    var email = $(this).attr('href').replace('mailto:', '');
+                    _gaq.push(['_trackEvent', 'External', 'E-mail', email]);
+                });
+            });
+            /*]]&gt;*/
+        """
+        return tag
+
+
 class AnalyticsDownloadPlugin(AnalyticsBaseTrackingPlugin):
     """
     A tracking plugin to track file downloads.
@@ -58,18 +72,18 @@ class AnalyticsDownloadPlugin(AnalyticsBaseTrackingPlugin):
 
     def download_tag(self):
         tag = """
-/*&lt;![CDATA[*/
-jQuery(function($) {
-    var extensions = %s;
-    var extensionsPattern = new RegExp('\\.((' + extensions.join(')|(') + '))$', 'g');
-    $('body').delegate('a', 'click', function() {
-        if ($(this).attr('href').match(extensionsPattern) ||  $(this).attr('href').match(/\/at_download\//g)) {
-            _gaq.push(['_trackEvent', 'File', 'Download', $(this).attr('href')]);
-        }
-    });
-});
-/*]]&gt;*/
-""" % (self.file_extensions)
+            /*&lt;![CDATA[*/
+            jQuery(function($) {
+                var extensions = %s;
+                var extensionsPattern = new RegExp('\\.((' + extensions.join(')|(') + '))$', 'g');
+                $('body').delegate('a', 'click', function() {
+                    if ($(this).attr('href').match(extensionsPattern) ||  $(this).attr('href').match(/\/at_download\//g)) {
+                        _gaq.push(['_trackEvent', 'File', 'Download', $(this).attr('href')]);
+                    }
+                });
+            });
+            /*]]&gt;*/
+            """ % (self.file_extensions)
         return tag
 
 

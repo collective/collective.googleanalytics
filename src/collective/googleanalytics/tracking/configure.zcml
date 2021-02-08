@@ -43,5 +43,15 @@
         class=".plugins.AnalyticsDownloadPlugin"
         attribute="download_tag"
         permission="zope2.View"
+        layer="..interfaces.browserlayer.IAnalyticsLayer"
         />
+
+    <browser:page
+        name="email_tag"
+        class=".plugins.AnalyticsEmailLinkPlugin"
+        attribute="email_tag"
+        permission="zope2.View"
+        layer="..interfaces.browserlayer.IAnalyticsLayer"
+        />
+
 </configure>

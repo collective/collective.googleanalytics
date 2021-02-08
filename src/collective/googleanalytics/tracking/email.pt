@@ -1,11 +1,2 @@
-<script type="text/javascript" tal:content="structure string:
-    /*&lt;![CDATA[*/
-    jQuery(function($) {
-        $('a[href^=&quot;mailto&quot;]').click(function () {
-            var email = $(this).attr('href').replace('mailto:', '');
-            _gaq.push(['_trackEvent', 'External', 'E-mail', email]);
-        });
-    });
-    /*]]&gt;*/
-">
+<script type="text/javascript" tal:content="structure view/email_tag">
 </script>
