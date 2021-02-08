@@ -56,6 +56,22 @@ class AnalyticsDownloadPlugin(AnalyticsBaseTrackingPlugin):
 
     file_extensions = json.dumps(FILE_EXTENSION_CHOICES)
 
+    def download_tag(self):
+        tag = """
+/*&lt;![CDATA[*/
+jQuery(function($) {
+    var extensions = %s;
+    var extensionsPattern = new RegExp('\\.((' + extensions.join(')|(') + '))$', 'g');
+    $('body').delegate('a', 'click', function() {
+        if ($(this).attr('href').match(extensionsPattern) ||  $(this).attr('href').match(/\/at_download\//g)) {
+            _gaq.push(['_trackEvent', 'File', 'Download', $(this).attr('href')]);
+        }
+    });
+});
+/*]]&gt;*/
+""" % (self.file_extensions)
+        return tag
+
 
 class AnalyticsCommentPlugin(AnalyticsBaseTrackingPlugin):
     """
