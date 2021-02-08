@@ -1,14 +1,2 @@
-<script type="text/javascript" tal:content="structure string:
-    /*&lt;![CDATA[*/
-    jQuery(function($) {
-        var extensions = ${view/file_extensions};
-        var extensionsPattern = new RegExp('\\.((' + extensions.join(')|(') + '))$', 'g');
-        $('body').delegate('a', 'click', function() {
-            if ($(this).attr('href').match(extensionsPattern) ||  $(this).attr('href').match(/\/at_download\//g)) {
-                _gaq.push(['_trackEvent', 'File', 'Download', $(this).attr('href')]);
-            }
-        });
-    });
-    /*]]&gt;*/
-">
+<script type="text/javascript" tal:content="structure view/download_tag">
 </script>

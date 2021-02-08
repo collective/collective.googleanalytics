@@ -1,5 +1,6 @@
 <configure
     xmlns="http://namespaces.zope.org/zope"
+    xmlns:browser="http://namespaces.zope.org/browser"
     i18n_domain="collective.googleanalytics">
 
     <adapter
@@ -36,4 +37,21 @@
         name="Page load time"
         factory=".plugins.AnalyticsPageLoadTimePlugin"
         />
+
+    <browser:page
+        name="download_tag"
+        class=".plugins.AnalyticsDownloadPlugin"
+        attribute="download_tag"
+        permission="zope2.View"
+        layer="..interfaces.browserlayer.IAnalyticsLayer"
+        />
+
+    <browser:page
+        name="email_tag"
+        class=".plugins.AnalyticsEmailLinkPlugin"
+        attribute="email_tag"
+        permission="zope2.View"
+        layer="..interfaces.browserlayer.IAnalyticsLayer"
+        />
+
 </configure>
